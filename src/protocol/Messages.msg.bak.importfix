@@ -1,0 +1,102 @@
+// Messages.msg — OMNeT++ message definitions for Swarm Evo-SE
+// Each message class maps to a real VANET packet type.
+// OMNeT++ generates C++ classes from these definitions.
+
+namespace swarmevose;
+
+cplusplus {{
+#include "veins/modules/messages/BaseFrame1609_4_m.h"
+}}
+
+class veins::BaseFrame1609_4 extends omnetpp::cPacket;
+
+// ---- CANDIDATE_MSG ----
+// Broadcast by a vehicle when requesting pseudonym validation from nearby swarm
+// Sent 60 seconds before current pseudonym expires (pre-activation)
+packet CandidateMsg extends veins::BaseFrame1609_4 {
+    string senderId;           // Vehicle's current pseudonym (anonymous)
+    string candidatePseudonym; // The new pseudonym being proposed
+    string zkProofSerialized;  // Pre-computed ZK proof from pool
+    unsigned int epoch;            // Current epoch number
+    double locationX;          // Claimed position X (for geographic plausibility)
+    double locationY;          // Claimed position Y
+    string h0;                 // Vehicle's certified public key (public)
+    bool isMalicious = false;  // [Simulation only] flag for malicious node testing
+}
+
+// ---- PARTIAL_SIG_MSG ----
+// Response from a validator vehicle: "I verified your ZK proof"
+// Contains one partial BLS signature
+packet PartialSigMsg extends veins::BaseFrame1609_4 {
+    string validatorId;        // Validator's pseudonym
+    string targetPseudonym;    // Which pseudonym was validated
+    string sigBytes;           // Partial BLS signature (hex)
+    unsigned int epoch;            // Epoch of validation
+    string validatorH0;        // Validator's H_0 (for aggregation verification)
+    bool accepted;             // Did the validator accept the proof?
+    string rejectReason;       // If rejected: why (for dashboard)
+}
+
+// ---- SAFETY_MSG ----
+// The main V2V safety broadcast (braking, hazard, position etc.)
+// Contains the full Proof of Swarm Acceptance
+packet SafetyMsg extends veins::BaseFrame1609_4 {
+    string senderId;           // Sender's current pseudonym
+    double speed;              // Vehicle speed (m/s)
+    double posX;               // Position X
+    double posY;               // Position Y
+    double heading;            // Heading in degrees
+    string eventType;          // "BEACON", "BRAKE", "HAZARD", "EMERGENCY"
+    string messageSignature;   // Digital signature over payload
+    // Proof of Swarm Acceptance fields:
+    string sigmaSerialized;    // Aggregated BLS Sigma_threshold
+    unsigned int filterEpochAtSigning; // ACF epoch when proof was issued
+    string clusterId;          // Which cluster validated this vehicle
+    bool isMalicious = false;  // [Simulation only]
+}
+
+// ---- REVOKE_PROPOSAL_MSG ----
+// Broadcast when malicious behaviour is detected
+// Triggers swarm voting on whether to revoke a pseudonym
+packet RevokeProposalMsg extends veins::BaseFrame1609_4 {
+    string proposerId;         // Vehicle proposing the revocation
+    string suspectPseudonym;   // Pseudonym being proposed for revocation
+    string suspectH0;          // Suspect's claimed H_0
+    string evidence;           // Description of observed malicious behaviour
+    unsigned int epoch;            // Current epoch
+    double evidenceScore;      // Confidence level 0.0-1.0
+}
+
+// ---- REVOKE_VOTE_MSG ----
+// Vote from a validator that has independently observed the suspicious behaviour
+packet RevokeVoteMsg extends veins::BaseFrame1609_4 {
+    string voterId;            // Voter's pseudonym
+    string suspectPseudonym;   // Who they are voting to revoke
+    string partialSigBytes;    // Partial BLS sig over revocation proposal
+    unsigned int epoch;
+    bool vote;                 // true = revoke, false = reject proposal
+}
+
+// ---- SIGNED_ACF_UPDATE_MSG ----
+// Broadcast after k revocation votes collected
+// Contains the fingerprint to insert and the threshold signature proving consensus
+packet SignedAcfUpdateMsg extends veins::BaseFrame1609_4 {
+    string revokedFingerprint; // SHA256 of revoked pseudonym
+    string sigmaSerialized;    // Aggregated BLS over the revocation
+    unsigned int newEpoch;         // New ACF epoch after this update
+    string clusterId;          // Issuing cluster
+    string stateHash;          // New filter state hash
+}
+
+// ---- CLUSTER_TRANSITION_CERT_MSG ----
+// Issued by outgoing cluster to vehicle leaving at high speed
+// Allows new cluster to accept vehicle in ~2ms without full ZK
+packet ClusterTransitionCertMsg extends veins::BaseFrame1609_4 {
+    string vehiclePseudonym;   // Vehicle being certified
+    string vehicleH0;          // Vehicle's H_0
+    string outgoingClusterId;  // Cluster issuing the cert
+    string sigmaSerialized;    // Threshold sig from outgoing cluster
+    unsigned int epoch;
+    double issuedAtX;          // Location where cert was issued
+    double issuedAtY;
+}

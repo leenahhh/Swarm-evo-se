@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<!-- Highway edge: 5km, 3 lanes, 120km/h speed limit -->
+<edges>
+    <edge id="highway" from="start" to="end"
+          numLanes="3" speed="33.33" spreadType="center"/>
+</edges>

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!-- Highway routes: 8 vehicles spaced 500m apart -->
+<routes>
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.5"
+           length="5" maxSpeed="33.33" color="0,0,255"/>
+    <route id="r0" edges="highway"/>
+    <!-- Vehicles depart at 0, 5, 10... seconds to spread them out -->
+    <vehicle id="v0" type="car" route="r0" depart="0"   departPos="0"/>
+    <vehicle id="v1" type="car" route="r0" depart="5"   departPos="500"/>
+    <vehicle id="v2" type="car" route="r0" depart="10"  departPos="1000"/>
+    <vehicle id="v3" type="car" route="r0" depart="15"  departPos="1500"/>
+    <vehicle id="v4" type="car" route="r0" depart="20"  departPos="2000"/>
+    <vehicle id="v5" type="car" route="r0" depart="25"  departPos="2500"/>
+    <vehicle id="v6" type="car" route="r0" depart="30"  departPos="3000"/>
+    <vehicle id="v7" type="car" route="r0" depart="35"  departPos="3500"/>
+</routes>

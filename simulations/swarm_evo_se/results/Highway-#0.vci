@@ -1,0 +1,160 @@
+file 130802 1781182418                                          
+version 3
+run Highway-0-20260611-18:17:39-730643
+attr configname Highway
+attr datetime 20260611-18:17:39
+attr datetimef 20260611-181739
+attr experiment Highway
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network SwarmNetwork
+attr processid 730643
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config description "Highway: 8 vehicles, 5km, sparse"
+config SwarmNetwork.manager.launchConfig "xmldoc(\"sumo_highway.launchd.xml\")"
+config **.maliciousRatio 0.0
+config **.maliciousMode "\"NONE\""
+config network SwarmNetwork
+config sim-time-limit 300s
+config record-eventlog false
+config **.vector-recording true
+config **.scalar-recording true
+config SwarmNetwork.playgroundSizeX 6000m
+config SwarmNetwork.playgroundSizeY 1200m
+config SwarmNetwork.playgroundSizeZ 50m
+config SwarmNetwork.connectionManager.sendDirect true
+config SwarmNetwork.connectionManager.maxInterfDist 300m
+config SwarmNetwork.connectionManager.drawMaxIntfDist false
+config SwarmNetwork.manager.updateInterval 0.1s
+config SwarmNetwork.manager.host "\"localhost\""
+config SwarmNetwork.manager.port 9999
+config SwarmNetwork.manager.autoShutdown true
+config SwarmNetwork.manager.launchConfig "xmldoc(\"sumo_highway.launchd.xml\")"
+config SwarmNetwork.node[*].applType "\"SwarmVehicle\""
+config SwarmNetwork.node[*].appl.headerLength 80bit
+config SwarmNetwork.node[*].appl.sendBeacons true
+config SwarmNetwork.node[*].appl.dataOnSch false
+config SwarmNetwork.node[*].appl.beaconInterval 0.1s
+config SwarmNetwork.node[*].veinsmobility.x 0
+config SwarmNetwork.node[*].veinsmobility.y 0
+config SwarmNetwork.node[*].veinsmobility.z 0
+config SwarmNetwork.node[*].veinsmobility.setHostSpeed false
+config SwarmNetwork.node[*].nic.phy80211p.usePropagationDelay false
+config SwarmNetwork.node[*].nic.phy80211p.useNoiseFloor true
+config SwarmNetwork.node[*].nic.phy80211p.noiseFloor -98dBm
+config SwarmNetwork.node[*].nic.phy80211p.useThermalNoise true
+config SwarmNetwork.node[*].nic.phy80211p.thermalNoise -110dBm
+config SwarmNetwork.node[*].nic.phy80211p.sensitivity -89dBm
+config SwarmNetwork.node[*].nic.phy80211p.maxTXPower 20mW
+config SwarmNetwork.node[*].nic.phy80211p.initialRadioState 0
+config SwarmNetwork.node[*].nic.phy80211p.collectCollisionStatistics false
+config SwarmNetwork.node[*].nic.phy80211p.channelNumber 180
+config SwarmNetwork.node[*].nic.phy80211p.headerLength 46bit
+config SwarmNetwork.node[*].nic.phy80211p.decider "xmldoc(\"config.xml\")"
+config SwarmNetwork.node[*].nic.phy80211p.analogueModels "xmldoc(\"config.xml\")"
+config SwarmNetwork.node[*].nic.phy80211p.antenna default
+config SwarmNetwork.node[*].nic.phy80211p.minPowerLevel -110dBm
+config SwarmNetwork.node[*].nic.phy80211p.carrierFrequency "5.890e9 Hz"
+config SwarmNetwork.node[*].nic.phy80211p.drawCommunicationRange false
+config SwarmNetwork.node[*].nic.mac1609_4.useServiceChannel false
+config SwarmNetwork.node[*].nic.mac1609_4.queueSize 14
+config SwarmNetwork.node[*].nic.mac1609_4.contentionWindowMin 15
+config SwarmNetwork.node[*].nic.mac1609_4.contentionWindowMax 1007
+config SwarmNetwork.node[*].nic.mac1609_4.AIFS 2
+config SwarmNetwork.node[*].nic.mac1609_4.slotDuration 13us
+config SwarmNetwork.node[*].nic.mac1609_4.guardSize 4us
+config SwarmNetwork.node[*].nic.mac1609_4.txPower 20mW
+config SwarmNetwork.node[*].nic.mac1609_4.bitrate 6Mbps
+config SwarmNetwork.node[*].nic.mac1609_4.headerLength 88bit
+config SwarmNetwork.node[*].nic.mac1609_4.bandwidth 10MHz
+config SwarmNetwork.node[*].nic.mac1609_4.centerFrequency "5.890e9 Hz"
+config **.epochDuration 600s
+config **.beaconInterval 0.1s
+config **.preActivationLead 60s
+config **.trustCacheTTL 30
+config **.acfMaxStaleness 3
+config **.proofPoolPrecompute 100
+config **.dashboardPort 8765
+config **.maliciousRatio 0.0
+config **.maliciousMode "\"NONE\""
+
+vector 0 SwarmNetwork.node[0].nic.phy80211p RadioState ETV
+vector 1 SwarmNetwork.node[0].nic.phy80211p RadioChannel ETV
+vector 2 SwarmNetwork.manager posx ETV
+vector 3 SwarmNetwork.manager posy ETV
+vector 4 SwarmNetwork.manager speed ETV
+vector 5 SwarmNetwork.manager acceleration ETV
+vector 6 SwarmNetwork.manager co2emission ETV
+vector 7 SwarmNetwork.node[1].nic.phy80211p RadioState ETV
+vector 8 SwarmNetwork.node[1].nic.phy80211p RadioChannel ETV
+vector 9 SwarmNetwork.manager posx ETV
+vector 10 SwarmNetwork.manager posy ETV
+vector 11 SwarmNetwork.manager speed ETV
+vector 12 SwarmNetwork.manager acceleration ETV
+vector 13 SwarmNetwork.manager co2emission ETV
+vector 14 SwarmNetwork.node[2].nic.phy80211p RadioState ETV
+vector 15 SwarmNetwork.node[2].nic.phy80211p RadioChannel ETV
+vector 16 SwarmNetwork.manager posx ETV
+vector 17 SwarmNetwork.manager posy ETV
+vector 18 SwarmNetwork.manager speed ETV
+vector 19 SwarmNetwork.manager acceleration ETV
+vector 20 SwarmNetwork.manager co2emission ETV
+vector 21 SwarmNetwork.node[3].nic.phy80211p RadioState ETV
+vector 22 SwarmNetwork.node[3].nic.phy80211p RadioChannel ETV
+vector 23 SwarmNetwork.manager posx ETV
+vector 24 SwarmNetwork.manager posy ETV
+vector 25 SwarmNetwork.manager speed ETV
+vector 26 SwarmNetwork.manager acceleration ETV
+vector 27 SwarmNetwork.manager co2emission ETV
+vector 28 SwarmNetwork.node[4].nic.phy80211p RadioState ETV
+vector 29 SwarmNetwork.node[4].nic.phy80211p RadioChannel ETV
+vector 30 SwarmNetwork.manager posx ETV
+vector 31 SwarmNetwork.manager posy ETV
+vector 32 SwarmNetwork.manager speed ETV
+vector 33 SwarmNetwork.manager acceleration ETV
+vector 34 SwarmNetwork.manager co2emission ETV
+vector 35 SwarmNetwork.node[5].nic.phy80211p RadioState ETV
+vector 36 SwarmNetwork.node[5].nic.phy80211p RadioChannel ETV
+vector 37 SwarmNetwork.manager posx ETV
+vector 38 SwarmNetwork.manager posy ETV
+vector 39 SwarmNetwork.manager speed ETV
+vector 40 SwarmNetwork.manager acceleration ETV
+vector 41 SwarmNetwork.manager co2emission ETV
+2	5900 7676 2 2845 0.1 28.8 288 25 696.84418601625 79529.810961457 34884830.806848
+3	13576 4553 2 2845 0.1 28.8 288 28.2 28.2 8121.6 229029.12
+4	18129 7665 5 2845 0.2 28.8 287 0.25286542447004 33.327864147935 6718.4418601625 191578.76947512
+5	25794 7820 8 2845 0.3 28.8 286 -1.1235853329999 2.5823568655644 330.64130408736 691.64461817186
+6	33614 7641 8 2845 0.3 28.8 286 -2.3997586407766 25.441091278458 2531.0456987047 31969.213805371
+9	41255 6425 179 2845 5.1 28.8 238 525 1038.907667318 168885.77641658 125913283.77247
+10	47680 4083 179 2845 5.1 28.8 238 28.2 28.2 6711.6 189267.12
+11	51763 6649 185 2845 5.2 28.8 237 0.25168102677912 33.328514430835 5139.0766731803 139696.20797266
+12	58412 6731 191 2845 5.3 28.8 236 -1.1868517812108 2.5878362877294 329.99783658523 692.92064293465
+13	65143 6598 191 2845 5.3 28.8 236 -1.9035416540004 24.156990509219 2239.9732170497 29407.603691425
+16	71741 5317 490 2845 10.1 28.8 188 1025 1371.8713818458 214892.65154207 247690857.46396
+17	77058 3292 490 2845 10.1 28.8 188 28.2 28.2 5301.6 149505.12
+18	80350 5322 498 2845 10.2 28.8 187 0.25949055874348 33.326799405655 3468.7138184581 84319.098682998
+19	85672 5315 507 2845 10.3 28.8 186 -0.88828675667756 2.5999280445278 330.21327042649 685.26709999867
+20	90987 5279 507 2845 10.3 28.8 186 -1.0099299924142 26.2942697101 1928.3165054648 27095.702033237
+23	96266 3943 934 2845 15.1 28.8 138 1525 1711.6718471191 219212.09357607 348649375.75141
+24	100209 2452 934 2845 15.1 28.8 138 28.2 28.2 3891.6 109743.12
+25	102661 3936 945 2845 15.2 28.8 137 0.25805717203929 26.70266069667 1866.7184711906 33352.259083125
+26	106597 3897 956 2845 15.3 28.8 136 1.3072789754719 2.5879506088289 264.44603524631 533.95524620577
+27	110494 3898 956 2845 15.3 28.8 136 1.4515654576868 19.790544792788 1168.4373969657 12892.08246311
+30	114392 2516 1511 2845 20.1 28.8 88 2025 2103.5487972907 180552.45879343 370494514.62021
+31	116908 1568 1511 2845 20.1 28.8 88 28.2 28.2 2481.6 69981.12
+32	118476 2499 1525 2845 20.2 28.8 87 0.25537703444459 17.718391821774 785.4879729074 9312.4069084641
+33	120975 2466 1539 2845 20.3 28.8 86 1.3612681274768 2.5873036384117 174.6301478733 365.16231472516
+34	123441 2470 1539 2845 20.3 28.8 86 1.421802564572 12.597429708644 527.44219032655 3978.2625397637
+37	125911 1078 2222 2845 25.1 28.8 38 2525 2540.1283911531 96153.204228629 243301840.39797
+38	126989 678 2222 2845 25.1 28.8 38 28.2 28.2 1071.6 30219.12
+39	127667 1067 2238 2845 25.2 28.8 37 0.25791299530864 7.5385474448403 151.28391153122 787.17356139636
+40	128734 1032 2255 2845 25.3 28.8 36 1.3137672927929 2.5843529098434 72.806344495317 153.78350824161
+41	129766 1035 2255 2845 25.3 28.8 36 1.4370453696332 5.9320902578604 117.91883024714 428.17836525443
+

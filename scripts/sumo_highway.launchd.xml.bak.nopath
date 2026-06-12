@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- TraCI launchd config for highway scenario -->
+<launch>
+    <copy file="/home/leena/swarm-evo-se/scripts/highway.net.xml"/>
+    <copy file="/home/leena/swarm-evo-se/scripts/highway.rou.xml"/>
+    <sumo-launchd port="9999" seed="23423">
+        <basedir path="/home/leena/swarm-evo-se/scripts"/>
+        <simulate>
+            <sumo-options>
+                <option name="net-file"   value="highway.net.xml"/>
+                <option name="route-files" value="highway.rou.xml"/>
+                <option name="step-length" value="0.1"/>
+                <option name="collision.action" value="warn"/>
+            </sumo-options>
+        </simulate>
+    </sumo-launchd>
+</launch>

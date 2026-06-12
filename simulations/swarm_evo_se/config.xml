@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+    <analogueModel type="SimplePathlossModel">
+        <parameter name="alpha" type="double" value="2.0"/>
+        <parameter name="carrierFrequency" type="double" value="5.890e9"/>
+    </analogueModel>
+    <decider type="Decider80211p">
+        <parameter name="centerFrequency" type="double" value="5.890e9"/>
+    </decider>
+</config>

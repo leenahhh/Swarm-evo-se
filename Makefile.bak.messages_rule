@@ -1,0 +1,142 @@
+# Makefile for Swarm Evo-SE
+# Usage:
+#   make          — build everything
+#   make run-highway  — run highway simulation
+#   make run-urban    — run urban simulation
+#   make run-sybil    — run Sybil attack test
+#   make dashboard    — open the live dashboard in browser
+#   make clean        — remove build artifacts
+
+# ---- Paths ----
+OMNETPP_DIR   = $(HOME)/omnetpp-6.1
+VEINS_DIR     = $(HOME)/veins
+VEINS_LIB_DIR = $(VEINS_DIR)/src
+SUMO_DIR      = $(HOME)/sumo-1.22.0-install
+PROJECT_DIR   = $(HOME)/swarm-evo-se
+
+# ---- Compiler settings ----
+CXX           = g++
+CXXFLAGS      = -std=c++17 -O2 -Wall \
+                -I$(OMNETPP_DIR)/include \
+                -I$(VEINS_DIR)/src \
+                -I$(PROJECT_DIR)/src \
+                -I/usr/include/nlohmann
+# LDFLAGS       = -L$(OMNETPP_DIR)/lib \
+#                 -L$(VEINS_DIR)/out/gcc-release/src \
+#                 -lssl -lcrypto -lveins -loppenvir -loppmain
+# LDFLAGS       = -L$(OMNETPP_DIR)/lib \
+#                 -L$(VEINS_LIB_DIR) \
+#                 -lssl -lcrypto -lveins -loppenvir -loppmain
+LDFLAGS       = -L$(OMNETPP_DIR)/lib \
+                -L$(VEINS_LIB_DIR) \
+                -lssl -lcrypto \
+                -lveins \
+                -loppmain \
+                -loppenvir \
+                -loppsim \
+                -loppcommon
+
+# ---- Source files ----
+# SRCS = $(wildcard src/crypto/*.cc) \
+#        $(wildcard src/vehicle/*.cc) \
+#        $(wildcard src/protocol/*.cc) \
+#        $(wildcard src/ta/*.cc) \
+#        $(wildcard src/gui/*.cc)
+SRCS = src/protocol/Messages_m.cc \
+       $(filter-out src/protocol/Messages_m.cc,$(wildcard src/protocol/*.cc)) \
+       $(wildcard src/crypto/*.cc) \
+       $(wildcard src/vehicle/*.cc) \
+       $(wildcard src/ta/*.cc) \
+       $(wildcard src/gui/*.cc)
+
+OBJS = $(SRCS:.cc=.o)
+
+# ---- Default target ----
+all: generate-msgs build
+
+# Step 1: Generate C++ from OMNeT++ .msg file
+# generate-msgs:
+# 	@echo ">>> Generating message classes from Messages.msg..."
+# 	$(OMNETPP_DIR)/bin/opp_msgc src/protocol/Messages.msg \
+# 		-o src/protocol/Messages
+generate-msgs:
+	@echo ">>> Generating message classes from Messages.msg..."
+	$(OMNETPP_DIR)/bin/opp_msgc src/protocol/Messages.msg
+
+# Step 2: Build the simulation
+build: $(OBJS)
+	@echo ">>> Linking SwarmEvoSE..."
+	$(CXX) $(CXXFLAGS) -o SwarmEvoSE $(OBJS) $(LDFLAGS)
+	@echo ">>> Build complete."
+
+%.o: %.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# ---- SUMO scenario generation ----
+scenarios:
+	@echo ">>> Generating SUMO scenarios..."
+	python3 scripts/generate_sumo_scenario.py
+
+# ---- Simulation runs ----
+run-highway: scenarios build
+	@echo ">>> Running Highway scenario..."
+	cd simulations/swarm_evo_se && \
+	$(OMNETPP_DIR)/bin/opp_run -r 0 \
+		-c Highway omnetpp.ini \
+		-n ../../src:$(VEINS_DIR)/src \
+		-l $(VEINS_LIB_DIR)/libveins
+
+run-urban: scenarios build
+	@echo ">>> Running Urban scenario..."
+	cd simulations/swarm_evo_se && \
+	$(OMNETPP_DIR)/bin/opp_run -r 0 \
+		-c Urban omnetpp.ini \
+		-n ../../src:$(VEINS_DIR)/src \
+		-l $(VEINS_LIB_DIR)/libveins
+
+run-sybil: scenarios build
+	@echo ">>> Running Sybil Attack scenario..."
+	cd simulations/swarm_evo_se && \
+	$(OMNETPP_DIR)/bin/opp_run -r 0 \
+		-c Sybil omnetpp.ini \
+		-n ../../src:$(VEINS_DIR)/src \
+		-l $(VEINS_LIB_DIR)/libveins
+
+run-replay: scenarios build
+	cd simulations/swarm_evo_se && \
+	$(OMNETPP_DIR)/bin/opp_run -r 0 \
+		-c ReplayAttack omnetpp.ini \
+		-n ../../src:$(VEINS_DIR)/src \
+		-l $(VEINS_LIB_DIR)/libveins
+
+run-false-revocation: scenarios build
+	cd simulations/swarm_evo_se && \
+	$(OMNETPP_DIR)/bin/opp_run -r 0 \
+		-c FalseRevocation omnetpp.ini \
+		-n ../../src:$(VEINS_DIR)/src \
+		-l $(VEINS_LIB_DIR)/libveins
+
+run-ghost: scenarios build
+	cd simulations/swarm_evo_se && \
+	$(OMNETPP_DIR)/bin/opp_run -r 0 \
+		-c GhostVehicle omnetpp.ini \
+		-n ../../src:$(VEINS_DIR)/src \
+		-l $(VEINS_LIB_DIR)/libveins
+
+# ---- Dashboard ----
+dashboard:
+	@echo ">>> Opening dashboard at http://localhost:8766/dashboard/index.html"
+	python3 -m http.server 8766 --directory $(PROJECT_DIR) &
+	sleep 1
+	xdg-open http://localhost:8766/dashboard/index.html 2>/dev/null || \
+	  echo "Open http://localhost:8766/dashboard/index.html in your browser"
+
+# ---- Clean ----
+clean:
+	rm -f $(OBJS) SwarmEvoSE
+	rm -f src/protocol/Messages_m.cc src/protocol/Messages_m.h
+	rm -f simulations/swarm_evo_se/results/*
+
+.PHONY: all build clean scenarios generate-msgs \
+        run-highway run-urban run-sybil run-replay \
+        run-false-revocation run-ghost dashboard

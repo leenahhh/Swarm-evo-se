@@ -1,0 +1,111 @@
+# omnetpp.ini — Simulation configuration for all three scenarios
+# Run with: cd ~/swarm-evo-se && opp_run -r 0 simulations/swarm_evo_se/omnetpp.ini
+
+[General]
+network                         = SwarmNetwork
+
+# Veins playground dimensions required by Scenario
+
+# Veins connection manager parameters
+SwarmNetwork.connectionManager.sendDirect = true
+SwarmNetwork.connectionManager.maxInterfDist = 300m
+SwarmNetwork.connectionManager.drawMaxIntfDist = false
+sim-time-limit                  = 300s
+record-eventlog                 = false
+**.vector-recording              = true
+**.scalar-recording              = true
+
+# --- DSRC Radio (IEEE 802.11p) ---
+*.**.nic.phy80211p.minPowerLevel                  = -110dBm
+*.**.nic.mac1609_4.txPower                        = 20mW
+*.**.nic.mac1609_4.bitrate                        = 6Mbps
+
+# --- Epoch and protocol parameters ---
+**.epochDuration                = 600s      # 10 minutes per epoch
+**.beaconInterval               = 0.1s      # 10 beacons/second
+**.preActivationLead            = 60s       # Start pseudonym request 60s early
+**.trustCacheTTL                = 30s       # Cache entries live 30s
+**.acfMaxStaleness              = 3         # Filter stale after 3 epochs
+**.proofPoolPrecompute          = 100       # Pre-compute 100 proofs at a time
+**.dashboardPort                = 8765      # WebSocket port for GUI
+
+# ===========================================================
+# Scenario 1: Highway (sparse) — tests Store-Carry-Forward
+# ===========================================================
+[Config Highway]
+description                     = "Highway: 8 vehicles, 5km, sparse"
+*.manager.launchConfig          = xmldoc("../../scripts/sumo_highway.launchd.xml")
+**.numVehicles                  = 8
+**.scenarioType                 = "HIGHWAY"
+**.maliciousRatio               = 0.0       # No malicious vehicles
+**.adaptiveK.sparseThreshold    = 10        # vehicles/km
+**.adaptiveK.sparseK            = 0.34      # k = ceil(0.34 * n), min 3
+
+# ===========================================================
+# Scenario 2: Urban (dense) — tests channel management and revocation speed
+# ===========================================================
+[Config Urban]
+description                     = "Urban: 120 veh/km, Manhattan grid"
+*.manager.launchConfig          = xmldoc("../../scripts/sumo_urban.launchd.xml")
+**.numVehicles                  = 120
+**.scenarioType                 = "URBAN"
+**.maliciousRatio               = 0.0
+**.adaptiveK.denseThreshold     = 100
+**.adaptiveK.denseK             = 0.67      # k = ceil(0.67 * n)
+
+# ===========================================================
+# Scenario 3: Sybil Attack — 10% malicious nodes
+# ===========================================================
+[Config Sybil]
+description                     = "Sybil attack: 50 vehicles, 10% malicious"
+*.manager.launchConfig          = xmldoc("../../scripts/sumo_urban.launchd.xml")
+**.numVehicles                  = 50
+**.scenarioType                 = "URBAN"
+**.maliciousRatio               = 0.10      # 10% malicious
+**.maliciousMode                = "SYBIL_ATTACK"
+
+# ===========================================================
+# Scenario 4: Replay Attack
+# ===========================================================
+[Config ReplayAttack]
+description                     = "Replay attack: 30 vehicles, 3 malicious"
+*.manager.launchConfig          = xmldoc("../../scripts/sumo_urban.launchd.xml")
+**.numVehicles                  = 30
+**.scenarioType                 = "URBAN"
+**.maliciousRatio               = 0.10
+**.maliciousMode                = "REPLAY_ATTACK"
+
+# ===========================================================
+# Scenario 5: False Revocation (Colluding attackers)
+# ===========================================================
+[Config FalseRevocation]
+description                     = "False revocation: colluding attackers try to ban legitimate vehicles"
+*.manager.launchConfig          = xmldoc("../../scripts/sumo_urban.launchd.xml")
+**.numVehicles                  = 50
+**.maliciousRatio               = 0.12
+**.maliciousMode                = "FALSE_REVOCATION"
+
+# ===========================================================
+# Scenario 6: Ghost Vehicle (impossible positions)
+# ===========================================================
+[Config GhostVehicle]
+description                     = "Ghost vehicle: claims physically impossible positions"
+*.manager.launchConfig          = xmldoc("../../scripts/sumo_urban.launchd.xml")
+**.numVehicles                  = 30
+**.maliciousRatio               = 0.07
+**.maliciousMode                = "GHOST_VEHICLE"
+# Swarm Evo-SE custom vehicle application
+
+# Veins playground dimensions required by Scenario
+
+# Explicit Veins node application binding
+SwarmNetwork.node[*].applType = "SwarmVehicle"
+SwarmNetwork.node[*].appl.headerLength = 80bit
+SwarmNetwork.node[*].appl.sendBeacons = true
+SwarmNetwork.node[*].appl.dataOnSch = false
+SwarmNetwork.node[*].appl.beaconInterval = 0.1s
+
+# Slightly larger playground for generated highway bounds
+SwarmNetwork.playgroundSizeX = 6000m
+SwarmNetwork.playgroundSizeY = 1200m
+SwarmNetwork.playgroundSizeZ = 50m

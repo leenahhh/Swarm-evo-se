@@ -1,0 +1,62 @@
+// SwarmNetwork.ned — OMNeT++ network topology for Swarm Evo-SE
+// Defines the simulation network: vehicles + DSRC radio channel + scenario manager
+
+
+import org.car2x.veins.nodes.RSU;
+import org.car2x.veins.nodes.Car;
+import org.car2x.veins.modules.obstacle.ObstacleControl;
+import org.car2x.veins.modules.world.annotations.AnnotationManager;
+import org.car2x.veins.base.connectionManager.ConnectionManager;
+import org.car2x.veins.modules.mobility.traci.TraCIScenarioManagerLaunchd;
+
+// The SwarmVehicle module: replaces the standard Veins Car app layer
+// with our complete Swarm Evo-SE protocol stack
+module SwarmVehicleNode extends Car {
+    parameters:
+        // Use our custom application layer
+        applType = "SwarmVehicle";
+        // DSRC radio parameters (IEEE 802.11p)
+        nic.mac1609_4.txPower = 20mW;
+        nic.phy80211p.sensitivity = -89dBm;
+        nic.phy80211p.useThermalNoise = true;
+        @display("i=veins/car;is=vs");
+}
+
+// Main simulation network
+network SwarmNetwork {
+    parameters:
+        @display("bgb=1000,1000");
+        // Scenario parameters (overridden in omnetpp.ini)
+        double scenarioWidth  @unit(m) = default(1000m);
+        double scenarioHeight @unit(m) = default(1000m);
+
+    submodules:
+        // DSRC channel model (IEEE 802.11p, Nakagami fading)
+        connectionManager: ConnectionManager {
+            parameters:
+                sendDirect = true;
+                maxInterfDist = 300m;   // DSRC range ~300m
+                drawMaxIntfDist = false;
+                @display("p=60,50");
+        }
+
+        // Obstacle handling (buildings block signal in urban scenario)
+        obstacleControl: ObstacleControl {
+            @display("p=60,100");
+        }
+
+        annotations: AnnotationManager {
+            @display("p=60,150");
+        }
+
+        // SUMO TraCI interface — receives vehicle positions from SUMO
+        manager: TraCIScenarioManagerLaunchd {
+            parameters:
+                host = "localhost";
+                port = 9999;
+                moduleType  = "swarmevose.SwarmVehicleNode";
+                moduleName  = "vehicle";
+                moduleDisplayString = "";
+                @display("p=60,200");
+        }
+}

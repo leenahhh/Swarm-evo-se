@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+    <copy file="urban.net.xml"/>
+    <copy file="urban.rou.xml"/>
+    <copy file="urban.sumocfg" type="config"/>
+</launch>

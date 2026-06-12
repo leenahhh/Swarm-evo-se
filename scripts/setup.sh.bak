@@ -1,0 +1,49 @@
+#!/bin/bash
+# setup.sh
+# One-shot script that installs all dependencies needed for Swarm Evo-SE.
+# Run this once before anything else. Safe to re-run.
+
+set -e  # Stop immediately on any error
+
+echo "=== Swarm Evo-SE Setup ==="
+
+# --- System packages ---
+sudo apt-get update
+sudo apt-get install -y \
+    build-essential \
+    cmake \
+    git \
+    python3 python3-pip \
+    libssl-dev \
+    libboost-all-dev \
+    nlohmann-json3-dev \
+    websocketpp-dev \
+    python3-websocket \
+    pkg-config
+
+# --- Python packages for dashboard and SUMO scenario generation ---
+pip3 install websockets asyncio matplotlib numpy
+
+# --- Source OMNeT++ environment if not already active ---
+# Adjust path if your omnetpp install is elsewhere
+OMNETPP_DIR="$HOME/omnetpp-6.1"
+if [ -f "$OMNETPP_DIR/setenv" ]; then
+    source "$OMNETPP_DIR/setenv"
+    echo "OMNeT++ environment loaded from $OMNETPP_DIR"
+else
+    echo "WARNING: OMNeT++ setenv not found at $OMNETPP_DIR. Set it manually."
+fi
+
+# --- Source SUMO environment ---
+SUMO_DIR="$HOME/sumo-1.22.0"
+if [ -d "$SUMO_DIR/bin" ]; then
+    export PATH="$SUMO_DIR/bin:$PATH"
+    export SUMO_HOME="$SUMO_DIR"
+    echo "SUMO loaded from $SUMO_DIR"
+else
+    echo "WARNING: SUMO not found at $SUMO_DIR/bin."
+fi
+
+echo ""
+echo "=== Setup complete. Now run: ==="
+echo "  cd ~/swarm-evo-se && source scripts/setup.sh && make"

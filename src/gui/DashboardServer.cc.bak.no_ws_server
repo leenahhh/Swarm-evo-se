@@ -1,0 +1,176 @@
+#include <cstdint>
+
+#include "DashboardServer.h"
+
+#include <iostream>
+#include <sstream>
+
+namespace {
+
+std::string escapeJson(const std::string& value) {
+    std::ostringstream out;
+    for (const unsigned char ch : value) {
+        switch (ch) {
+        case '"': out << "\\\""; break;
+        case '\\': out << "\\\\"; break;
+        case '\b': out << "\\b"; break;
+        case '\f': out << "\\f"; break;
+        case '\n': out << "\\n"; break;
+        case '\r': out << "\\r"; break;
+        case '\t': out << "\\t"; break;
+        default:
+            if (ch < 0x20) {
+                const char hex[] = "0123456789abcdef";
+                out << "\\u00" << hex[ch >> 4] << hex[ch & 0x0f];
+            } else {
+                out << static_cast<char>(ch);
+            }
+        }
+    }
+    return out.str();
+}
+
+std::string quoted(const std::string& value) {
+    return "\"" + escapeJson(value) + "\"";
+}
+
+} // namespace
+
+DashboardServer& DashboardServer::instance() {
+    static DashboardServer server;
+    return server;
+}
+
+void DashboardServer::start(uint16_t port) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (running_) {
+        return;
+    }
+
+    port_ = port;
+    running_ = true;
+    std::cout << "[DashboardServer] event logging enabled on port "
+              << port_ << std::endl;
+}
+
+void DashboardServer::stop() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    running_ = false;
+}
+
+void DashboardServer::emit(const std::string& eventType,
+                           const std::string& payload) {
+    const std::string body = payload.empty() ? "{}" : payload;
+    emitRaw("{\"type\":" + quoted(eventType) + ",\"payload\":" + body + "}");
+}
+
+void DashboardServer::emitRaw(const std::string& jsonStr) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (!running_) {
+        return;
+    }
+    std::cout << "[DashboardServer] " << jsonStr << std::endl;
+}
+
+void DashboardServer::runServer() {
+    // Lightweight simulation build: events are logged by emitRaw().
+}
+
+std::string buildVehicleUpdateJson(
+    const std::string& vehicleId,
+    const std::string& pseudonym,
+    const std::string& h0,
+    double posX, double posY,
+    uint32_t epoch,
+    uint32_t threshold,
+    uint32_t neighbours,
+    bool isMalicious,
+    const std::string& maliciousMode,
+    const std::string& status) {
+    std::ostringstream out;
+    out << "{\"vehicleId\":" << quoted(vehicleId)
+        << ",\"pseudonym\":" << quoted(pseudonym)
+        << ",\"h0\":" << quoted(h0)
+        << ",\"posX\":" << posX
+        << ",\"posY\":" << posY
+        << ",\"epoch\":" << epoch
+        << ",\"threshold\":" << threshold
+        << ",\"neighbours\":" << neighbours
+        << ",\"isMalicious\":" << (isMalicious ? "true" : "false")
+        << ",\"maliciousMode\":" << quoted(maliciousMode)
+        << ",\"status\":" << quoted(status) << '}';
+    return out.str();
+}
+
+std::string buildPacketEventJson(
+    const std::string& msgType,
+    const std::string& senderId,
+    const std::string& receiverId,
+    const std::string& outcome,
+    double latencyMs,
+    bool isMalicious,
+    const std::string& dropReason,
+    const std::string& extraFields) {
+    std::ostringstream out;
+    out << "{\"msgType\":" << quoted(msgType)
+        << ",\"senderId\":" << quoted(senderId)
+        << ",\"receiverId\":" << quoted(receiverId)
+        << ",\"outcome\":" << quoted(outcome)
+        << ",\"latencyMs\":" << latencyMs
+        << ",\"isMalicious\":" << (isMalicious ? "true" : "false")
+        << ",\"dropReason\":" << quoted(dropReason);
+    if (!extraFields.empty()) {
+        out << ',' << extraFields;
+    }
+    out << '}';
+    return out.str();
+}
+
+std::string buildACFUpdateJson(
+    uint32_t epoch,
+    bool isFresh,
+    const std::string& entriesJson) {
+    return "{\"epoch\":" + std::to_string(epoch) +
+           ",\"isFresh\":" + (isFresh ? "true" : "false") +
+           ",\"entries\":" + (entriesJson.empty() ? "[]" : entriesJson) + "}";
+}
+
+std::string buildRevocationJson(
+    const std::string& suspectId,
+    const std::string& reason,
+    uint32_t epoch) {
+    return "{\"suspectId\":" + quoted(suspectId) +
+           ",\"reason\":" + quoted(reason) +
+           ",\"epoch\":" + std::to_string(epoch) + "}";
+}
+
+std::string buildZKProofJson(
+    const std::string& vehicleId,
+    bool verified,
+    uint32_t epoch,
+    uint32_t index) {
+    return "{\"vehicleId\":" + quoted(vehicleId) +
+           ",\"verified\":" + (verified ? "true" : "false") +
+           ",\"epoch\":" + std::to_string(epoch) +
+           ",\"index\":" + std::to_string(index) + "}";
+}
+
+std::string buildBLSAggJson(
+    uint32_t signerCount,
+    const std::string& pseudonym,
+    uint32_t epoch) {
+    return "{\"signerCount\":" + std::to_string(signerCount) +
+           ",\"pseudonym\":" + quoted(pseudonym) +
+           ",\"epoch\":" + std::to_string(epoch) + "}";
+}
+
+std::string buildSimStateJson(
+    double simTime,
+    uint32_t epoch,
+    double epochProgress) {
+    std::ostringstream out;
+    out << "{\"simTime\":" << simTime
+        << ",\"epoch\":" << epoch
+        << ",\"epochProgress\":" << epochProgress << '}';
+    return out.str();
+}
