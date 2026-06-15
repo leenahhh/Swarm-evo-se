@@ -1,0 +1,78 @@
+# C/C++ compiled outputs
+*.o
+*.obj
+*.so
+*.a
+*.exe
+*.dll
+*.dylib
+*.d
+*.out
+*.map
+
+# OMNeT++ generated build files and outputs
+/bin/
+/lib/
+/out/
+**/out/
+Makefile.inc
+.oppbuildspec
+.oppide
+.settings/
+*_m.cc
+*_m.h
+
+# Simulation results and analysis files
+*.sca
+*.vec
+*.vci
+*.anf
+/results/*
+!/results/.gitkeep
+**/results/*
+!**/results/.gitkeep
+
+# Logs, traces, and temporary runtime output
+*.log
+*.trace
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+*_trace.txt
+nohup.out
+
+# Python cache, tooling, and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+ENV/
+
+# Dependency folders
+node_modules/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.code-workspace
+
+# Environment and local configuration
+.env
+.env.*
+!.env.example
+
+# Operating system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
