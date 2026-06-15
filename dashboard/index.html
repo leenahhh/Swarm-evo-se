@@ -278,6 +278,9 @@
 const WS_URL = "ws://localhost:8765";
 let ws = null;
 let vehicles = {};       // vehicleId -> vehicle state
+let focusVehicleId = null; // main node shown in demo
+let authMemory = {};       // vehicleId -> authenticated fingerprints
+let contactHistory = {};   // vehicleId -> recently seen contacts
 let acfEntries = [];     // current ACF entries
 let eventLogEntries = [];
 let stats = { sent:0, accepted:0, dropped:0, quarantine:0, rechallenge:0,
@@ -323,6 +326,7 @@ function handleEvent(e) {
     case 'ZK_PROOF':        handleZKProof(e); break;
     case 'BLS_AGG':         handleBLSAgg(e); break;
     case 'STATS_UPDATE':    handleStatsUpdate(e); break;
+    case 'TRUST_MEMORY_UPDATE': handleTrustMemoryUpdate(e); break;
     default: addLog('info', `Unknown event: ${e.type}`);
   }
 }
@@ -338,6 +342,10 @@ function handleSimState(e) {
 // ---- Vehicle update ----
 function handleVehicleUpdate(e) {
   vehicles[e.vehicleId] = e;
+
+  // First vehicle becomes focus node for demo
+  if (!focusVehicleId) focusVehicleId = e.vehicleId;
+
   renderVehicleList();
   renderMap();
 }
@@ -416,31 +424,79 @@ function handleStatsUpdate(e) {
     document.getElementById('sZkRate').textContent = e.zkProofsPerSec.toFixed(0);
 }
 
+
+// ---- Trust memory update ----
+function handleTrustMemoryUpdate(e) {
+  if (!authMemory[e.vehicleId]) authMemory[e.vehicleId] = [];
+
+  if (e.fingerprint && !authMemory[e.vehicleId].includes(e.fingerprint)) {
+    authMemory[e.vehicleId].push(e.fingerprint);
+  }
+
+  if (e.contactId) {
+    if (!contactHistory[e.vehicleId]) contactHistory[e.vehicleId] = [];
+    if (!contactHistory[e.vehicleId].includes(e.contactId)) {
+      contactHistory[e.vehicleId].push(e.contactId);
+    }
+  }
+
+  addLog('accept', `[${e.vehicleId}] authenticated fingerprint stored: ${String(e.fingerprint).slice(0,12)}...`);
+  renderVehicleList();
+}
+
 // ---- Render: Vehicle list ----
+
 function renderVehicleList() {
   const el = document.getElementById('vehicleList');
-  const vList = Object.values(vehicles).filter(v => {
-    if (vehicleTab === 'malicious') return v.isMalicious;
-    if (vehicleTab === 'revoked')   return v.status === 'REVOKED';
-    return true;
-  });
-  el.innerHTML = vList.map(v => {
-    const cls = v.status === 'REVOKED' ? 'revoked' : v.isMalicious ? 'malicious' : 'legitimate';
-    const statusCls = v.status === 'REVOKED' ? 'status-bad' :
-                      v.status === 'QUARANTINE' ? 'status-warn' : 'status-ok';
-    const statusLabel = v.status || 'OK';
-    return `<div class="vehicle-card ${cls}">
-      <div class="vc-header">
-        <span class="vc-id">${v.vehicleId?.slice(0,10) || 'unknown'}</span>
-        <span class="vc-status ${statusCls}">${statusLabel}</span>
-      </div>
-      <div>Pseudo: <span style="color:#bb9af7">${(v.pseudonym||'').slice(0,16)}…</span></div>
-      <div>H_0: <span style="color:#7fdbca">${(v.h0||'').slice(0,14)}…</span></div>
-      <div>Epoch: ${v.epoch||0} | k: ${v.threshold||0} | Neighbours: ${v.neighbours||0}</div>
-      ${v.isMalicious ? `<div style="color:#f7768e; font-size:9px;">MODE: ${v.maliciousMode||''}</div>` : ''}
-    </div>`;
-  }).join('');
+  const all = Object.values(vehicles);
+
+  if (!all.length) {
+    el.innerHTML = '<div style="color:#4a5568; font-size:10px;">Waiting for first vehicle...</div>';
+    return;
+  }
+
+  if (!focusVehicleId) focusVehicleId = all[0].vehicleId;
+
+  const focus = vehicles[focusVehicleId] || all[0];
+  const contacts = all.filter(v => v.vehicleId !== focus.vehicleId);
+
+  const mem = authMemory[focus.vehicleId] || [];
+  const seen = contactHistory[focus.vehicleId] || [];
+
+  el.innerHTML = `
+    <div style="background:#0d1425;border:1px solid #7fdbca;border-radius:6px;padding:8px;margin-bottom:8px;">
+      <div style="color:#7fdbca;font-weight:bold;margin-bottom:4px;">FOCUS NODE</div>
+      <div style="color:#82aaff;font-weight:bold;">${focus.vehicleId}</div>
+      <div>Pseudo: <span style="color:#bb9af7">${String(focus.pseudonym||'').slice(0,18)}...</span></div>
+      <div>Fingerprint: <span style="color:#e0af68">${String(focus.fingerprint||'waiting').slice(0,18)}...</span></div>
+      <div>H_0: <span style="color:#7fdbca">${String(focus.h0||'').slice(0,18)}...</span></div>
+      <div>Epoch: ${focus.epoch ?? 0} | k: ${focus.threshold ?? 0} | Observed neighbours: ${focus.neighbours ?? 0}</div>
+      <div>Status: <span style="color:${focus.status === 'REVOKED' ? '#f7768e' : '#73daca'}">${focus.status || 'OK'}</span></div>
+    </div>
+
+    <div style="color:#7fdbca;font-weight:bold;margin-bottom:4px;">AUTHENTICATED MEMORY</div>
+    <div style="background:#111827;border:1px solid #1e293b;border-radius:4px;padding:6px;margin-bottom:8px;min-height:50px;">
+      ${mem.length ? mem.map(fp => `<div style="color:#73daca;font-size:10px;">✓ ${String(fp).slice(0,32)}...</div>`).join('') :
+      '<div style="color:#4a5568;font-size:10px;">No authenticated fingerprints stored yet</div>'}
+    </div>
+
+    <div style="color:#7fdbca;font-weight:bold;margin-bottom:4px;">CONTACT NODES IN DSRC RANGE</div>
+    ${contacts.map(v => {
+      const active = seen.includes(v.vehicleId);
+      return `<div class="vehicle-card ${v.isMalicious ? 'malicious' : 'legitimate'}">
+        <div class="vc-header">
+          <span class="vc-id">${v.vehicleId}</span>
+          <span class="vc-status ${v.status === 'REVOKED' ? 'status-bad' : 'status-ok'}">${active ? 'CONTACT' : (v.status || 'OK')}</span>
+        </div>
+        <div>Pseudo: <span style="color:#bb9af7">${String(v.pseudonym||'').slice(0,16)}...</span></div>
+        <div>Fingerprint: <span style="color:#e0af68">${String(v.fingerprint||'').slice(0,16)}...</span></div>
+        <div>H_0: <span style="color:#7fdbca">${String(v.h0||'').slice(0,14)}...</span></div>
+        <div>Epoch: ${v.epoch ?? 0} | k: ${v.threshold ?? 0} | Neighbours: ${v.neighbours ?? 0}</div>
+      </div>`;
+    }).join('')}
+  `;
 }
+
 
 // ---- Render: Packet inspector ----
 function renderPacketInspector(pkt) {

@@ -1,0 +1,18 @@
+>>> Generating message classes from Messages.msg...
+/home/leena/omnetpp-6.1/bin/opp_msgc -I/home/leena/veins/src src/protocol/Messages.msg
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/protocol/Messages_m.cc -o src/protocol/Messages_m.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/protocol/RevocationProtocol.cc -o src/protocol/RevocationProtocol.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/protocol/SwarmConsensus.cc -o src/protocol/SwarmConsensus.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/crypto/ACF.cc -o src/crypto/ACF.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/crypto/BLSSignature.cc -o src/crypto/BLSSignature.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/crypto/HSM.cc -o src/crypto/HSM.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/crypto/ZKProof.cc -o src/crypto/ZKProof.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/vehicle/ProofPool.cc -o src/vehicle/ProofPool.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/vehicle/PseudonymEngine.cc -o src/vehicle/PseudonymEngine.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/vehicle/SwarmVehicle.cc -o src/vehicle/SwarmVehicle.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/vehicle/TrustCache.cc -o src/vehicle/TrustCache.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/ta/TrustedAuthority.cc -o src/ta/TrustedAuthority.o
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -c src/gui/DashboardServer.cc -o src/gui/DashboardServer.o
+>>> Linking SwarmEvoSE...
+g++ -std=c++17 -O2 -Wall -fPIC -pthread -I/home/leena/omnetpp-6.1/include -I/home/leena/veins/src -I/home/leena/swarm-evo-se/src -I/usr/include/nlohmann -o SwarmEvoSE src/protocol/Messages_m.o src/protocol/RevocationProtocol.o src/protocol/SwarmConsensus.o src/crypto/ACF.o src/crypto/BLSSignature.o src/crypto/HSM.o src/crypto/ZKProof.o src/vehicle/ProofPool.o src/vehicle/PseudonymEngine.o src/vehicle/SwarmVehicle.o src/vehicle/TrustCache.o src/ta/TrustedAuthority.o src/gui/DashboardServer.o -L/home/leena/omnetpp-6.1/lib -L/home/leena/veins/src -lssl -lcrypto -lveins -loppmain -loppenvir -loppsim -loppcommon
+>>> Build complete.

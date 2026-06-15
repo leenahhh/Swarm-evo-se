@@ -1,0 +1,1208 @@
+version 3
+run UrbanEndToEndDemo-0-20260614-19:00:14-85227
+attr configname UrbanEndToEndDemo
+attr datetime 20260614-19:00:14
+attr datetimef 20260614-190014
+attr experiment UrbanEndToEndDemo
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network SwarmNetwork
+attr processid 85227
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config description "Urban end-to-end demo: authentication, pseudonym generation, swarm acceptance, revocation, and malicious rejection"
+config network SwarmNetwork
+config sim-time-limit 45s
+config *.manager.launchConfig "xmldoc(\"../../scripts/sumo_urban_full_demo.launchd.xml\")"
+config SwarmNetwork.playgroundSizeX 600m
+config SwarmNetwork.playgroundSizeY 600m
+config SwarmNetwork.playgroundSizeZ 50m
+config *.connectionManager.sendDirect true
+config *.connectionManager.maxInterfDist 300m
+config *.connectionManager.drawMaxIntfDist true
+config *.node[*].applType "\"SwarmVehicle\""
+config *.node[*].appl.headerLength 80bit
+config *.node[*].appl.sendBeacons true
+config *.node[*].appl.dataOnSch false
+config *.node[*].appl.beaconInterval 5s
+config **.epochDuration 30s
+config **.preActivationLead 10s
+config **.trustCacheTTL 30
+config **.acfMaxStaleness 3
+config **.proofPoolPrecompute 100
+config **.dashboardPort 8765
+config *.node[*].appl.demoTrace true
+config *.node[0].appl.demoRole "\"LEGIT_SENDER\""
+config *.node[1].appl.demoRole "\"LEGIT_RECEIVER\""
+config *.node[2].appl.demoRole "\"VALIDATOR_1\""
+config *.node[3].appl.demoRole "\"VALIDATOR_2\""
+config *.node[4].appl.demoRole "\"VALIDATOR_3\""
+config *.node[5].appl.demoRole "\"MALICIOUS\""
+config **.maliciousRatio 0.0
+config **.maliciousMode "\"NONE\""
+config *.node[5].appl.maliciousRatio 1.0
+config *.node[5].appl.maliciousMode "\"INVALID_ZK\""
+config network SwarmNetwork
+config sim-time-limit 300s
+config record-eventlog false
+config **.vector-recording true
+config **.scalar-recording true
+config SwarmNetwork.playgroundSizeX 6000m
+config SwarmNetwork.playgroundSizeY 1200m
+config SwarmNetwork.playgroundSizeZ 50m
+config SwarmNetwork.connectionManager.sendDirect true
+config SwarmNetwork.connectionManager.maxInterfDist 300m
+config SwarmNetwork.connectionManager.drawMaxIntfDist false
+config SwarmNetwork.manager.updateInterval 0.1s
+config SwarmNetwork.manager.host "\"localhost\""
+config SwarmNetwork.manager.port 9999
+config SwarmNetwork.manager.autoShutdown true
+config SwarmNetwork.manager.launchConfig "xmldoc(\"sumo_highway.launchd.xml\")"
+config SwarmNetwork.node[*].applType "\"SwarmVehicle\""
+config SwarmNetwork.node[*].appl.headerLength 80bit
+config SwarmNetwork.node[*].appl.sendBeacons true
+config SwarmNetwork.node[*].appl.dataOnSch false
+config SwarmNetwork.node[*].appl.beaconInterval 0.1s
+config SwarmNetwork.node[*].veinsmobility.x 0
+config SwarmNetwork.node[*].veinsmobility.y 0
+config SwarmNetwork.node[*].veinsmobility.z 0
+config SwarmNetwork.node[*].veinsmobility.setHostSpeed false
+config SwarmNetwork.node[*].nic.phy80211p.usePropagationDelay false
+config SwarmNetwork.node[*].nic.phy80211p.useNoiseFloor true
+config SwarmNetwork.node[*].nic.phy80211p.noiseFloor -98dBm
+config SwarmNetwork.node[*].nic.phy80211p.useThermalNoise true
+config SwarmNetwork.node[*].nic.phy80211p.thermalNoise -110dBm
+config SwarmNetwork.node[*].nic.phy80211p.sensitivity -89dBm
+config SwarmNetwork.node[*].nic.phy80211p.maxTXPower 20mW
+config SwarmNetwork.node[*].nic.phy80211p.initialRadioState 0
+config SwarmNetwork.node[*].nic.phy80211p.collectCollisionStatistics false
+config SwarmNetwork.node[*].nic.phy80211p.channelNumber 180
+config SwarmNetwork.node[*].nic.phy80211p.headerLength 46bit
+config SwarmNetwork.node[*].nic.phy80211p.decider "xmldoc(\"config.xml\")"
+config SwarmNetwork.node[*].nic.phy80211p.analogueModels "xmldoc(\"config.xml\")"
+config SwarmNetwork.node[*].nic.phy80211p.antenna default
+config SwarmNetwork.node[*].nic.phy80211p.minPowerLevel -110dBm
+config SwarmNetwork.node[*].nic.phy80211p.carrierFrequency "5.890e9 Hz"
+config SwarmNetwork.node[*].nic.phy80211p.drawCommunicationRange false
+config SwarmNetwork.node[*].nic.mac1609_4.useServiceChannel false
+config SwarmNetwork.node[*].nic.mac1609_4.queueSize 14
+config SwarmNetwork.node[*].nic.mac1609_4.contentionWindowMin 15
+config SwarmNetwork.node[*].nic.mac1609_4.contentionWindowMax 1007
+config SwarmNetwork.node[*].nic.mac1609_4.AIFS 2
+config SwarmNetwork.node[*].nic.mac1609_4.slotDuration 13us
+config SwarmNetwork.node[*].nic.mac1609_4.guardSize 4us
+config SwarmNetwork.node[*].nic.mac1609_4.txPower 20mW
+config SwarmNetwork.node[*].nic.mac1609_4.bitrate 6Mbps
+config SwarmNetwork.node[*].nic.mac1609_4.headerLength 88bit
+config SwarmNetwork.node[*].nic.mac1609_4.bandwidth 10MHz
+config SwarmNetwork.node[*].nic.mac1609_4.centerFrequency "5.890e9 Hz"
+config **.epochDuration 600s
+config **.beaconInterval 0.1s
+config **.preActivationLead 60s
+config **.trustCacheTTL 30
+config **.acfMaxStaleness 3
+config **.proofPoolPrecompute 100
+config **.dashboardPort 8765
+config **.maliciousRatio 0.0
+config **.maliciousMode "\"NONE\""
+
+par SwarmNetwork.node[5].appl typename "\"SwarmVehicle\""
+par SwarmNetwork.node[5].appl headerLength 80bit
+attr unit bit
+par SwarmNetwork.node[5].appl sendBeacons true
+par SwarmNetwork.node[5].appl beaconLengthBits 256bit
+attr unit bit
+par SwarmNetwork.node[5].appl beaconUserPriority 7
+par SwarmNetwork.node[5].appl beaconInterval 5s
+attr unit s
+par SwarmNetwork.node[5].appl dataLengthBits 1024bit
+attr unit bit
+par SwarmNetwork.node[5].appl dataOnSch false
+par SwarmNetwork.node[5].appl dataUserPriority 7
+par SwarmNetwork.node[5].appl avoidBeaconSynchronization true
+par SwarmNetwork.node[5].appl sendWSA false
+par SwarmNetwork.node[5].appl wsaLengthBits 250bit
+attr unit bit
+par SwarmNetwork.node[5].appl wsaInterval 1s
+attr unit s
+par SwarmNetwork.node[5].appl demoTrace true
+par SwarmNetwork.node[5].appl demoRole "\"MALICIOUS\""
+par SwarmNetwork.node[5].appl epochDuration 30s
+attr unit s
+par SwarmNetwork.node[5].appl preActivationLead 10s
+attr unit s
+par SwarmNetwork.node[5].appl trustCacheTTL 30
+par SwarmNetwork.node[5].appl acfMaxStaleness 3
+par SwarmNetwork.node[5].appl proofPoolPrecompute 100
+par SwarmNetwork.node[5].appl dashboardPort 8765
+par SwarmNetwork.node[5].appl maliciousRatio 0
+par SwarmNetwork.node[5].appl maliciousMode "\"NONE\""
+par SwarmNetwork.node[5].appl numVehicles 0
+par SwarmNetwork.node[5].appl scenarioType "\"HIGHWAY\""
+scalar SwarmNetwork.node[5].appl msgSent 3
+scalar SwarmNetwork.node[5].appl msgReceived 1
+scalar SwarmNetwork.node[5].appl msgDropped 0
+scalar SwarmNetwork.node[5].appl cacheHits 0
+scalar SwarmNetwork.node[5].appl revocationsIssued 0
+scalar SwarmNetwork.node[5].appl cacheHitRate 0
+scalar SwarmNetwork.node[5].appl acfSize 1
+scalar SwarmNetwork.node[5].appl isMalicious 0
+scalar SwarmNetwork.node[5].appl isRevoked 1
+scalar SwarmNetwork.node[5].appl generatedWSMs 4
+scalar SwarmNetwork.node[5].appl receivedWSMs 0
+scalar SwarmNetwork.node[5].appl generatedBSMs 0
+scalar SwarmNetwork.node[5].appl receivedBSMs 0
+scalar SwarmNetwork.node[5].appl generatedWSAs 0
+scalar SwarmNetwork.node[5].appl receivedWSAs 0
+par SwarmNetwork.node[5].nic.phy80211p typename "\"org.car2x.veins.modules.phy.PhyLayer80211p\""
+par SwarmNetwork.node[5].nic.phy80211p recordStats false
+par SwarmNetwork.node[5].nic.phy80211p usePropagationDelay false
+par SwarmNetwork.node[5].nic.phy80211p noiseFloor -98dBm
+attr unit dBm
+par SwarmNetwork.node[5].nic.phy80211p useNoiseFloor true
+par SwarmNetwork.node[5].nic.phy80211p antenna "<root>...</root> at content:1"
+par SwarmNetwork.node[5].nic.phy80211p antennaOffsetX 0m
+attr unit m
+par SwarmNetwork.node[5].nic.phy80211p antennaOffsetY 0m
+attr unit m
+par SwarmNetwork.node[5].nic.phy80211p antennaOffsetZ 1.895m
+attr unit m
+par SwarmNetwork.node[5].nic.phy80211p antennaOffsetYaw 0rad
+attr unit rad
+par SwarmNetwork.node[5].nic.phy80211p analogueModels "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[5].nic.phy80211p decider "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[5].nic.phy80211p minPowerLevel -110dBm
+attr unit dBm
+par SwarmNetwork.node[5].nic.phy80211p timeRXToTX 0s
+attr unit s
+par SwarmNetwork.node[5].nic.phy80211p timeRXToSleep 0s
+attr unit s
+par SwarmNetwork.node[5].nic.phy80211p timeTXToRX 0s
+attr unit s
+par SwarmNetwork.node[5].nic.phy80211p timeTXToSleep 0s
+attr unit s
+par SwarmNetwork.node[5].nic.phy80211p timeSleepToRX 0s
+attr unit s
+par SwarmNetwork.node[5].nic.phy80211p timeSleepToTX 0s
+attr unit s
+par SwarmNetwork.node[5].nic.phy80211p initialRadioState 0
+par SwarmNetwork.node[5].nic.phy80211p radioMinAtt 1
+par SwarmNetwork.node[5].nic.phy80211p radioMaxAtt 0
+par SwarmNetwork.node[5].nic.phy80211p nbRadioChannels 1
+par SwarmNetwork.node[5].nic.phy80211p initialRadioChannel 0
+par SwarmNetwork.node[5].nic.phy80211p ccaThreshold -65dBm
+attr unit dBm
+par SwarmNetwork.node[5].nic.phy80211p collectCollisionStatistics false
+par SwarmNetwork.node[5].nic.phy80211p allowTxDuringRx false
+scalar SwarmNetwork.node[5].nic.phy80211p busyTime 8.5224489795918e-05
+par SwarmNetwork.node[5].nic.mac1609_4 typename "\"org.car2x.veins.modules.mac.ieee80211p.Mac1609_4\""
+par SwarmNetwork.node[5].nic.mac1609_4 notAffectedByHostState false
+par SwarmNetwork.node[5].nic.mac1609_4 headerLength 88bit
+attr unit bit
+par SwarmNetwork.node[5].nic.mac1609_4 address "\"auto\""
+par SwarmNetwork.node[5].nic.mac1609_4 useServiceChannel false
+par SwarmNetwork.node[5].nic.mac1609_4 serviceChannel 1
+par SwarmNetwork.node[5].nic.mac1609_4 bitrate 6000000bps
+attr unit bps
+par SwarmNetwork.node[5].nic.mac1609_4 syncOffset 0.0003s
+attr unit s
+par SwarmNetwork.node[5].nic.mac1609_4 txPower 20mW
+attr unit mW
+par SwarmNetwork.node[5].nic.mac1609_4 queueSize 14
+par SwarmNetwork.node[5].nic.mac1609_4 dot11RTSThreshold 12000bit
+attr unit bit
+par SwarmNetwork.node[5].nic.mac1609_4 dot11ShortRetryLimit 7
+par SwarmNetwork.node[5].nic.mac1609_4 dot11LongRetryLimit 4
+par SwarmNetwork.node[5].nic.mac1609_4 ackLength 112bit
+attr unit bit
+par SwarmNetwork.node[5].nic.mac1609_4 useAcks false
+par SwarmNetwork.node[5].nic.mac1609_4 frameErrorRate 0
+par SwarmNetwork.node[5].nic.mac1609_4 ackErrorRate 0
+scalar SwarmNetwork.node[5].nic.mac1609_4 ReceivedUnicastPackets 0
+scalar SwarmNetwork.node[5].nic.mac1609_4 ReceivedBroadcasts 9
+scalar SwarmNetwork.node[5].nic.mac1609_4 SentPackets 4
+scalar SwarmNetwork.node[5].nic.mac1609_4 SentAcknowledgements 0
+scalar SwarmNetwork.node[5].nic.mac1609_4 RetriesExceeded 0
+scalar SwarmNetwork.node[5].nic.mac1609_4 SNIRLostPackets 0
+scalar SwarmNetwork.node[5].nic.mac1609_4 RXTXLostPackets 4
+scalar SwarmNetwork.node[5].nic.mac1609_4 TotalLostPackets 4
+scalar SwarmNetwork.node[5].nic.mac1609_4 DroppedPacketsInMac 0
+scalar SwarmNetwork.node[5].nic.mac1609_4 TooLittleTime 0
+scalar SwarmNetwork.node[5].nic.mac1609_4 TimesIntoBackoff 4
+scalar SwarmNetwork.node[5].nic.mac1609_4 SlotsBackoff 6
+scalar SwarmNetwork.node[5].nic.mac1609_4 NumInternalContention 0
+scalar SwarmNetwork.node[5].nic.mac1609_4 totalBusyTime 0.00302
+scalar SwarmNetwork.node[5].nic.mac1609_4 retriesExceeded:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigRetriesExceeded
+scalar SwarmNetwork.node[5].nic.mac1609_4 sentAcks:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentAck
+scalar SwarmNetwork.node[5].nic.mac1609_4 sentPackets:count 4
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentPacket
+scalar SwarmNetwork.node[5].nic.mac1609_4 collisions:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigCollision
+scalar SwarmNetwork.node[5].nic.mac1609_4 channelBusy:timeavg 0.00012326530612245
+attr recordingmode timeavg
+attr source org_car2x_veins_modules_mac_sigChannelBusy
+par SwarmNetwork.node[5].nic typename "\"org.car2x.veins.modules.nic.Nic80211p\""
+par SwarmNetwork.node[5].nic connectionManagerName "\"connectionManager\""
+par SwarmNetwork.node[5].veinsmobility typename "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[5].veinsmobility notAffectedByHostState true
+par SwarmNetwork.node[5].veinsmobility x 0
+par SwarmNetwork.node[5].veinsmobility y 0
+par SwarmNetwork.node[5].veinsmobility z 0
+par SwarmNetwork.node[5].veinsmobility xOrientation 1
+par SwarmNetwork.node[5].veinsmobility yOrientation 0
+par SwarmNetwork.node[5].veinsmobility zOrientation 0
+par SwarmNetwork.node[5].veinsmobility hostPositionOffset 0m
+attr unit m
+par SwarmNetwork.node[5].veinsmobility setHostSpeed false
+par SwarmNetwork.node[5].veinsmobility accidentCount 0
+par SwarmNetwork.node[5].veinsmobility accidentStart 32.6139s
+attr unit s
+par SwarmNetwork.node[5].veinsmobility accidentDuration "uniform(30s, 60s)"
+attr unit s
+par SwarmNetwork.node[5].veinsmobility accidentInterval "uniform(30s, 60s)"
+attr unit s
+scalar SwarmNetwork.node[5].veinsmobility startTime 0.6
+scalar SwarmNetwork.node[5].veinsmobility totalTime 24.4
+scalar SwarmNetwork.node[5].veinsmobility stopTime 25.1
+scalar SwarmNetwork.node[5].veinsmobility minSpeed 5.242668705292
+scalar SwarmNetwork.node[5].veinsmobility maxSpeed 13.889870153401
+scalar SwarmNetwork.node[5].veinsmobility totalDistance 321.91301767081
+scalar SwarmNetwork.node[5].veinsmobility totalCO2Emission 68.407670233516
+par SwarmNetwork.node[5] typename "\"org.car2x.veins.nodes.Car\""
+par SwarmNetwork.node[5] applType "\"SwarmVehicle\""
+par SwarmNetwork.node[5] nicType "\"Nic80211p\""
+par SwarmNetwork.node[5] veinsmobilityType "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[1].appl typename "\"SwarmVehicle\""
+par SwarmNetwork.node[1].appl headerLength 80bit
+attr unit bit
+par SwarmNetwork.node[1].appl sendBeacons true
+par SwarmNetwork.node[1].appl beaconLengthBits 256bit
+attr unit bit
+par SwarmNetwork.node[1].appl beaconUserPriority 7
+par SwarmNetwork.node[1].appl beaconInterval 5s
+attr unit s
+par SwarmNetwork.node[1].appl dataLengthBits 1024bit
+attr unit bit
+par SwarmNetwork.node[1].appl dataOnSch false
+par SwarmNetwork.node[1].appl dataUserPriority 7
+par SwarmNetwork.node[1].appl avoidBeaconSynchronization true
+par SwarmNetwork.node[1].appl sendWSA false
+par SwarmNetwork.node[1].appl wsaLengthBits 250bit
+attr unit bit
+par SwarmNetwork.node[1].appl wsaInterval 1s
+attr unit s
+par SwarmNetwork.node[1].appl demoTrace true
+par SwarmNetwork.node[1].appl demoRole "\"LEGIT_RECEIVER\""
+par SwarmNetwork.node[1].appl epochDuration 30s
+attr unit s
+par SwarmNetwork.node[1].appl preActivationLead 10s
+attr unit s
+par SwarmNetwork.node[1].appl trustCacheTTL 30
+par SwarmNetwork.node[1].appl acfMaxStaleness 3
+par SwarmNetwork.node[1].appl proofPoolPrecompute 100
+par SwarmNetwork.node[1].appl dashboardPort 8765
+par SwarmNetwork.node[1].appl maliciousRatio 0
+par SwarmNetwork.node[1].appl maliciousMode "\"NONE\""
+par SwarmNetwork.node[1].appl numVehicles 0
+par SwarmNetwork.node[1].appl scenarioType "\"HIGHWAY\""
+scalar SwarmNetwork.node[1].appl msgSent 0
+scalar SwarmNetwork.node[1].appl msgReceived 2
+scalar SwarmNetwork.node[1].appl msgDropped 1
+scalar SwarmNetwork.node[1].appl cacheHits 0
+scalar SwarmNetwork.node[1].appl revocationsIssued 0
+scalar SwarmNetwork.node[1].appl cacheHitRate 0
+scalar SwarmNetwork.node[1].appl acfSize 1
+scalar SwarmNetwork.node[1].appl isMalicious 0
+scalar SwarmNetwork.node[1].appl isRevoked 0
+scalar SwarmNetwork.node[1].appl generatedWSMs 1
+scalar SwarmNetwork.node[1].appl receivedWSMs 0
+scalar SwarmNetwork.node[1].appl generatedBSMs 0
+scalar SwarmNetwork.node[1].appl receivedBSMs 0
+scalar SwarmNetwork.node[1].appl generatedWSAs 0
+scalar SwarmNetwork.node[1].appl receivedWSAs 0
+par SwarmNetwork.node[1].nic.phy80211p typename "\"org.car2x.veins.modules.phy.PhyLayer80211p\""
+par SwarmNetwork.node[1].nic.phy80211p recordStats false
+par SwarmNetwork.node[1].nic.phy80211p usePropagationDelay false
+par SwarmNetwork.node[1].nic.phy80211p noiseFloor -98dBm
+attr unit dBm
+par SwarmNetwork.node[1].nic.phy80211p useNoiseFloor true
+par SwarmNetwork.node[1].nic.phy80211p antenna "<root>...</root> at content:1"
+par SwarmNetwork.node[1].nic.phy80211p antennaOffsetX 0m
+attr unit m
+par SwarmNetwork.node[1].nic.phy80211p antennaOffsetY 0m
+attr unit m
+par SwarmNetwork.node[1].nic.phy80211p antennaOffsetZ 1.895m
+attr unit m
+par SwarmNetwork.node[1].nic.phy80211p antennaOffsetYaw 0rad
+attr unit rad
+par SwarmNetwork.node[1].nic.phy80211p analogueModels "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[1].nic.phy80211p decider "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[1].nic.phy80211p minPowerLevel -110dBm
+attr unit dBm
+par SwarmNetwork.node[1].nic.phy80211p timeRXToTX 0s
+attr unit s
+par SwarmNetwork.node[1].nic.phy80211p timeRXToSleep 0s
+attr unit s
+par SwarmNetwork.node[1].nic.phy80211p timeTXToRX 0s
+attr unit s
+par SwarmNetwork.node[1].nic.phy80211p timeTXToSleep 0s
+attr unit s
+par SwarmNetwork.node[1].nic.phy80211p timeSleepToRX 0s
+attr unit s
+par SwarmNetwork.node[1].nic.phy80211p timeSleepToTX 0s
+attr unit s
+par SwarmNetwork.node[1].nic.phy80211p initialRadioState 0
+par SwarmNetwork.node[1].nic.phy80211p radioMinAtt 1
+par SwarmNetwork.node[1].nic.phy80211p radioMaxAtt 0
+par SwarmNetwork.node[1].nic.phy80211p nbRadioChannels 1
+par SwarmNetwork.node[1].nic.phy80211p initialRadioChannel 0
+par SwarmNetwork.node[1].nic.phy80211p ccaThreshold -65dBm
+attr unit dBm
+par SwarmNetwork.node[1].nic.phy80211p collectCollisionStatistics false
+par SwarmNetwork.node[1].nic.phy80211p allowTxDuringRx false
+scalar SwarmNetwork.node[1].nic.phy80211p busyTime 0.00010160583941606
+par SwarmNetwork.node[1].nic.mac1609_4 typename "\"org.car2x.veins.modules.mac.ieee80211p.Mac1609_4\""
+par SwarmNetwork.node[1].nic.mac1609_4 notAffectedByHostState false
+par SwarmNetwork.node[1].nic.mac1609_4 headerLength 88bit
+attr unit bit
+par SwarmNetwork.node[1].nic.mac1609_4 address "\"auto\""
+par SwarmNetwork.node[1].nic.mac1609_4 useServiceChannel false
+par SwarmNetwork.node[1].nic.mac1609_4 serviceChannel 1
+par SwarmNetwork.node[1].nic.mac1609_4 bitrate 6000000bps
+attr unit bps
+par SwarmNetwork.node[1].nic.mac1609_4 syncOffset 0.0003s
+attr unit s
+par SwarmNetwork.node[1].nic.mac1609_4 txPower 20mW
+attr unit mW
+par SwarmNetwork.node[1].nic.mac1609_4 queueSize 14
+par SwarmNetwork.node[1].nic.mac1609_4 dot11RTSThreshold 12000bit
+attr unit bit
+par SwarmNetwork.node[1].nic.mac1609_4 dot11ShortRetryLimit 7
+par SwarmNetwork.node[1].nic.mac1609_4 dot11LongRetryLimit 4
+par SwarmNetwork.node[1].nic.mac1609_4 ackLength 112bit
+attr unit bit
+par SwarmNetwork.node[1].nic.mac1609_4 useAcks false
+par SwarmNetwork.node[1].nic.mac1609_4 frameErrorRate 0
+par SwarmNetwork.node[1].nic.mac1609_4 ackErrorRate 0
+scalar SwarmNetwork.node[1].nic.mac1609_4 ReceivedUnicastPackets 0
+scalar SwarmNetwork.node[1].nic.mac1609_4 ReceivedBroadcasts 12
+scalar SwarmNetwork.node[1].nic.mac1609_4 SentPackets 1
+scalar SwarmNetwork.node[1].nic.mac1609_4 SentAcknowledgements 0
+scalar SwarmNetwork.node[1].nic.mac1609_4 RetriesExceeded 0
+scalar SwarmNetwork.node[1].nic.mac1609_4 SNIRLostPackets 0
+scalar SwarmNetwork.node[1].nic.mac1609_4 RXTXLostPackets 4
+scalar SwarmNetwork.node[1].nic.mac1609_4 TotalLostPackets 4
+scalar SwarmNetwork.node[1].nic.mac1609_4 DroppedPacketsInMac 0
+scalar SwarmNetwork.node[1].nic.mac1609_4 TooLittleTime 0
+scalar SwarmNetwork.node[1].nic.mac1609_4 TimesIntoBackoff 1
+scalar SwarmNetwork.node[1].nic.mac1609_4 SlotsBackoff 0
+scalar SwarmNetwork.node[1].nic.mac1609_4 NumInternalContention 0
+scalar SwarmNetwork.node[1].nic.mac1609_4 totalBusyTime 0.003017
+scalar SwarmNetwork.node[1].nic.mac1609_4 retriesExceeded:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigRetriesExceeded
+scalar SwarmNetwork.node[1].nic.mac1609_4 sentAcks:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentAck
+scalar SwarmNetwork.node[1].nic.mac1609_4 sentPackets:count 1
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentPacket
+scalar SwarmNetwork.node[1].nic.mac1609_4 collisions:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigCollision
+scalar SwarmNetwork.node[1].nic.mac1609_4 channelBusy:timeavg 0.00011010948905109
+attr recordingmode timeavg
+attr source org_car2x_veins_modules_mac_sigChannelBusy
+par SwarmNetwork.node[1].nic typename "\"org.car2x.veins.modules.nic.Nic80211p\""
+par SwarmNetwork.node[1].nic connectionManagerName "\"connectionManager\""
+par SwarmNetwork.node[1].veinsmobility typename "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[1].veinsmobility notAffectedByHostState true
+par SwarmNetwork.node[1].veinsmobility x 0
+par SwarmNetwork.node[1].veinsmobility y 0
+par SwarmNetwork.node[1].veinsmobility z 0
+par SwarmNetwork.node[1].veinsmobility xOrientation 1
+par SwarmNetwork.node[1].veinsmobility yOrientation 0
+par SwarmNetwork.node[1].veinsmobility zOrientation 0
+par SwarmNetwork.node[1].veinsmobility hostPositionOffset 0m
+attr unit m
+par SwarmNetwork.node[1].veinsmobility setHostSpeed false
+par SwarmNetwork.node[1].veinsmobility accidentCount 0
+par SwarmNetwork.node[1].veinsmobility accidentStart 46.3465s
+attr unit s
+par SwarmNetwork.node[1].veinsmobility accidentDuration "uniform(30s, 60s)"
+attr unit s
+par SwarmNetwork.node[1].veinsmobility accidentInterval "uniform(30s, 60s)"
+attr unit s
+scalar SwarmNetwork.node[1].veinsmobility startTime 0.2
+scalar SwarmNetwork.node[1].veinsmobility totalTime 27.3
+scalar SwarmNetwork.node[1].veinsmobility stopTime 27.6
+scalar SwarmNetwork.node[1].veinsmobility minSpeed 5.218372474947
+scalar SwarmNetwork.node[1].veinsmobility maxSpeed 13.889899776217
+scalar SwarmNetwork.node[1].veinsmobility totalDistance 361.76536497148
+scalar SwarmNetwork.node[1].veinsmobility totalCO2Emission 74.410333720164
+par SwarmNetwork.node[1] typename "\"org.car2x.veins.nodes.Car\""
+par SwarmNetwork.node[1] applType "\"SwarmVehicle\""
+par SwarmNetwork.node[1] nicType "\"Nic80211p\""
+par SwarmNetwork.node[1] veinsmobilityType "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[0].appl typename "\"SwarmVehicle\""
+par SwarmNetwork.node[0].appl headerLength 80bit
+attr unit bit
+par SwarmNetwork.node[0].appl sendBeacons true
+par SwarmNetwork.node[0].appl beaconLengthBits 256bit
+attr unit bit
+par SwarmNetwork.node[0].appl beaconUserPriority 7
+par SwarmNetwork.node[0].appl beaconInterval 5s
+attr unit s
+par SwarmNetwork.node[0].appl dataLengthBits 1024bit
+attr unit bit
+par SwarmNetwork.node[0].appl dataOnSch false
+par SwarmNetwork.node[0].appl dataUserPriority 7
+par SwarmNetwork.node[0].appl avoidBeaconSynchronization true
+par SwarmNetwork.node[0].appl sendWSA false
+par SwarmNetwork.node[0].appl wsaLengthBits 250bit
+attr unit bit
+par SwarmNetwork.node[0].appl wsaInterval 1s
+attr unit s
+par SwarmNetwork.node[0].appl demoTrace true
+par SwarmNetwork.node[0].appl demoRole "\"LEGIT_SENDER\""
+par SwarmNetwork.node[0].appl epochDuration 30s
+attr unit s
+par SwarmNetwork.node[0].appl preActivationLead 10s
+attr unit s
+par SwarmNetwork.node[0].appl trustCacheTTL 30
+par SwarmNetwork.node[0].appl acfMaxStaleness 3
+par SwarmNetwork.node[0].appl proofPoolPrecompute 100
+par SwarmNetwork.node[0].appl dashboardPort 8765
+par SwarmNetwork.node[0].appl maliciousRatio 0
+par SwarmNetwork.node[0].appl maliciousMode "\"NONE\""
+par SwarmNetwork.node[0].appl numVehicles 0
+par SwarmNetwork.node[0].appl scenarioType "\"HIGHWAY\""
+scalar SwarmNetwork.node[0].appl msgSent 2
+scalar SwarmNetwork.node[0].appl msgReceived 1
+scalar SwarmNetwork.node[0].appl msgDropped 1
+scalar SwarmNetwork.node[0].appl cacheHits 0
+scalar SwarmNetwork.node[0].appl revocationsIssued 0
+scalar SwarmNetwork.node[0].appl cacheHitRate 0
+scalar SwarmNetwork.node[0].appl acfSize 1
+scalar SwarmNetwork.node[0].appl isMalicious 0
+scalar SwarmNetwork.node[0].appl isRevoked 0
+scalar SwarmNetwork.node[0].appl generatedWSMs 3
+scalar SwarmNetwork.node[0].appl receivedWSMs 0
+scalar SwarmNetwork.node[0].appl generatedBSMs 0
+scalar SwarmNetwork.node[0].appl receivedBSMs 0
+scalar SwarmNetwork.node[0].appl generatedWSAs 0
+scalar SwarmNetwork.node[0].appl receivedWSAs 0
+par SwarmNetwork.node[0].nic.phy80211p typename "\"org.car2x.veins.modules.phy.PhyLayer80211p\""
+par SwarmNetwork.node[0].nic.phy80211p recordStats false
+par SwarmNetwork.node[0].nic.phy80211p usePropagationDelay false
+par SwarmNetwork.node[0].nic.phy80211p noiseFloor -98dBm
+attr unit dBm
+par SwarmNetwork.node[0].nic.phy80211p useNoiseFloor true
+par SwarmNetwork.node[0].nic.phy80211p antenna "<root>...</root> at content:1"
+par SwarmNetwork.node[0].nic.phy80211p antennaOffsetX 0m
+attr unit m
+par SwarmNetwork.node[0].nic.phy80211p antennaOffsetY 0m
+attr unit m
+par SwarmNetwork.node[0].nic.phy80211p antennaOffsetZ 1.895m
+attr unit m
+par SwarmNetwork.node[0].nic.phy80211p antennaOffsetYaw 0rad
+attr unit rad
+par SwarmNetwork.node[0].nic.phy80211p analogueModels "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[0].nic.phy80211p decider "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[0].nic.phy80211p minPowerLevel -110dBm
+attr unit dBm
+par SwarmNetwork.node[0].nic.phy80211p timeRXToTX 0s
+attr unit s
+par SwarmNetwork.node[0].nic.phy80211p timeRXToSleep 0s
+attr unit s
+par SwarmNetwork.node[0].nic.phy80211p timeTXToRX 0s
+attr unit s
+par SwarmNetwork.node[0].nic.phy80211p timeTXToSleep 0s
+attr unit s
+par SwarmNetwork.node[0].nic.phy80211p timeSleepToRX 0s
+attr unit s
+par SwarmNetwork.node[0].nic.phy80211p timeSleepToTX 0s
+attr unit s
+par SwarmNetwork.node[0].nic.phy80211p initialRadioState 0
+par SwarmNetwork.node[0].nic.phy80211p radioMinAtt 1
+par SwarmNetwork.node[0].nic.phy80211p radioMaxAtt 0
+par SwarmNetwork.node[0].nic.phy80211p nbRadioChannels 1
+par SwarmNetwork.node[0].nic.phy80211p initialRadioChannel 0
+par SwarmNetwork.node[0].nic.phy80211p ccaThreshold -65dBm
+attr unit dBm
+par SwarmNetwork.node[0].nic.phy80211p collectCollisionStatistics false
+par SwarmNetwork.node[0].nic.phy80211p allowTxDuringRx false
+scalar SwarmNetwork.node[0].nic.phy80211p busyTime 7.864406779661e-05
+par SwarmNetwork.node[0].nic.mac1609_4 typename "\"org.car2x.veins.modules.mac.ieee80211p.Mac1609_4\""
+par SwarmNetwork.node[0].nic.mac1609_4 notAffectedByHostState false
+par SwarmNetwork.node[0].nic.mac1609_4 headerLength 88bit
+attr unit bit
+par SwarmNetwork.node[0].nic.mac1609_4 address "\"auto\""
+par SwarmNetwork.node[0].nic.mac1609_4 useServiceChannel false
+par SwarmNetwork.node[0].nic.mac1609_4 serviceChannel 1
+par SwarmNetwork.node[0].nic.mac1609_4 bitrate 6000000bps
+attr unit bps
+par SwarmNetwork.node[0].nic.mac1609_4 syncOffset 0.0003s
+attr unit s
+par SwarmNetwork.node[0].nic.mac1609_4 txPower 20mW
+attr unit mW
+par SwarmNetwork.node[0].nic.mac1609_4 queueSize 14
+par SwarmNetwork.node[0].nic.mac1609_4 dot11RTSThreshold 12000bit
+attr unit bit
+par SwarmNetwork.node[0].nic.mac1609_4 dot11ShortRetryLimit 7
+par SwarmNetwork.node[0].nic.mac1609_4 dot11LongRetryLimit 4
+par SwarmNetwork.node[0].nic.mac1609_4 ackLength 112bit
+attr unit bit
+par SwarmNetwork.node[0].nic.mac1609_4 useAcks false
+par SwarmNetwork.node[0].nic.mac1609_4 frameErrorRate 0
+par SwarmNetwork.node[0].nic.mac1609_4 ackErrorRate 0
+scalar SwarmNetwork.node[0].nic.mac1609_4 ReceivedUnicastPackets 0
+scalar SwarmNetwork.node[0].nic.mac1609_4 ReceivedBroadcasts 10
+scalar SwarmNetwork.node[0].nic.mac1609_4 SentPackets 3
+scalar SwarmNetwork.node[0].nic.mac1609_4 SentAcknowledgements 0
+scalar SwarmNetwork.node[0].nic.mac1609_4 RetriesExceeded 0
+scalar SwarmNetwork.node[0].nic.mac1609_4 SNIRLostPackets 0
+scalar SwarmNetwork.node[0].nic.mac1609_4 RXTXLostPackets 4
+scalar SwarmNetwork.node[0].nic.mac1609_4 TotalLostPackets 4
+scalar SwarmNetwork.node[0].nic.mac1609_4 DroppedPacketsInMac 0
+scalar SwarmNetwork.node[0].nic.mac1609_4 TooLittleTime 0
+scalar SwarmNetwork.node[0].nic.mac1609_4 TimesIntoBackoff 3
+scalar SwarmNetwork.node[0].nic.mac1609_4 SlotsBackoff 6
+scalar SwarmNetwork.node[0].nic.mac1609_4 NumInternalContention 0
+scalar SwarmNetwork.node[0].nic.mac1609_4 totalBusyTime 0.003019
+scalar SwarmNetwork.node[0].nic.mac1609_4 retriesExceeded:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigRetriesExceeded
+scalar SwarmNetwork.node[0].nic.mac1609_4 sentAcks:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentAck
+scalar SwarmNetwork.node[0].nic.mac1609_4 sentPackets:count 3
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentPacket
+scalar SwarmNetwork.node[0].nic.mac1609_4 collisions:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigCollision
+scalar SwarmNetwork.node[0].nic.mac1609_4 channelBusy:timeavg 0.00010233898305085
+attr recordingmode timeavg
+attr source org_car2x_veins_modules_mac_sigChannelBusy
+par SwarmNetwork.node[0].nic typename "\"org.car2x.veins.modules.nic.Nic80211p\""
+par SwarmNetwork.node[0].nic connectionManagerName "\"connectionManager\""
+par SwarmNetwork.node[0].veinsmobility typename "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[0].veinsmobility notAffectedByHostState true
+par SwarmNetwork.node[0].veinsmobility x 0
+par SwarmNetwork.node[0].veinsmobility y 0
+par SwarmNetwork.node[0].veinsmobility z 0
+par SwarmNetwork.node[0].veinsmobility xOrientation 1
+par SwarmNetwork.node[0].veinsmobility yOrientation 0
+par SwarmNetwork.node[0].veinsmobility zOrientation 0
+par SwarmNetwork.node[0].veinsmobility hostPositionOffset 0m
+attr unit m
+par SwarmNetwork.node[0].veinsmobility setHostSpeed false
+par SwarmNetwork.node[0].veinsmobility accidentCount 0
+par SwarmNetwork.node[0].veinsmobility accidentStart 46.4644s
+attr unit s
+par SwarmNetwork.node[0].veinsmobility accidentDuration "uniform(30s, 60s)"
+attr unit s
+par SwarmNetwork.node[0].veinsmobility accidentInterval "uniform(30s, 60s)"
+attr unit s
+scalar SwarmNetwork.node[0].veinsmobility startTime 0.1
+scalar SwarmNetwork.node[0].veinsmobility totalTime 29.4
+scalar SwarmNetwork.node[0].veinsmobility stopTime 29.6
+scalar SwarmNetwork.node[0].veinsmobility minSpeed 5.2150844808063
+scalar SwarmNetwork.node[0].veinsmobility maxSpeed 13.889833580899
+scalar SwarmNetwork.node[0].veinsmobility totalDistance 391.24453106943
+scalar SwarmNetwork.node[0].veinsmobility totalCO2Emission 78.647133165428
+par SwarmNetwork.node[0] typename "\"org.car2x.veins.nodes.Car\""
+par SwarmNetwork.node[0] applType "\"SwarmVehicle\""
+par SwarmNetwork.node[0] nicType "\"Nic80211p\""
+par SwarmNetwork.node[0] veinsmobilityType "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[4].appl typename "\"SwarmVehicle\""
+par SwarmNetwork.node[4].appl headerLength 80bit
+attr unit bit
+par SwarmNetwork.node[4].appl sendBeacons true
+par SwarmNetwork.node[4].appl beaconLengthBits 256bit
+attr unit bit
+par SwarmNetwork.node[4].appl beaconUserPriority 7
+par SwarmNetwork.node[4].appl beaconInterval 5s
+attr unit s
+par SwarmNetwork.node[4].appl dataLengthBits 1024bit
+attr unit bit
+par SwarmNetwork.node[4].appl dataOnSch false
+par SwarmNetwork.node[4].appl dataUserPriority 7
+par SwarmNetwork.node[4].appl avoidBeaconSynchronization true
+par SwarmNetwork.node[4].appl sendWSA false
+par SwarmNetwork.node[4].appl wsaLengthBits 250bit
+attr unit bit
+par SwarmNetwork.node[4].appl wsaInterval 1s
+attr unit s
+par SwarmNetwork.node[4].appl demoTrace true
+par SwarmNetwork.node[4].appl demoRole "\"VALIDATOR_3\""
+par SwarmNetwork.node[4].appl epochDuration 30s
+attr unit s
+par SwarmNetwork.node[4].appl preActivationLead 10s
+attr unit s
+par SwarmNetwork.node[4].appl trustCacheTTL 30
+par SwarmNetwork.node[4].appl acfMaxStaleness 3
+par SwarmNetwork.node[4].appl proofPoolPrecompute 100
+par SwarmNetwork.node[4].appl dashboardPort 8765
+par SwarmNetwork.node[4].appl maliciousRatio 0
+par SwarmNetwork.node[4].appl maliciousMode "\"NONE\""
+par SwarmNetwork.node[4].appl numVehicles 0
+par SwarmNetwork.node[4].appl scenarioType "\"HIGHWAY\""
+scalar SwarmNetwork.node[4].appl msgSent 2
+scalar SwarmNetwork.node[4].appl msgReceived 2
+scalar SwarmNetwork.node[4].appl msgDropped 3
+scalar SwarmNetwork.node[4].appl cacheHits 0
+scalar SwarmNetwork.node[4].appl revocationsIssued 0
+scalar SwarmNetwork.node[4].appl cacheHitRate 0
+scalar SwarmNetwork.node[4].appl acfSize 1
+scalar SwarmNetwork.node[4].appl isMalicious 0
+scalar SwarmNetwork.node[4].appl isRevoked 0
+scalar SwarmNetwork.node[4].appl generatedWSMs 3
+scalar SwarmNetwork.node[4].appl receivedWSMs 0
+scalar SwarmNetwork.node[4].appl generatedBSMs 0
+scalar SwarmNetwork.node[4].appl receivedBSMs 0
+scalar SwarmNetwork.node[4].appl generatedWSAs 0
+scalar SwarmNetwork.node[4].appl receivedWSAs 0
+par SwarmNetwork.node[4].nic.phy80211p typename "\"org.car2x.veins.modules.phy.PhyLayer80211p\""
+par SwarmNetwork.node[4].nic.phy80211p recordStats false
+par SwarmNetwork.node[4].nic.phy80211p usePropagationDelay false
+par SwarmNetwork.node[4].nic.phy80211p noiseFloor -98dBm
+attr unit dBm
+par SwarmNetwork.node[4].nic.phy80211p useNoiseFloor true
+par SwarmNetwork.node[4].nic.phy80211p antenna "<root>...</root> at content:1"
+par SwarmNetwork.node[4].nic.phy80211p antennaOffsetX 0m
+attr unit m
+par SwarmNetwork.node[4].nic.phy80211p antennaOffsetY 0m
+attr unit m
+par SwarmNetwork.node[4].nic.phy80211p antennaOffsetZ 1.895m
+attr unit m
+par SwarmNetwork.node[4].nic.phy80211p antennaOffsetYaw 0rad
+attr unit rad
+par SwarmNetwork.node[4].nic.phy80211p analogueModels "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[4].nic.phy80211p decider "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[4].nic.phy80211p minPowerLevel -110dBm
+attr unit dBm
+par SwarmNetwork.node[4].nic.phy80211p timeRXToTX 0s
+attr unit s
+par SwarmNetwork.node[4].nic.phy80211p timeRXToSleep 0s
+attr unit s
+par SwarmNetwork.node[4].nic.phy80211p timeTXToRX 0s
+attr unit s
+par SwarmNetwork.node[4].nic.phy80211p timeTXToSleep 0s
+attr unit s
+par SwarmNetwork.node[4].nic.phy80211p timeSleepToRX 0s
+attr unit s
+par SwarmNetwork.node[4].nic.phy80211p timeSleepToTX 0s
+attr unit s
+par SwarmNetwork.node[4].nic.phy80211p initialRadioState 0
+par SwarmNetwork.node[4].nic.phy80211p radioMinAtt 1
+par SwarmNetwork.node[4].nic.phy80211p radioMaxAtt 0
+par SwarmNetwork.node[4].nic.phy80211p nbRadioChannels 1
+par SwarmNetwork.node[4].nic.phy80211p initialRadioChannel 0
+par SwarmNetwork.node[4].nic.phy80211p ccaThreshold -65dBm
+attr unit dBm
+par SwarmNetwork.node[4].nic.phy80211p collectCollisionStatistics false
+par SwarmNetwork.node[4].nic.phy80211p allowTxDuringRx false
+scalar SwarmNetwork.node[4].nic.phy80211p busyTime 7.0948012232416e-05
+par SwarmNetwork.node[4].nic.mac1609_4 typename "\"org.car2x.veins.modules.mac.ieee80211p.Mac1609_4\""
+par SwarmNetwork.node[4].nic.mac1609_4 notAffectedByHostState false
+par SwarmNetwork.node[4].nic.mac1609_4 headerLength 88bit
+attr unit bit
+par SwarmNetwork.node[4].nic.mac1609_4 address "\"auto\""
+par SwarmNetwork.node[4].nic.mac1609_4 useServiceChannel false
+par SwarmNetwork.node[4].nic.mac1609_4 serviceChannel 1
+par SwarmNetwork.node[4].nic.mac1609_4 bitrate 6000000bps
+attr unit bps
+par SwarmNetwork.node[4].nic.mac1609_4 syncOffset 0.0003s
+attr unit s
+par SwarmNetwork.node[4].nic.mac1609_4 txPower 20mW
+attr unit mW
+par SwarmNetwork.node[4].nic.mac1609_4 queueSize 14
+par SwarmNetwork.node[4].nic.mac1609_4 dot11RTSThreshold 12000bit
+attr unit bit
+par SwarmNetwork.node[4].nic.mac1609_4 dot11ShortRetryLimit 7
+par SwarmNetwork.node[4].nic.mac1609_4 dot11LongRetryLimit 4
+par SwarmNetwork.node[4].nic.mac1609_4 ackLength 112bit
+attr unit bit
+par SwarmNetwork.node[4].nic.mac1609_4 useAcks false
+par SwarmNetwork.node[4].nic.mac1609_4 frameErrorRate 0
+par SwarmNetwork.node[4].nic.mac1609_4 ackErrorRate 0
+scalar SwarmNetwork.node[4].nic.mac1609_4 ReceivedUnicastPackets 0
+scalar SwarmNetwork.node[4].nic.mac1609_4 ReceivedBroadcasts 10
+scalar SwarmNetwork.node[4].nic.mac1609_4 SentPackets 3
+scalar SwarmNetwork.node[4].nic.mac1609_4 SentAcknowledgements 0
+scalar SwarmNetwork.node[4].nic.mac1609_4 RetriesExceeded 0
+scalar SwarmNetwork.node[4].nic.mac1609_4 SNIRLostPackets 0
+scalar SwarmNetwork.node[4].nic.mac1609_4 RXTXLostPackets 4
+scalar SwarmNetwork.node[4].nic.mac1609_4 TotalLostPackets 4
+scalar SwarmNetwork.node[4].nic.mac1609_4 DroppedPacketsInMac 0
+scalar SwarmNetwork.node[4].nic.mac1609_4 TooLittleTime 0
+scalar SwarmNetwork.node[4].nic.mac1609_4 TimesIntoBackoff 3
+scalar SwarmNetwork.node[4].nic.mac1609_4 SlotsBackoff 3
+scalar SwarmNetwork.node[4].nic.mac1609_4 NumInternalContention 0
+scalar SwarmNetwork.node[4].nic.mac1609_4 totalBusyTime 0.003019
+scalar SwarmNetwork.node[4].nic.mac1609_4 retriesExceeded:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigRetriesExceeded
+scalar SwarmNetwork.node[4].nic.mac1609_4 sentAcks:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentAck
+scalar SwarmNetwork.node[4].nic.mac1609_4 sentPackets:count 3
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentPacket
+scalar SwarmNetwork.node[4].nic.mac1609_4 collisions:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigCollision
+scalar SwarmNetwork.node[4].nic.mac1609_4 channelBusy:timeavg 9.2324159021407e-05
+attr recordingmode timeavg
+attr source org_car2x_veins_modules_mac_sigChannelBusy
+par SwarmNetwork.node[4].nic typename "\"org.car2x.veins.modules.nic.Nic80211p\""
+par SwarmNetwork.node[4].nic connectionManagerName "\"connectionManager\""
+par SwarmNetwork.node[4].veinsmobility typename "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[4].veinsmobility notAffectedByHostState true
+par SwarmNetwork.node[4].veinsmobility x 0
+par SwarmNetwork.node[4].veinsmobility y 0
+par SwarmNetwork.node[4].veinsmobility z 0
+par SwarmNetwork.node[4].veinsmobility xOrientation 1
+par SwarmNetwork.node[4].veinsmobility yOrientation 0
+par SwarmNetwork.node[4].veinsmobility zOrientation 0
+par SwarmNetwork.node[4].veinsmobility hostPositionOffset 0m
+attr unit m
+par SwarmNetwork.node[4].veinsmobility setHostSpeed false
+par SwarmNetwork.node[4].veinsmobility accidentCount 0
+par SwarmNetwork.node[4].veinsmobility accidentStart 47.0413s
+attr unit s
+par SwarmNetwork.node[4].veinsmobility accidentDuration "uniform(30s, 60s)"
+attr unit s
+par SwarmNetwork.node[4].veinsmobility accidentInterval "uniform(30s, 60s)"
+attr unit s
+scalar SwarmNetwork.node[4].veinsmobility startTime 0.5
+scalar SwarmNetwork.node[4].veinsmobility totalTime 32.6
+scalar SwarmNetwork.node[4].veinsmobility stopTime 33.2
+scalar SwarmNetwork.node[4].veinsmobility minSpeed 4.2361811427576
+scalar SwarmNetwork.node[4].veinsmobility maxSpeed 12.266098657911
+scalar SwarmNetwork.node[4].veinsmobility totalDistance 384.98527934158
+scalar SwarmNetwork.node[4].veinsmobility totalCO2Emission 76.519391418514
+par SwarmNetwork.node[4] typename "\"org.car2x.veins.nodes.Car\""
+par SwarmNetwork.node[4] applType "\"SwarmVehicle\""
+par SwarmNetwork.node[4] nicType "\"Nic80211p\""
+par SwarmNetwork.node[4] veinsmobilityType "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[2].appl typename "\"SwarmVehicle\""
+par SwarmNetwork.node[2].appl headerLength 80bit
+attr unit bit
+par SwarmNetwork.node[2].appl sendBeacons true
+par SwarmNetwork.node[2].appl beaconLengthBits 256bit
+attr unit bit
+par SwarmNetwork.node[2].appl beaconUserPriority 7
+par SwarmNetwork.node[2].appl beaconInterval 5s
+attr unit s
+par SwarmNetwork.node[2].appl dataLengthBits 1024bit
+attr unit bit
+par SwarmNetwork.node[2].appl dataOnSch false
+par SwarmNetwork.node[2].appl dataUserPriority 7
+par SwarmNetwork.node[2].appl avoidBeaconSynchronization true
+par SwarmNetwork.node[2].appl sendWSA false
+par SwarmNetwork.node[2].appl wsaLengthBits 250bit
+attr unit bit
+par SwarmNetwork.node[2].appl wsaInterval 1s
+attr unit s
+par SwarmNetwork.node[2].appl demoTrace true
+par SwarmNetwork.node[2].appl demoRole "\"VALIDATOR_1\""
+par SwarmNetwork.node[2].appl epochDuration 30s
+attr unit s
+par SwarmNetwork.node[2].appl preActivationLead 10s
+attr unit s
+par SwarmNetwork.node[2].appl trustCacheTTL 30
+par SwarmNetwork.node[2].appl acfMaxStaleness 3
+par SwarmNetwork.node[2].appl proofPoolPrecompute 100
+par SwarmNetwork.node[2].appl dashboardPort 8765
+par SwarmNetwork.node[2].appl maliciousRatio 0
+par SwarmNetwork.node[2].appl maliciousMode "\"NONE\""
+par SwarmNetwork.node[2].appl numVehicles 0
+par SwarmNetwork.node[2].appl scenarioType "\"HIGHWAY\""
+scalar SwarmNetwork.node[2].appl msgSent 3
+scalar SwarmNetwork.node[2].appl msgReceived 2
+scalar SwarmNetwork.node[2].appl msgDropped 3
+scalar SwarmNetwork.node[2].appl cacheHits 0
+scalar SwarmNetwork.node[2].appl revocationsIssued 1
+scalar SwarmNetwork.node[2].appl cacheHitRate 0
+scalar SwarmNetwork.node[2].appl acfSize 1
+scalar SwarmNetwork.node[2].appl isMalicious 0
+scalar SwarmNetwork.node[2].appl isRevoked 0
+scalar SwarmNetwork.node[2].appl generatedWSMs 3
+scalar SwarmNetwork.node[2].appl receivedWSMs 0
+scalar SwarmNetwork.node[2].appl generatedBSMs 0
+scalar SwarmNetwork.node[2].appl receivedBSMs 0
+scalar SwarmNetwork.node[2].appl generatedWSAs 0
+scalar SwarmNetwork.node[2].appl receivedWSAs 0
+par SwarmNetwork.node[2].nic.phy80211p typename "\"org.car2x.veins.modules.phy.PhyLayer80211p\""
+par SwarmNetwork.node[2].nic.phy80211p recordStats false
+par SwarmNetwork.node[2].nic.phy80211p usePropagationDelay false
+par SwarmNetwork.node[2].nic.phy80211p noiseFloor -98dBm
+attr unit dBm
+par SwarmNetwork.node[2].nic.phy80211p useNoiseFloor true
+par SwarmNetwork.node[2].nic.phy80211p antenna "<root>...</root> at content:1"
+par SwarmNetwork.node[2].nic.phy80211p antennaOffsetX 0m
+attr unit m
+par SwarmNetwork.node[2].nic.phy80211p antennaOffsetY 0m
+attr unit m
+par SwarmNetwork.node[2].nic.phy80211p antennaOffsetZ 1.895m
+attr unit m
+par SwarmNetwork.node[2].nic.phy80211p antennaOffsetYaw 0rad
+attr unit rad
+par SwarmNetwork.node[2].nic.phy80211p analogueModels "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[2].nic.phy80211p decider "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[2].nic.phy80211p minPowerLevel -110dBm
+attr unit dBm
+par SwarmNetwork.node[2].nic.phy80211p timeRXToTX 0s
+attr unit s
+par SwarmNetwork.node[2].nic.phy80211p timeRXToSleep 0s
+attr unit s
+par SwarmNetwork.node[2].nic.phy80211p timeTXToRX 0s
+attr unit s
+par SwarmNetwork.node[2].nic.phy80211p timeTXToSleep 0s
+attr unit s
+par SwarmNetwork.node[2].nic.phy80211p timeSleepToRX 0s
+attr unit s
+par SwarmNetwork.node[2].nic.phy80211p timeSleepToTX 0s
+attr unit s
+par SwarmNetwork.node[2].nic.phy80211p initialRadioState 0
+par SwarmNetwork.node[2].nic.phy80211p radioMinAtt 1
+par SwarmNetwork.node[2].nic.phy80211p radioMaxAtt 0
+par SwarmNetwork.node[2].nic.phy80211p nbRadioChannels 1
+par SwarmNetwork.node[2].nic.phy80211p initialRadioChannel 0
+par SwarmNetwork.node[2].nic.phy80211p ccaThreshold -65dBm
+attr unit dBm
+par SwarmNetwork.node[2].nic.phy80211p collectCollisionStatistics false
+par SwarmNetwork.node[2].nic.phy80211p allowTxDuringRx false
+scalar SwarmNetwork.node[2].nic.phy80211p busyTime 9.6666666666667e-05
+par SwarmNetwork.node[2].nic.mac1609_4 typename "\"org.car2x.veins.modules.mac.ieee80211p.Mac1609_4\""
+par SwarmNetwork.node[2].nic.mac1609_4 notAffectedByHostState false
+par SwarmNetwork.node[2].nic.mac1609_4 headerLength 88bit
+attr unit bit
+par SwarmNetwork.node[2].nic.mac1609_4 address "\"auto\""
+par SwarmNetwork.node[2].nic.mac1609_4 useServiceChannel false
+par SwarmNetwork.node[2].nic.mac1609_4 serviceChannel 1
+par SwarmNetwork.node[2].nic.mac1609_4 bitrate 6000000bps
+attr unit bps
+par SwarmNetwork.node[2].nic.mac1609_4 syncOffset 0.0003s
+attr unit s
+par SwarmNetwork.node[2].nic.mac1609_4 txPower 20mW
+attr unit mW
+par SwarmNetwork.node[2].nic.mac1609_4 queueSize 14
+par SwarmNetwork.node[2].nic.mac1609_4 dot11RTSThreshold 12000bit
+attr unit bit
+par SwarmNetwork.node[2].nic.mac1609_4 dot11ShortRetryLimit 7
+par SwarmNetwork.node[2].nic.mac1609_4 dot11LongRetryLimit 4
+par SwarmNetwork.node[2].nic.mac1609_4 ackLength 112bit
+attr unit bit
+par SwarmNetwork.node[2].nic.mac1609_4 useAcks false
+par SwarmNetwork.node[2].nic.mac1609_4 frameErrorRate 0
+par SwarmNetwork.node[2].nic.mac1609_4 ackErrorRate 0
+scalar SwarmNetwork.node[2].nic.mac1609_4 ReceivedUnicastPackets 0
+scalar SwarmNetwork.node[2].nic.mac1609_4 ReceivedBroadcasts 9
+scalar SwarmNetwork.node[2].nic.mac1609_4 SentPackets 3
+scalar SwarmNetwork.node[2].nic.mac1609_4 SentAcknowledgements 0
+scalar SwarmNetwork.node[2].nic.mac1609_4 RetriesExceeded 0
+scalar SwarmNetwork.node[2].nic.mac1609_4 SNIRLostPackets 5
+scalar SwarmNetwork.node[2].nic.mac1609_4 RXTXLostPackets 0
+scalar SwarmNetwork.node[2].nic.mac1609_4 TotalLostPackets 5
+scalar SwarmNetwork.node[2].nic.mac1609_4 DroppedPacketsInMac 0
+scalar SwarmNetwork.node[2].nic.mac1609_4 TooLittleTime 0
+scalar SwarmNetwork.node[2].nic.mac1609_4 TimesIntoBackoff 3
+scalar SwarmNetwork.node[2].nic.mac1609_4 SlotsBackoff 6
+scalar SwarmNetwork.node[2].nic.mac1609_4 NumInternalContention 0
+scalar SwarmNetwork.node[2].nic.mac1609_4 totalBusyTime 0.003019
+scalar SwarmNetwork.node[2].nic.mac1609_4 retriesExceeded:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigRetriesExceeded
+scalar SwarmNetwork.node[2].nic.mac1609_4 sentAcks:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentAck
+scalar SwarmNetwork.node[2].nic.mac1609_4 sentPackets:count 3
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentPacket
+scalar SwarmNetwork.node[2].nic.mac1609_4 collisions:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigCollision
+scalar SwarmNetwork.node[2].nic.mac1609_4 channelBusy:timeavg 8.985119047619e-05
+attr recordingmode timeavg
+attr source org_car2x_veins_modules_mac_sigChannelBusy
+par SwarmNetwork.node[2].nic typename "\"org.car2x.veins.modules.nic.Nic80211p\""
+par SwarmNetwork.node[2].nic connectionManagerName "\"connectionManager\""
+par SwarmNetwork.node[2].veinsmobility typename "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[2].veinsmobility notAffectedByHostState true
+par SwarmNetwork.node[2].veinsmobility x 0
+par SwarmNetwork.node[2].veinsmobility y 0
+par SwarmNetwork.node[2].veinsmobility z 0
+par SwarmNetwork.node[2].veinsmobility xOrientation 1
+par SwarmNetwork.node[2].veinsmobility yOrientation 0
+par SwarmNetwork.node[2].veinsmobility zOrientation 0
+par SwarmNetwork.node[2].veinsmobility hostPositionOffset 0m
+attr unit m
+par SwarmNetwork.node[2].veinsmobility setHostSpeed false
+par SwarmNetwork.node[2].veinsmobility accidentCount 0
+par SwarmNetwork.node[2].veinsmobility accidentStart 43.1276s
+attr unit s
+par SwarmNetwork.node[2].veinsmobility accidentDuration "uniform(30s, 60s)"
+attr unit s
+par SwarmNetwork.node[2].veinsmobility accidentInterval "uniform(30s, 60s)"
+attr unit s
+scalar SwarmNetwork.node[2].veinsmobility startTime 0.3
+scalar SwarmNetwork.node[2].veinsmobility totalTime 33.5
+scalar SwarmNetwork.node[2].veinsmobility stopTime 33.9
+scalar SwarmNetwork.node[2].veinsmobility minSpeed 0.95165048686251
+scalar SwarmNetwork.node[2].veinsmobility maxSpeed 13.88943743319
+scalar SwarmNetwork.node[2].veinsmobility totalDistance 387.61156493938
+scalar SwarmNetwork.node[2].veinsmobility totalCO2Emission 110.51615529133
+par SwarmNetwork.node[2] typename "\"org.car2x.veins.nodes.Car\""
+par SwarmNetwork.node[2] applType "\"SwarmVehicle\""
+par SwarmNetwork.node[2] nicType "\"Nic80211p\""
+par SwarmNetwork.node[2] veinsmobilityType "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[3].appl typename "\"SwarmVehicle\""
+par SwarmNetwork.node[3].appl headerLength 80bit
+attr unit bit
+par SwarmNetwork.node[3].appl sendBeacons true
+par SwarmNetwork.node[3].appl beaconLengthBits 256bit
+attr unit bit
+par SwarmNetwork.node[3].appl beaconUserPriority 7
+par SwarmNetwork.node[3].appl beaconInterval 5s
+attr unit s
+par SwarmNetwork.node[3].appl dataLengthBits 1024bit
+attr unit bit
+par SwarmNetwork.node[3].appl dataOnSch false
+par SwarmNetwork.node[3].appl dataUserPriority 7
+par SwarmNetwork.node[3].appl avoidBeaconSynchronization true
+par SwarmNetwork.node[3].appl sendWSA false
+par SwarmNetwork.node[3].appl wsaLengthBits 250bit
+attr unit bit
+par SwarmNetwork.node[3].appl wsaInterval 1s
+attr unit s
+par SwarmNetwork.node[3].appl demoTrace true
+par SwarmNetwork.node[3].appl demoRole "\"VALIDATOR_2\""
+par SwarmNetwork.node[3].appl epochDuration 30s
+attr unit s
+par SwarmNetwork.node[3].appl preActivationLead 10s
+attr unit s
+par SwarmNetwork.node[3].appl trustCacheTTL 30
+par SwarmNetwork.node[3].appl acfMaxStaleness 3
+par SwarmNetwork.node[3].appl proofPoolPrecompute 100
+par SwarmNetwork.node[3].appl dashboardPort 8765
+par SwarmNetwork.node[3].appl maliciousRatio 0
+par SwarmNetwork.node[3].appl maliciousMode "\"NONE\""
+par SwarmNetwork.node[3].appl numVehicles 0
+par SwarmNetwork.node[3].appl scenarioType "\"HIGHWAY\""
+scalar SwarmNetwork.node[3].appl msgSent 2
+scalar SwarmNetwork.node[3].appl msgReceived 2
+scalar SwarmNetwork.node[3].appl msgDropped 3
+scalar SwarmNetwork.node[3].appl cacheHits 0
+scalar SwarmNetwork.node[3].appl revocationsIssued 0
+scalar SwarmNetwork.node[3].appl cacheHitRate 0
+scalar SwarmNetwork.node[3].appl acfSize 1
+scalar SwarmNetwork.node[3].appl isMalicious 0
+scalar SwarmNetwork.node[3].appl isRevoked 0
+scalar SwarmNetwork.node[3].appl generatedWSMs 3
+scalar SwarmNetwork.node[3].appl receivedWSMs 0
+scalar SwarmNetwork.node[3].appl generatedBSMs 0
+scalar SwarmNetwork.node[3].appl receivedBSMs 0
+scalar SwarmNetwork.node[3].appl generatedWSAs 0
+scalar SwarmNetwork.node[3].appl receivedWSAs 0
+par SwarmNetwork.node[3].nic.phy80211p typename "\"org.car2x.veins.modules.phy.PhyLayer80211p\""
+par SwarmNetwork.node[3].nic.phy80211p recordStats false
+par SwarmNetwork.node[3].nic.phy80211p usePropagationDelay false
+par SwarmNetwork.node[3].nic.phy80211p noiseFloor -98dBm
+attr unit dBm
+par SwarmNetwork.node[3].nic.phy80211p useNoiseFloor true
+par SwarmNetwork.node[3].nic.phy80211p antenna "<root>...</root> at content:1"
+par SwarmNetwork.node[3].nic.phy80211p antennaOffsetX 0m
+attr unit m
+par SwarmNetwork.node[3].nic.phy80211p antennaOffsetY 0m
+attr unit m
+par SwarmNetwork.node[3].nic.phy80211p antennaOffsetZ 1.895m
+attr unit m
+par SwarmNetwork.node[3].nic.phy80211p antennaOffsetYaw 0rad
+attr unit rad
+par SwarmNetwork.node[3].nic.phy80211p analogueModels "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[3].nic.phy80211p decider "<config>...</config> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//config.xml:2"
+par SwarmNetwork.node[3].nic.phy80211p minPowerLevel -110dBm
+attr unit dBm
+par SwarmNetwork.node[3].nic.phy80211p timeRXToTX 0s
+attr unit s
+par SwarmNetwork.node[3].nic.phy80211p timeRXToSleep 0s
+attr unit s
+par SwarmNetwork.node[3].nic.phy80211p timeTXToRX 0s
+attr unit s
+par SwarmNetwork.node[3].nic.phy80211p timeTXToSleep 0s
+attr unit s
+par SwarmNetwork.node[3].nic.phy80211p timeSleepToRX 0s
+attr unit s
+par SwarmNetwork.node[3].nic.phy80211p timeSleepToTX 0s
+attr unit s
+par SwarmNetwork.node[3].nic.phy80211p initialRadioState 0
+par SwarmNetwork.node[3].nic.phy80211p radioMinAtt 1
+par SwarmNetwork.node[3].nic.phy80211p radioMaxAtt 0
+par SwarmNetwork.node[3].nic.phy80211p nbRadioChannels 1
+par SwarmNetwork.node[3].nic.phy80211p initialRadioChannel 0
+par SwarmNetwork.node[3].nic.phy80211p ccaThreshold -65dBm
+attr unit dBm
+par SwarmNetwork.node[3].nic.phy80211p collectCollisionStatistics false
+par SwarmNetwork.node[3].nic.phy80211p allowTxDuringRx false
+scalar SwarmNetwork.node[3].nic.phy80211p busyTime 6.8436578171091e-05
+par SwarmNetwork.node[3].nic.mac1609_4 typename "\"org.car2x.veins.modules.mac.ieee80211p.Mac1609_4\""
+par SwarmNetwork.node[3].nic.mac1609_4 notAffectedByHostState false
+par SwarmNetwork.node[3].nic.mac1609_4 headerLength 88bit
+attr unit bit
+par SwarmNetwork.node[3].nic.mac1609_4 address "\"auto\""
+par SwarmNetwork.node[3].nic.mac1609_4 useServiceChannel false
+par SwarmNetwork.node[3].nic.mac1609_4 serviceChannel 1
+par SwarmNetwork.node[3].nic.mac1609_4 bitrate 6000000bps
+attr unit bps
+par SwarmNetwork.node[3].nic.mac1609_4 syncOffset 0.0003s
+attr unit s
+par SwarmNetwork.node[3].nic.mac1609_4 txPower 20mW
+attr unit mW
+par SwarmNetwork.node[3].nic.mac1609_4 queueSize 14
+par SwarmNetwork.node[3].nic.mac1609_4 dot11RTSThreshold 12000bit
+attr unit bit
+par SwarmNetwork.node[3].nic.mac1609_4 dot11ShortRetryLimit 7
+par SwarmNetwork.node[3].nic.mac1609_4 dot11LongRetryLimit 4
+par SwarmNetwork.node[3].nic.mac1609_4 ackLength 112bit
+attr unit bit
+par SwarmNetwork.node[3].nic.mac1609_4 useAcks false
+par SwarmNetwork.node[3].nic.mac1609_4 frameErrorRate 0
+par SwarmNetwork.node[3].nic.mac1609_4 ackErrorRate 0
+scalar SwarmNetwork.node[3].nic.mac1609_4 ReceivedUnicastPackets 0
+scalar SwarmNetwork.node[3].nic.mac1609_4 ReceivedBroadcasts 10
+scalar SwarmNetwork.node[3].nic.mac1609_4 SentPackets 3
+scalar SwarmNetwork.node[3].nic.mac1609_4 SentAcknowledgements 0
+scalar SwarmNetwork.node[3].nic.mac1609_4 RetriesExceeded 0
+scalar SwarmNetwork.node[3].nic.mac1609_4 SNIRLostPackets 0
+scalar SwarmNetwork.node[3].nic.mac1609_4 RXTXLostPackets 4
+scalar SwarmNetwork.node[3].nic.mac1609_4 TotalLostPackets 4
+scalar SwarmNetwork.node[3].nic.mac1609_4 DroppedPacketsInMac 0
+scalar SwarmNetwork.node[3].nic.mac1609_4 TooLittleTime 0
+scalar SwarmNetwork.node[3].nic.mac1609_4 TimesIntoBackoff 3
+scalar SwarmNetwork.node[3].nic.mac1609_4 SlotsBackoff 1
+scalar SwarmNetwork.node[3].nic.mac1609_4 NumInternalContention 0
+scalar SwarmNetwork.node[3].nic.mac1609_4 totalBusyTime 0.003019
+scalar SwarmNetwork.node[3].nic.mac1609_4 retriesExceeded:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigRetriesExceeded
+scalar SwarmNetwork.node[3].nic.mac1609_4 sentAcks:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentAck
+scalar SwarmNetwork.node[3].nic.mac1609_4 sentPackets:count 3
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigSentPacket
+scalar SwarmNetwork.node[3].nic.mac1609_4 collisions:count 0
+attr recordingmode count
+attr source org_car2x_veins_modules_mac_sigCollision
+scalar SwarmNetwork.node[3].nic.mac1609_4 channelBusy:timeavg 8.905604719764e-05
+attr recordingmode timeavg
+attr source org_car2x_veins_modules_mac_sigChannelBusy
+par SwarmNetwork.node[3].nic typename "\"org.car2x.veins.modules.nic.Nic80211p\""
+par SwarmNetwork.node[3].nic connectionManagerName "\"connectionManager\""
+par SwarmNetwork.node[3].veinsmobility typename "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.node[3].veinsmobility notAffectedByHostState true
+par SwarmNetwork.node[3].veinsmobility x 0
+par SwarmNetwork.node[3].veinsmobility y 0
+par SwarmNetwork.node[3].veinsmobility z 0
+par SwarmNetwork.node[3].veinsmobility xOrientation 1
+par SwarmNetwork.node[3].veinsmobility yOrientation 0
+par SwarmNetwork.node[3].veinsmobility zOrientation 0
+par SwarmNetwork.node[3].veinsmobility hostPositionOffset 0m
+attr unit m
+par SwarmNetwork.node[3].veinsmobility setHostSpeed false
+par SwarmNetwork.node[3].veinsmobility accidentCount 0
+par SwarmNetwork.node[3].veinsmobility accidentStart 41.5032s
+attr unit s
+par SwarmNetwork.node[3].veinsmobility accidentDuration "uniform(30s, 60s)"
+attr unit s
+par SwarmNetwork.node[3].veinsmobility accidentInterval "uniform(30s, 60s)"
+attr unit s
+scalar SwarmNetwork.node[3].veinsmobility startTime 0.4
+scalar SwarmNetwork.node[3].veinsmobility totalTime 33.8
+scalar SwarmNetwork.node[3].veinsmobility stopTime 34.3
+scalar SwarmNetwork.node[3].veinsmobility minSpeed 0
+scalar SwarmNetwork.node[3].veinsmobility maxSpeed 13.889981195313
+scalar SwarmNetwork.node[3].veinsmobility totalDistance 360.26632645632
+scalar SwarmNetwork.node[3].veinsmobility totalCO2Emission 103.35659851337
+par SwarmNetwork.node[3] typename "\"org.car2x.veins.nodes.Car\""
+par SwarmNetwork.node[3] applType "\"SwarmVehicle\""
+par SwarmNetwork.node[3] nicType "\"Nic80211p\""
+par SwarmNetwork.node[3] veinsmobilityType "\"org.car2x.veins.modules.mobility.traci.TraCIMobility\""
+par SwarmNetwork.obstacles typename "\"org.car2x.veins.modules.obstacle.ObstacleControl\""
+par SwarmNetwork.obstacles obstacles "<obstacles/> at content:1"
+par SwarmNetwork.obstacles gridCellSize 250
+par SwarmNetwork.annotations typename "\"org.car2x.veins.modules.world.annotations.AnnotationManager\""
+par SwarmNetwork.annotations draw false
+par SwarmNetwork.annotations annotations "<annotations/> at content:1"
+par SwarmNetwork.connectionManager typename "\"org.car2x.veins.base.connectionManager.ConnectionManager\""
+par SwarmNetwork.connectionManager sendDirect true
+par SwarmNetwork.connectionManager maxInterfDist 300m
+attr unit m
+par SwarmNetwork.connectionManager drawMaxIntfDist true
+par SwarmNetwork.world typename "\"org.car2x.veins.base.modules.BaseWorldUtility\""
+par SwarmNetwork.world playgroundSizeX 600m
+attr unit m
+par SwarmNetwork.world playgroundSizeY 600m
+attr unit m
+par SwarmNetwork.world playgroundSizeZ 50m
+attr unit m
+par SwarmNetwork.world useTorus false
+par SwarmNetwork.world use2D false
+par SwarmNetwork.manager typename "\"org.car2x.veins.modules.mobility.traci.TraCIScenarioManagerLaunchd\""
+par SwarmNetwork.manager connectAt 0s
+attr unit s
+par SwarmNetwork.manager firstStepAt -1s
+attr unit s
+par SwarmNetwork.manager updateInterval 0.1s
+attr unit s
+par SwarmNetwork.manager moduleType "\"org.car2x.veins.nodes.Car\""
+par SwarmNetwork.manager moduleName "\"node\""
+par SwarmNetwork.manager moduleDisplayString "\"*='i=veins/node/car;is=vs'\""
+par SwarmNetwork.manager trafficLightModuleType "\"\""
+par SwarmNetwork.manager trafficLightModuleName "\"tls\""
+par SwarmNetwork.manager trafficLightFilter "\"\""
+par SwarmNetwork.manager trafficLightModuleDisplayString "\"i=veins/node/trafficlight;is=vs\""
+par SwarmNetwork.manager host "\"localhost\""
+par SwarmNetwork.manager port 9999
+par SwarmNetwork.manager seed -1
+par SwarmNetwork.manager autoShutdown true
+par SwarmNetwork.manager margin 25
+par SwarmNetwork.manager roiRoads "\"\""
+par SwarmNetwork.manager roiRects "\"\""
+par SwarmNetwork.manager penetrationRate 1
+par SwarmNetwork.manager ignoreGuiCommands false
+par SwarmNetwork.manager order -1
+par SwarmNetwork.manager ignoreUnknownSubscriptionResults false
+par SwarmNetwork.manager launchConfig "<launch>...</launch> at /home/leena/swarm-evo-se/simulations/swarm_evo_se//../../scripts/sumo_urban_full_demo.launchd.xml:2"
+scalar SwarmNetwork.manager roiArea 0
+par SwarmNetwork.roadsCanvasVisualizer typename "\"org.car2x.veins.visualizer.roads.RoadsCanvasVisualizer\""
+par SwarmNetwork.roadsCanvasVisualizer enabled true
+par SwarmNetwork.roadsCanvasVisualizer lineZIndex -1
+par SwarmNetwork.roadsCanvasVisualizer lineColor "\"firebrick4\""
+par SwarmNetwork.roadsCanvasVisualizer lineWidth 1
+par SwarmNetwork.roadsCanvasVisualizer lineWidthZoom false
+par SwarmNetwork.trustedAuthority typename "\"TrustedAuthorityVisual\""
+par SwarmNetwork typename "\"SwarmNetwork\""
+par SwarmNetwork playgroundSizeX 600m
+attr unit m
+par SwarmNetwork playgroundSizeY 600m
+attr unit m
+par SwarmNetwork playgroundSizeZ 50m
+attr unit m
+

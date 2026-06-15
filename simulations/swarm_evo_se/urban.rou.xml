@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- generated on 2026-06-11 16:53:08.865496 by randomTrips.py UNKNOWN
+<!-- generated on 2026-06-12 11:37:06.096478 by randomTrips.py UNKNOWN
 <configuration>
     <net-file value="/home/leena/swarm-evo-se/scripts/urban.net.xml"/>
     <route-file value="/home/leena/swarm-evo-se/scripts/urban.rou.xml"/>
@@ -9,7 +9,7 @@
 </configuration>
 -->
 
-<!-- generated on 2026-06-11 16:53:08 by Eclipse SUMO duarouter Version 1.22.0
+<!-- generated on 2026-06-12 11:37:06 by Eclipse SUMO duarouter Version 1.22.0
 <duarouterConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/duarouterConfiguration.xsd">
 
     <input>

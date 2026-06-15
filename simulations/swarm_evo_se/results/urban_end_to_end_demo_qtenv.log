@@ -1,0 +1,676 @@
+OMNeT++ Discrete Event Simulation  (C) 1992-2024 Andras Varga, OpenSim Ltd.
+Version: 6.1, build: 241008-f7568267cd, edition: Academic Public License -- NOT FOR COMMERCIAL USE
+See the license for distribution terms and warranty disclaimer
+
+Setting up Qtenv...
+
+Loading NED files from .:  2
+Loading NED files from ../../src:  0
+Loading NED files from /home/leena/veins/src:  46
+
+Loading images from 'images': *: 0 
+Loading images from '/home/leena/omnetpp-6.1/images': *: 0  abstract/*: 90  background/*: 4  block/*: 325  device/*: 195  logo/*: 3  maps/*: 9  misc/*: 70  msg/*: 55  old/*: 111  status/*: 28 
+
+
+============================================================
+[PHASE1_DEMO] TRUSTED AUTHORITY (TA) REGISTRATION TRACE
+============================================================
+[PHASE1_DEMO][1] Vehicle registration request created
+    Vehicle module / VIN equivalent : node[0]
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1A] Trusted Authority verifies physical vehicle identity
+    Physical identity verified      : YES
+    Registration record             : VIN/module ID exists in TA records
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1B] Trusted Authority verifies HSM manufacturer certificate chain
+    HSM certificate chain           : OEM_ROOT_CA -> HSM_VENDOR_CA -> HSM_CHIP_CERT_node[0]
+    HSM chain verification result   : SUCCESS
+    Time taken                      : 0.007 ms
+[PHASE1_DEMO][2] Hardware Security Module (HSM) initialised
+    K_master, 256-bit root secret   : e1905343b4b2617a1d927534a231899787ce0a99a744e05950cd3a3e36f595d2   [DEMO ONLY]
+    Time taken                      : 73.162 ms
+[PHASE1_DEMO][3] VIN bound to HSM
+    Bound VIN / vehicle ID          : node[0]
+    Time taken                      : 0.003 ms
+[PHASE1_DEMO][4] Private key/scalar prepared inside HSM
+    Private key material            : e1905343b4b2617a1d927534a231899787ce0a99a744e05950cd3a3e36f595d2   [DEMO ONLY]
+    Time taken                      : same as HSM root secret generation in this simulation
+[PHASE1_DEMO][5] Public key anchor derived
+    H_0 public key / public anchor  : d4a86527f214fc7d024e08bc428393b3a1b71c9de1796dc1c54524b6bfe96b31
+    Time taken                      : 1.028 ms
+[PHASE1_DEMO][6] Trusted Authority sends challenge nonce
+    TA nonce                        : cf55f4c0b8cb0d94056b8458fa731324c95e228a8082e2113a409d6aab82b8c5
+    Time taken                      : 0.028 ms
+[PHASE1_DEMO][7] HSM signs nonce for proof-of-possession
+    Nonce signature / PoP proof     : 520865d11373d472a1613321fd1eb0b3251fec3a04545724addb8c072651e78a
+    Time taken                      : 0.013 ms
+[PHASE1_DEMO][8] Trusted Authority service accessed
+    TA component                    : TrustedAuthority singleton/service
+    Time taken                      : 0.004 ms
+[PHASE1_DEMO][9] Trusted Authority verifies proof-of-possession
+    Verification result             : SUCCESS
+    Time taken                      : 0.014 ms
+[PHASE1_DEMO][10] Enrolment certificate issued
+    Certificate binds               : Vehicle registration + H_0
+    Certificate fingerprint         : d3d388a12e0699d8ca34e08bf87861a5
+    Certificate serial              : CERT_e6b0309fdb0aab1b
+    Time taken                      : included in TA verification/registration call above
+[PHASE1_DEMO][11] Public system parameters delivered
+    Epoch duration                  : 30.000000 s
+    Beacon interval                 : 5.000000 s
+    Trust cache TTL                 : 30 s
+    Authenticated Cuckoo Filter max staleness : 3 epochs
+    Time taken                      : 0.030 ms
+[PHASE1_DEMO][12] Cluster assignment completed
+    Assigned cluster ID             : cluster-12
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][13] Trusted Authority generates bootstrap Pseudo-Identities (PIDs)
+    Bootstrap PID[0]             : PID_0_d75b87d5212485c409095aa854cae727
+    Bootstrap PID[1]             : PID_1_cc97ba792caeedc073bdf0e800478034
+    Bootstrap PID[2]             : PID_2_89107ae32dae4905856829bf45bedc5d
+    Bootstrap PID[3]             : PID_3_808d70406c69b6edc12f076776aeca4a
+    Bootstrap PID[4]             : PID_4_c53f638ee3cba0e8f4962e821d7ca3c9
+    Total bootstrap PIDs generated : 5
+    Time taken                      : 0.028 ms
+[PHASE1_DEMO][14] Trusted Authority provides expiry information
+    Expiry information              : enrolment_certificate_validity=365_days; starter_pack_validity=30_days; bootstrap_pid_validity=initial_epoch_only
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][15] Starter Pack packaged and loaded into On-Board Unit (OBU)
+    Starter Pack ID                 : STARTER_PACK_e7cf34e5d6b907af
+    Contains                        : enrolment certificate + 5 bootstrap PIDs + public parameters + expiry info
+    Starter Pack loaded into OBU    : YES
+    Time taken                      : 0.070 ms
+[PHASE1_DEMO][16] TA secrecy boundary check
+    TA receives K_master            : NO
+    TA receives C_0                 : NO
+    TA provides ACF                 : NO
+    TA only certifies H_0           : YES
+[PHASE1_DEMO][RESULT] PHASE 1 REGISTRATION SUCCESSFUL
+[PHASE1_DEMO][TOTAL_TIME] Total Phase 1 wall-clock time : 75.605 ms
+============================================================
+
+[URBAN_FULL_DEMO][t=0.100s][node[0]][LEGIT_SENDER][PHASE_2_FIRST_BOOT] Step 1: HSM ready | K_master remains sealed inside HSM
+[URBAN_FULL_DEMO][t=0.100s][node[0]][LEGIT_SENDER][PHASE_2_FIRST_BOOT] Step 2: anchors derived | H_0 public anchor and C_0 chain anchor prepared
+[URBAN_FULL_DEMO][t=0.100s][node[0]][LEGIT_SENDER][PHASE_2_FIRST_BOOT] Step 3: Authenticated Cuckoo Filter initialized | ACF starts empty, epoch=0
+[URBAN_FULL_DEMO][t=0.100s][node[0]][LEGIT_SENDER][PHASE_2_FIRST_BOOT] Step 4: session seed derived | S_session generated for current epoch
+[URBAN_FULL_DEMO][t=0.100s][node[0]][LEGIT_SENDER][PHASE_2_FIRST_BOOT] Step 5: first pseudonym derived | Current pseudonym=f8cf2cf58584e63a
+[URBAN_FULL_DEMO][t=0.100s][node[0]][LEGIT_SENDER][PHASE_2_FIRST_BOOT] Step 6: Zero-Knowledge proof pool prepared | Precomputed proofs ready for pseudonym validation
+[URBAN_FULL_DEMO][t=0.100s][node[0]][LEGIT_SENDER][PHASE_2_FIRST_BOOT] Step 7: Boneh-Lynn-Shacham signing keys ready | Ephemeral signing key derived
+[URBAN_FULL_DEMO][t=0.100s][node[0]][LEGIT_SENDER][PHASE_2_FIRST_BOOT] Step 8: trust cache initialized | Receiver cache ready for accepted vehicles
+
+============================================================
+[PHASE1_DEMO] TRUSTED AUTHORITY (TA) REGISTRATION TRACE
+============================================================
+[PHASE1_DEMO][1] Vehicle registration request created
+    Vehicle module / VIN equivalent : node[1]
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1A] Trusted Authority verifies physical vehicle identity
+    Physical identity verified      : YES
+    Registration record             : VIN/module ID exists in TA records
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1B] Trusted Authority verifies HSM manufacturer certificate chain
+    HSM certificate chain           : OEM_ROOT_CA -> HSM_VENDOR_CA -> HSM_CHIP_CERT_node[1]
+    HSM chain verification result   : SUCCESS
+    Time taken                      : 0.006 ms
+[PHASE1_DEMO][2] Hardware Security Module (HSM) initialised
+    K_master, 256-bit root secret   : 834ce96dba7818ef58f5e7700211d1cba61cde0d7cccca5f603dda0bad1115d8   [DEMO ONLY]
+    Time taken                      : 0.103 ms
+[PHASE1_DEMO][3] VIN bound to HSM
+    Bound VIN / vehicle ID          : node[1]
+    Time taken                      : 0.002 ms
+[PHASE1_DEMO][4] Private key/scalar prepared inside HSM
+    Private key material            : 834ce96dba7818ef58f5e7700211d1cba61cde0d7cccca5f603dda0bad1115d8   [DEMO ONLY]
+    Time taken                      : same as HSM root secret generation in this simulation
+[PHASE1_DEMO][5] Public key anchor derived
+    H_0 public key / public anchor  : 8c9b80403468500022674b8ab6c13bd503fd566e301738a366d30e5331d1d5fc
+    Time taken                      : 0.159 ms
+[PHASE1_DEMO][6] Trusted Authority sends challenge nonce
+    TA nonce                        : 7ef08620b66b46ecaf042ed84bb5b598f7b436915f8af51559dd137697864431
+    Time taken                      : 0.010 ms
+[PHASE1_DEMO][7] HSM signs nonce for proof-of-possession
+    Nonce signature / PoP proof     : a449c37e1565ac0dc33fef1d9399c404ad26f455783fd57b12b6176e6648ec8e
+    Time taken                      : 0.020 ms
+[PHASE1_DEMO][8] Trusted Authority service accessed
+    TA component                    : TrustedAuthority singleton/service
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][9] Trusted Authority verifies proof-of-possession
+    Verification result             : SUCCESS
+    Time taken                      : 0.027 ms
+[PHASE1_DEMO][10] Enrolment certificate issued
+    Certificate binds               : Vehicle registration + H_0
+    Certificate fingerprint         : 81b758a157eca716957272307773598c
+    Certificate serial              : CERT_5545d86ad870013d
+    Time taken                      : included in TA verification/registration call above
+[PHASE1_DEMO][11] Public system parameters delivered
+    Epoch duration                  : 30.000000 s
+    Beacon interval                 : 5.000000 s
+    Trust cache TTL                 : 30 s
+    Authenticated Cuckoo Filter max staleness : 3 epochs
+    Time taken                      : 0.012 ms
+[PHASE1_DEMO][12] Cluster assignment completed
+    Assigned cluster ID             : cluster-0
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][13] Trusted Authority generates bootstrap Pseudo-Identities (PIDs)
+    Bootstrap PID[0]             : PID_0_1c6704b38c7eb9fc6881ad1da68244de
+    Bootstrap PID[1]             : PID_1_a04c178e701023f2d10a3965c95ad179
+    Bootstrap PID[2]             : PID_2_57c076362adecef0b8fa04390d1d644c
+    Bootstrap PID[3]             : PID_3_3b7e6d3c6ce477db14b9c2e0c0536091
+    Bootstrap PID[4]             : PID_4_d23fb3eaea4372c6c80b70df75158b8a
+    Total bootstrap PIDs generated : 5
+    Time taken                      : 0.061 ms
+[PHASE1_DEMO][14] Trusted Authority provides expiry information
+    Expiry information              : enrolment_certificate_validity=365_days; starter_pack_validity=30_days; bootstrap_pid_validity=initial_epoch_only
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][15] Starter Pack packaged and loaded into On-Board Unit (OBU)
+    Starter Pack ID                 : STARTER_PACK_7af2bbc7ee786fae
+    Contains                        : enrolment certificate + 5 bootstrap PIDs + public parameters + expiry info
+    Starter Pack loaded into OBU    : YES
+    Time taken                      : 0.021 ms
+[PHASE1_DEMO][16] TA secrecy boundary check
+    TA receives K_master            : NO
+    TA receives C_0                 : NO
+    TA provides ACF                 : NO
+    TA only certifies H_0           : YES
+[PHASE1_DEMO][RESULT] PHASE 1 REGISTRATION SUCCESSFUL
+[PHASE1_DEMO][TOTAL_TIME] Total Phase 1 wall-clock time : 2.950 ms
+============================================================
+
+[URBAN_FULL_DEMO][t=0.200s][node[1]][LEGIT_RECEIVER][PHASE_2_FIRST_BOOT] Step 1: HSM ready | K_master remains sealed inside HSM
+[URBAN_FULL_DEMO][t=0.200s][node[1]][LEGIT_RECEIVER][PHASE_2_FIRST_BOOT] Step 2: anchors derived | H_0 public anchor and C_0 chain anchor prepared
+[URBAN_FULL_DEMO][t=0.200s][node[1]][LEGIT_RECEIVER][PHASE_2_FIRST_BOOT] Step 3: Authenticated Cuckoo Filter initialized | ACF starts empty, epoch=0
+[URBAN_FULL_DEMO][t=0.200s][node[1]][LEGIT_RECEIVER][PHASE_2_FIRST_BOOT] Step 4: session seed derived | S_session generated for current epoch
+[URBAN_FULL_DEMO][t=0.200s][node[1]][LEGIT_RECEIVER][PHASE_2_FIRST_BOOT] Step 5: first pseudonym derived | Current pseudonym=10831ac1b4608391
+[URBAN_FULL_DEMO][t=0.200s][node[1]][LEGIT_RECEIVER][PHASE_2_FIRST_BOOT] Step 6: Zero-Knowledge proof pool prepared | Precomputed proofs ready for pseudonym validation
+[URBAN_FULL_DEMO][t=0.200s][node[1]][LEGIT_RECEIVER][PHASE_2_FIRST_BOOT] Step 7: Boneh-Lynn-Shacham signing keys ready | Ephemeral signing key derived
+[URBAN_FULL_DEMO][t=0.200s][node[1]][LEGIT_RECEIVER][PHASE_2_FIRST_BOOT] Step 8: trust cache initialized | Receiver cache ready for accepted vehicles
+
+============================================================
+[PHASE1_DEMO] TRUSTED AUTHORITY (TA) REGISTRATION TRACE
+============================================================
+[PHASE1_DEMO][1] Vehicle registration request created
+    Vehicle module / VIN equivalent : node[2]
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1A] Trusted Authority verifies physical vehicle identity
+    Physical identity verified      : YES
+    Registration record             : VIN/module ID exists in TA records
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1B] Trusted Authority verifies HSM manufacturer certificate chain
+    HSM certificate chain           : OEM_ROOT_CA -> HSM_VENDOR_CA -> HSM_CHIP_CERT_node[2]
+    HSM chain verification result   : SUCCESS
+    Time taken                      : 0.009 ms
+[PHASE1_DEMO][2] Hardware Security Module (HSM) initialised
+    K_master, 256-bit root secret   : b3a54e4a41349eca7904394643e7a16e220bf866f78992956322941c37fade4b   [DEMO ONLY]
+    Time taken                      : 0.135 ms
+[PHASE1_DEMO][3] VIN bound to HSM
+    Bound VIN / vehicle ID          : node[2]
+    Time taken                      : 0.003 ms
+[PHASE1_DEMO][4] Private key/scalar prepared inside HSM
+    Private key material            : b3a54e4a41349eca7904394643e7a16e220bf866f78992956322941c37fade4b   [DEMO ONLY]
+    Time taken                      : same as HSM root secret generation in this simulation
+[PHASE1_DEMO][5] Public key anchor derived
+    H_0 public key / public anchor  : 3a4f105bdd9d1231eadce33ac453459392c2cfa1f2911a1ea84df50620b84dbb
+    Time taken                      : 0.540 ms
+[PHASE1_DEMO][6] Trusted Authority sends challenge nonce
+    TA nonce                        : 36590e471dac6f2aa3713f0e57b125f3badc95d8b4e590c2bedb805d68748612
+    Time taken                      : 0.035 ms
+[PHASE1_DEMO][7] HSM signs nonce for proof-of-possession
+    Nonce signature / PoP proof     : c78c51249cec0efa1e0d4899185e1f96dd79f4e2816532bda68f67ad245406f8
+    Time taken                      : 0.024 ms
+[PHASE1_DEMO][8] Trusted Authority service accessed
+    TA component                    : TrustedAuthority singleton/service
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][9] Trusted Authority verifies proof-of-possession
+    Verification result             : SUCCESS
+    Time taken                      : 0.027 ms
+[PHASE1_DEMO][10] Enrolment certificate issued
+    Certificate binds               : Vehicle registration + H_0
+    Certificate fingerprint         : 44df59801ba81aeee1b9485b97645d99
+    Certificate serial              : CERT_ee556fe4d5051a43
+    Time taken                      : included in TA verification/registration call above
+[PHASE1_DEMO][11] Public system parameters delivered
+    Epoch duration                  : 30.000000 s
+    Beacon interval                 : 5.000000 s
+    Trust cache TTL                 : 30 s
+    Authenticated Cuckoo Filter max staleness : 3 epochs
+    Time taken                      : 0.021 ms
+[PHASE1_DEMO][12] Cluster assignment completed
+    Assigned cluster ID             : cluster-9
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][13] Trusted Authority generates bootstrap Pseudo-Identities (PIDs)
+    Bootstrap PID[0]             : PID_0_1a02e951982d48d0ea1c9297c68e0c33
+    Bootstrap PID[1]             : PID_1_01516d89ef923cb1586738a96b30d55e
+    Bootstrap PID[2]             : PID_2_5f68bf959b1f3a579d9010928e231dfd
+    Bootstrap PID[3]             : PID_3_f219afc9fdd4c87e4c925181a792bab7
+    Bootstrap PID[4]             : PID_4_ccb308c500a3111b6c319c5be4805beb
+    Total bootstrap PIDs generated : 5
+    Time taken                      : 0.242 ms
+[PHASE1_DEMO][14] Trusted Authority provides expiry information
+    Expiry information              : enrolment_certificate_validity=365_days; starter_pack_validity=30_days; bootstrap_pid_validity=initial_epoch_only
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][15] Starter Pack packaged and loaded into On-Board Unit (OBU)
+    Starter Pack ID                 : STARTER_PACK_57b76e50d2be2605
+    Contains                        : enrolment certificate + 5 bootstrap PIDs + public parameters + expiry info
+    Starter Pack loaded into OBU    : YES
+    Time taken                      : 0.040 ms
+[PHASE1_DEMO][16] TA secrecy boundary check
+    TA receives K_master            : NO
+    TA receives C_0                 : NO
+    TA provides ACF                 : NO
+    TA only certifies H_0           : YES
+[PHASE1_DEMO][RESULT] PHASE 1 REGISTRATION SUCCESSFUL
+[PHASE1_DEMO][TOTAL_TIME] Total Phase 1 wall-clock time : 7.246 ms
+============================================================
+
+[URBAN_FULL_DEMO][t=0.300s][node[2]][VALIDATOR_1][PHASE_2_FIRST_BOOT] Step 1: HSM ready | K_master remains sealed inside HSM
+[URBAN_FULL_DEMO][t=0.300s][node[2]][VALIDATOR_1][PHASE_2_FIRST_BOOT] Step 2: anchors derived | H_0 public anchor and C_0 chain anchor prepared
+[URBAN_FULL_DEMO][t=0.300s][node[2]][VALIDATOR_1][PHASE_2_FIRST_BOOT] Step 3: Authenticated Cuckoo Filter initialized | ACF starts empty, epoch=0
+[URBAN_FULL_DEMO][t=0.300s][node[2]][VALIDATOR_1][PHASE_2_FIRST_BOOT] Step 4: session seed derived | S_session generated for current epoch
+[URBAN_FULL_DEMO][t=0.300s][node[2]][VALIDATOR_1][PHASE_2_FIRST_BOOT] Step 5: first pseudonym derived | Current pseudonym=29085cc6998cc8d4
+[URBAN_FULL_DEMO][t=0.300s][node[2]][VALIDATOR_1][PHASE_2_FIRST_BOOT] Step 6: Zero-Knowledge proof pool prepared | Precomputed proofs ready for pseudonym validation
+[URBAN_FULL_DEMO][t=0.300s][node[2]][VALIDATOR_1][PHASE_2_FIRST_BOOT] Step 7: Boneh-Lynn-Shacham signing keys ready | Ephemeral signing key derived
+[URBAN_FULL_DEMO][t=0.300s][node[2]][VALIDATOR_1][PHASE_2_FIRST_BOOT] Step 8: trust cache initialized | Receiver cache ready for accepted vehicles
+
+============================================================
+[PHASE1_DEMO] TRUSTED AUTHORITY (TA) REGISTRATION TRACE
+============================================================
+[PHASE1_DEMO][1] Vehicle registration request created
+    Vehicle module / VIN equivalent : node[3]
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1A] Trusted Authority verifies physical vehicle identity
+    Physical identity verified      : YES
+    Registration record             : VIN/module ID exists in TA records
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1B] Trusted Authority verifies HSM manufacturer certificate chain
+    HSM certificate chain           : OEM_ROOT_CA -> HSM_VENDOR_CA -> HSM_CHIP_CERT_node[3]
+    HSM chain verification result   : SUCCESS
+    Time taken                      : 0.004 ms
+[PHASE1_DEMO][2] Hardware Security Module (HSM) initialised
+    K_master, 256-bit root secret   : 3baac06aa60cb988a79abc93077417699795df09264243404c97f95eddb93380   [DEMO ONLY]
+    Time taken                      : 0.095 ms
+[PHASE1_DEMO][3] VIN bound to HSM
+    Bound VIN / vehicle ID          : node[3]
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][4] Private key/scalar prepared inside HSM
+    Private key material            : 3baac06aa60cb988a79abc93077417699795df09264243404c97f95eddb93380   [DEMO ONLY]
+    Time taken                      : same as HSM root secret generation in this simulation
+[PHASE1_DEMO][5] Public key anchor derived
+    H_0 public key / public anchor  : 0b478b7bdf874b7b041bb2807d675464849948cbe26573ea054366e610012c57
+    Time taken                      : 0.131 ms
+[PHASE1_DEMO][6] Trusted Authority sends challenge nonce
+    TA nonce                        : e4233fb2dda51bf576b7338260be35531c5d4f0e9bfc6ce69ce42295e383b919
+    Time taken                      : 0.011 ms
+[PHASE1_DEMO][7] HSM signs nonce for proof-of-possession
+    Nonce signature / PoP proof     : 4ce83a4ea01323cb6ffb44cb271277309e463af972b83bee1f6c73717b3e147c
+    Time taken                      : 0.016 ms
+[PHASE1_DEMO][8] Trusted Authority service accessed
+    TA component                    : TrustedAuthority singleton/service
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][9] Trusted Authority verifies proof-of-possession
+    Verification result             : SUCCESS
+    Time taken                      : 0.023 ms
+[PHASE1_DEMO][10] Enrolment certificate issued
+    Certificate binds               : Vehicle registration + H_0
+    Certificate fingerprint         : af213ae93d09f00c2751c18524e455a7
+    Certificate serial              : CERT_9caa6c8448a2a9d1
+    Time taken                      : included in TA verification/registration call above
+[PHASE1_DEMO][11] Public system parameters delivered
+    Epoch duration                  : 30.000000 s
+    Beacon interval                 : 5.000000 s
+    Trust cache TTL                 : 30 s
+    Authenticated Cuckoo Filter max staleness : 3 epochs
+    Time taken                      : 0.013 ms
+[PHASE1_DEMO][12] Cluster assignment completed
+    Assigned cluster ID             : cluster-4
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][13] Trusted Authority generates bootstrap Pseudo-Identities (PIDs)
+    Bootstrap PID[0]             : PID_0_d342288fef05f82fe8c11d7374e8e69b
+    Bootstrap PID[1]             : PID_1_ec435bb77259f1c5a03841437728423b
+    Bootstrap PID[2]             : PID_2_91088a009af1e619a541b0e76dcee39e
+    Bootstrap PID[3]             : PID_3_93126b04bed3b5bd603b0465ecc22420
+    Bootstrap PID[4]             : PID_4_f8dd84f948dc023c7a7e4228229e98aa
+    Total bootstrap PIDs generated : 5
+    Time taken                      : 0.063 ms
+[PHASE1_DEMO][14] Trusted Authority provides expiry information
+    Expiry information              : enrolment_certificate_validity=365_days; starter_pack_validity=30_days; bootstrap_pid_validity=initial_epoch_only
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][15] Starter Pack packaged and loaded into On-Board Unit (OBU)
+    Starter Pack ID                 : STARTER_PACK_3b8aeb3fe0d8523f
+    Contains                        : enrolment certificate + 5 bootstrap PIDs + public parameters + expiry info
+    Starter Pack loaded into OBU    : YES
+    Time taken                      : 0.021 ms
+[PHASE1_DEMO][16] TA secrecy boundary check
+    TA receives K_master            : NO
+    TA receives C_0                 : NO
+    TA provides ACF                 : NO
+    TA only certifies H_0           : YES
+[PHASE1_DEMO][RESULT] PHASE 1 REGISTRATION SUCCESSFUL
+[PHASE1_DEMO][TOTAL_TIME] Total Phase 1 wall-clock time : 2.129 ms
+============================================================
+
+[URBAN_FULL_DEMO][t=0.400s][node[3]][VALIDATOR_2][PHASE_2_FIRST_BOOT] Step 1: HSM ready | K_master remains sealed inside HSM
+[URBAN_FULL_DEMO][t=0.400s][node[3]][VALIDATOR_2][PHASE_2_FIRST_BOOT] Step 2: anchors derived | H_0 public anchor and C_0 chain anchor prepared
+[URBAN_FULL_DEMO][t=0.400s][node[3]][VALIDATOR_2][PHASE_2_FIRST_BOOT] Step 3: Authenticated Cuckoo Filter initialized | ACF starts empty, epoch=0
+[URBAN_FULL_DEMO][t=0.400s][node[3]][VALIDATOR_2][PHASE_2_FIRST_BOOT] Step 4: session seed derived | S_session generated for current epoch
+[URBAN_FULL_DEMO][t=0.400s][node[3]][VALIDATOR_2][PHASE_2_FIRST_BOOT] Step 5: first pseudonym derived | Current pseudonym=c66366375fd2caa8
+[URBAN_FULL_DEMO][t=0.400s][node[3]][VALIDATOR_2][PHASE_2_FIRST_BOOT] Step 6: Zero-Knowledge proof pool prepared | Precomputed proofs ready for pseudonym validation
+[URBAN_FULL_DEMO][t=0.400s][node[3]][VALIDATOR_2][PHASE_2_FIRST_BOOT] Step 7: Boneh-Lynn-Shacham signing keys ready | Ephemeral signing key derived
+[URBAN_FULL_DEMO][t=0.400s][node[3]][VALIDATOR_2][PHASE_2_FIRST_BOOT] Step 8: trust cache initialized | Receiver cache ready for accepted vehicles
+
+============================================================
+[PHASE1_DEMO] TRUSTED AUTHORITY (TA) REGISTRATION TRACE
+============================================================
+[PHASE1_DEMO][1] Vehicle registration request created
+    Vehicle module / VIN equivalent : node[4]
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1A] Trusted Authority verifies physical vehicle identity
+    Physical identity verified      : YES
+    Registration record             : VIN/module ID exists in TA records
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1B] Trusted Authority verifies HSM manufacturer certificate chain
+    HSM certificate chain           : OEM_ROOT_CA -> HSM_VENDOR_CA -> HSM_CHIP_CERT_node[4]
+    HSM chain verification result   : SUCCESS
+    Time taken                      : 0.005 ms
+[PHASE1_DEMO][2] Hardware Security Module (HSM) initialised
+    K_master, 256-bit root secret   : 0a8d26fce2b7ba56deaf58649e433a868ee1d65be61ed3e36b49bfa966e7b2ae   [DEMO ONLY]
+    Time taken                      : 0.061 ms
+[PHASE1_DEMO][3] VIN bound to HSM
+    Bound VIN / vehicle ID          : node[4]
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][4] Private key/scalar prepared inside HSM
+    Private key material            : 0a8d26fce2b7ba56deaf58649e433a868ee1d65be61ed3e36b49bfa966e7b2ae   [DEMO ONLY]
+    Time taken                      : same as HSM root secret generation in this simulation
+[PHASE1_DEMO][5] Public key anchor derived
+    H_0 public key / public anchor  : dc23cdfcc3b6fa151a612596b637d640feb6c30fb49dc445027bb4fcbdc58077
+    Time taken                      : 0.096 ms
+[PHASE1_DEMO][6] Trusted Authority sends challenge nonce
+    TA nonce                        : 1a0483a8c5072584b9d56904eb337f436c3aa3ab338198afd963efbae52bb047
+    Time taken                      : 0.011 ms
+[PHASE1_DEMO][7] HSM signs nonce for proof-of-possession
+    Nonce signature / PoP proof     : a47e1566d8b8b9391689dede0fcc929b1e50f1b883ce4b1ebf76b55df8fe79bf
+    Time taken                      : 0.017 ms
+[PHASE1_DEMO][8] Trusted Authority service accessed
+    TA component                    : TrustedAuthority singleton/service
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][9] Trusted Authority verifies proof-of-possession
+    Verification result             : SUCCESS
+    Time taken                      : 0.023 ms
+[PHASE1_DEMO][10] Enrolment certificate issued
+    Certificate binds               : Vehicle registration + H_0
+    Certificate fingerprint         : 8e96705e82a29baed31ceab803677f87
+    Certificate serial              : CERT_e730e7e3878ee8fd
+    Time taken                      : included in TA verification/registration call above
+[PHASE1_DEMO][11] Public system parameters delivered
+    Epoch duration                  : 30.000000 s
+    Beacon interval                 : 5.000000 s
+    Trust cache TTL                 : 30 s
+    Authenticated Cuckoo Filter max staleness : 3 epochs
+    Time taken                      : 0.009 ms
+[PHASE1_DEMO][12] Cluster assignment completed
+    Assigned cluster ID             : cluster-9
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][13] Trusted Authority generates bootstrap Pseudo-Identities (PIDs)
+    Bootstrap PID[0]             : PID_0_79addc87e69b612e6ca45bef62bdc482
+    Bootstrap PID[1]             : PID_1_ca3726c1afe20a47d48897ceb5612df8
+    Bootstrap PID[2]             : PID_2_5068cdc27b42e9335bc0b9ee068c5ce3
+    Bootstrap PID[3]             : PID_3_bf23440acf7f3900db9e49f1d3a0ae02
+    Bootstrap PID[4]             : PID_4_80e163f809b62dbed1cacaa5022adaaf
+    Total bootstrap PIDs generated : 5
+    Time taken                      : 0.065 ms
+[PHASE1_DEMO][14] Trusted Authority provides expiry information
+    Expiry information              : enrolment_certificate_validity=365_days; starter_pack_validity=30_days; bootstrap_pid_validity=initial_epoch_only
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][15] Starter Pack packaged and loaded into On-Board Unit (OBU)
+    Starter Pack ID                 : STARTER_PACK_7fa934851054bf15
+    Contains                        : enrolment certificate + 5 bootstrap PIDs + public parameters + expiry info
+    Starter Pack loaded into OBU    : YES
+    Time taken                      : 0.021 ms
+[PHASE1_DEMO][16] TA secrecy boundary check
+    TA receives K_master            : NO
+    TA receives C_0                 : NO
+    TA provides ACF                 : NO
+    TA only certifies H_0           : YES
+[PHASE1_DEMO][RESULT] PHASE 1 REGISTRATION SUCCESSFUL
+[PHASE1_DEMO][TOTAL_TIME] Total Phase 1 wall-clock time : 4.013 ms
+============================================================
+
+[URBAN_FULL_DEMO][t=0.500s][node[4]][VALIDATOR_3][PHASE_2_FIRST_BOOT] Step 1: HSM ready | K_master remains sealed inside HSM
+[URBAN_FULL_DEMO][t=0.500s][node[4]][VALIDATOR_3][PHASE_2_FIRST_BOOT] Step 2: anchors derived | H_0 public anchor and C_0 chain anchor prepared
+[URBAN_FULL_DEMO][t=0.500s][node[4]][VALIDATOR_3][PHASE_2_FIRST_BOOT] Step 3: Authenticated Cuckoo Filter initialized | ACF starts empty, epoch=0
+[URBAN_FULL_DEMO][t=0.500s][node[4]][VALIDATOR_3][PHASE_2_FIRST_BOOT] Step 4: session seed derived | S_session generated for current epoch
+[URBAN_FULL_DEMO][t=0.500s][node[4]][VALIDATOR_3][PHASE_2_FIRST_BOOT] Step 5: first pseudonym derived | Current pseudonym=ba11810e716e9679
+[URBAN_FULL_DEMO][t=0.500s][node[4]][VALIDATOR_3][PHASE_2_FIRST_BOOT] Step 6: Zero-Knowledge proof pool prepared | Precomputed proofs ready for pseudonym validation
+[URBAN_FULL_DEMO][t=0.500s][node[4]][VALIDATOR_3][PHASE_2_FIRST_BOOT] Step 7: Boneh-Lynn-Shacham signing keys ready | Ephemeral signing key derived
+[URBAN_FULL_DEMO][t=0.500s][node[4]][VALIDATOR_3][PHASE_2_FIRST_BOOT] Step 8: trust cache initialized | Receiver cache ready for accepted vehicles
+
+============================================================
+[PHASE1_DEMO] TRUSTED AUTHORITY (TA) REGISTRATION TRACE
+============================================================
+[PHASE1_DEMO][1] Vehicle registration request created
+    Vehicle module / VIN equivalent : node[5]
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1A] Trusted Authority verifies physical vehicle identity
+    Physical identity verified      : YES
+    Registration record             : VIN/module ID exists in TA records
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][1B] Trusted Authority verifies HSM manufacturer certificate chain
+    HSM certificate chain           : OEM_ROOT_CA -> HSM_VENDOR_CA -> HSM_CHIP_CERT_node[5]
+    HSM chain verification result   : SUCCESS
+    Time taken                      : 0.005 ms
+[PHASE1_DEMO][2] Hardware Security Module (HSM) initialised
+    K_master, 256-bit root secret   : 951e2b368bf48a2758f3957997e6246b2fb99bc7b0bb6c520babef0be3907b37   [DEMO ONLY]
+    Time taken                      : 0.064 ms
+[PHASE1_DEMO][3] VIN bound to HSM
+    Bound VIN / vehicle ID          : node[5]
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][4] Private key/scalar prepared inside HSM
+    Private key material            : 951e2b368bf48a2758f3957997e6246b2fb99bc7b0bb6c520babef0be3907b37   [DEMO ONLY]
+    Time taken                      : same as HSM root secret generation in this simulation
+[PHASE1_DEMO][5] Public key anchor derived
+    H_0 public key / public anchor  : 3522f58eba8b154c9e287f492d34ff8549abf64e67d33c83342ad19c6d35e562
+    Time taken                      : 0.095 ms
+[PHASE1_DEMO][6] Trusted Authority sends challenge nonce
+    TA nonce                        : 884103f2285705c16e771301540626d26f457876739573e9b60ec04614e4696a
+    Time taken                      : 0.005 ms
+[PHASE1_DEMO][7] HSM signs nonce for proof-of-possession
+    Nonce signature / PoP proof     : 05ce4b12507de1cad4ed623a9dece6bec9a63e5c69dfa25e020e691de028492c
+    Time taken                      : 0.011 ms
+[PHASE1_DEMO][8] Trusted Authority service accessed
+    TA component                    : TrustedAuthority singleton/service
+    Time taken                      : 0.001 ms
+[PHASE1_DEMO][9] Trusted Authority verifies proof-of-possession
+    Verification result             : SUCCESS
+    Time taken                      : 0.014 ms
+[PHASE1_DEMO][10] Enrolment certificate issued
+    Certificate binds               : Vehicle registration + H_0
+    Certificate fingerprint         : a37f2cb4f3cc2f7673bcabe2a5c2ebf0
+    Certificate serial              : CERT_6ca8e600a3c6302e
+    Time taken                      : included in TA verification/registration call above
+[PHASE1_DEMO][11] Public system parameters delivered
+    Epoch duration                  : 30.000000 s
+    Beacon interval                 : 5.000000 s
+    Trust cache TTL                 : 30 s
+    Authenticated Cuckoo Filter max staleness : 3 epochs
+    Time taken                      : 0.006 ms
+[PHASE1_DEMO][12] Cluster assignment completed
+    Assigned cluster ID             : cluster-4
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][13] Trusted Authority generates bootstrap Pseudo-Identities (PIDs)
+    Bootstrap PID[0]             : PID_0_c396b6cac7a5fda883b787caeb6ce526
+    Bootstrap PID[1]             : PID_1_f1353892a7cc8ee1319e5e17b3d992cb
+    Bootstrap PID[2]             : PID_2_d15c14776e46d11da394e26c1677d412
+    Bootstrap PID[3]             : PID_3_bd1d5355871e5023756d55bbed081927
+    Bootstrap PID[4]             : PID_4_0ac264f2bd9279219063c56f015cdd3e
+    Total bootstrap PIDs generated : 5
+    Time taken                      : 0.040 ms
+[PHASE1_DEMO][14] Trusted Authority provides expiry information
+    Expiry information              : enrolment_certificate_validity=365_days; starter_pack_validity=30_days; bootstrap_pid_validity=initial_epoch_only
+    Time taken                      : 0.000 ms
+[PHASE1_DEMO][15] Starter Pack packaged and loaded into On-Board Unit (OBU)
+    Starter Pack ID                 : STARTER_PACK_2e06ec0195e1194c
+    Contains                        : enrolment certificate + 5 bootstrap PIDs + public parameters + expiry info
+    Starter Pack loaded into OBU    : YES
+    Time taken                      : 0.015 ms
+[PHASE1_DEMO][16] TA secrecy boundary check
+    TA receives K_master            : NO
+    TA receives C_0                 : NO
+    TA provides ACF                 : NO
+    TA only certifies H_0           : YES
+[PHASE1_DEMO][RESULT] PHASE 1 REGISTRATION SUCCESSFUL
+[PHASE1_DEMO][TOTAL_TIME] Total Phase 1 wall-clock time : 1.068 ms
+============================================================
+
+[URBAN_FULL_DEMO][t=0.600s][node[5]][MALICIOUS][PHASE_2_FIRST_BOOT] Step 1: HSM ready | K_master remains sealed inside HSM
+[URBAN_FULL_DEMO][t=0.600s][node[5]][MALICIOUS][PHASE_2_FIRST_BOOT] Step 2: anchors derived | H_0 public anchor and C_0 chain anchor prepared
+[URBAN_FULL_DEMO][t=0.600s][node[5]][MALICIOUS][PHASE_2_FIRST_BOOT] Step 3: Authenticated Cuckoo Filter initialized | ACF starts empty, epoch=0
+[URBAN_FULL_DEMO][t=0.600s][node[5]][MALICIOUS][PHASE_2_FIRST_BOOT] Step 4: session seed derived | S_session generated for current epoch
+[URBAN_FULL_DEMO][t=0.600s][node[5]][MALICIOUS][PHASE_2_FIRST_BOOT] Step 5: first pseudonym derived | Current pseudonym=71b24873032847e7
+[URBAN_FULL_DEMO][t=0.600s][node[5]][MALICIOUS][PHASE_2_FIRST_BOOT] Step 6: Zero-Knowledge proof pool prepared | Precomputed proofs ready for pseudonym validation
+[URBAN_FULL_DEMO][t=0.600s][node[5]][MALICIOUS][PHASE_2_FIRST_BOOT] Step 7: Boneh-Lynn-Shacham signing keys ready | Ephemeral signing key derived
+[URBAN_FULL_DEMO][t=0.600s][node[5]][MALICIOUS][PHASE_2_FIRST_BOOT] Step 8: trust cache initialized | Receiver cache ready for accepted vehicles
+[URBAN_FULL_DEMO][t=2.100s][node[0]][LEGIT_SENDER][PHASE_3_PSEUDONYM_GENERATION] Demo event fired | LEGIT_SENDER requesting swarm-accepted pseudonym
+[URBAN_FULL_DEMO][t=2.100s][node[0]][LEGIT_SENDER][PHASE_3_PSEUDONYM_GENERATION] TX real CANDIDATE_MSG | candidatePseudonym=f8cf2cf58584e63a, H_0=d4a86527f214fc7d, epoch=0
+[URBAN_FULL_DEMO][t=2.100s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=2.100s][node[1]][LEGIT_RECEIVER][PHASE_3_SWARM_VALIDATION] Ignored CANDIDATE_MSG | this node is not a validator in controlled demo
+[URBAN_FULL_DEMO][t=2.100s][node[2]][VALIDATOR_1][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=2.100s][node[2]][VALIDATOR_1][PHASE_3_SWARM_VALIDATION] Zero-Knowledge proof verification | proofValid=YES
+[URBAN_FULL_DEMO][t=2.100s][node[2]][VALIDATOR_1][PHASE_3_SWARM_ACCEPTANCE] Scheduled PARTIAL_SIG_MSG | delay=0.100000, targetCandidate=f8cf2cf58584e63a
+[URBAN_FULL_DEMO][t=2.100s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=2.100s][node[3]][VALIDATOR_2][PHASE_3_SWARM_VALIDATION] Zero-Knowledge proof verification | proofValid=YES
+[URBAN_FULL_DEMO][t=2.100s][node[3]][VALIDATOR_2][PHASE_3_SWARM_ACCEPTANCE] Scheduled PARTIAL_SIG_MSG | delay=0.200000, targetCandidate=f8cf2cf58584e63a
+[URBAN_FULL_DEMO][t=2.100s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=2.100s][node[4]][VALIDATOR_3][PHASE_3_SWARM_VALIDATION] Zero-Knowledge proof verification | proofValid=YES
+[URBAN_FULL_DEMO][t=2.100s][node[4]][VALIDATOR_3][PHASE_3_SWARM_ACCEPTANCE] Scheduled PARTIAL_SIG_MSG | delay=0.300000, targetCandidate=f8cf2cf58584e63a
+[URBAN_FULL_DEMO][t=2.100s][node[5]][MALICIOUS][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=2.100s][node[5]][MALICIOUS][PHASE_3_SWARM_VALIDATION] Ignored CANDIDATE_MSG | this node is not a validator in controlled demo
+[URBAN_FULL_DEMO][t=2.200s][node[2]][VALIDATOR_1][PHASE_3_SWARM_ACCEPTANCE] TX real PARTIAL_SIG_MSG | validator=29085cc6998cc8d4, targetCandidate=f8cf2cf58584e63a557c25517303ad2ce1a54bd596d558e479a27b1dbfbb5a54
+[URBAN_FULL_DEMO][t=2.200s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.200s][node[0]][LEGIT_SENDER][PHASE_3_SWARM_ACCEPTANCE] RX PARTIAL_SIG_MSG and stored validator signature | collected=1/3
+[URBAN_FULL_DEMO][t=2.200s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.200s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.200s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.200s][node[5]][MALICIOUS][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.300s][node[3]][VALIDATOR_2][PHASE_3_SWARM_ACCEPTANCE] TX real PARTIAL_SIG_MSG | validator=c66366375fd2caa8, targetCandidate=f8cf2cf58584e63a557c25517303ad2ce1a54bd596d558e479a27b1dbfbb5a54
+[URBAN_FULL_DEMO][t=2.300s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.300s][node[0]][LEGIT_SENDER][PHASE_3_SWARM_ACCEPTANCE] RX PARTIAL_SIG_MSG and stored validator signature | collected=2/3
+[URBAN_FULL_DEMO][t=2.300s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.300s][node[2]][VALIDATOR_1][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.300s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.300s][node[5]][MALICIOUS][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.400s][node[4]][VALIDATOR_3][PHASE_3_SWARM_ACCEPTANCE] TX real PARTIAL_SIG_MSG | validator=ba11810e716e9679, targetCandidate=f8cf2cf58584e63a557c25517303ad2ce1a54bd596d558e479a27b1dbfbb5a54
+[URBAN_FULL_DEMO][t=2.400s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.400s][node[0]][LEGIT_SENDER][PHASE_3_SWARM_ACCEPTANCE] RX PARTIAL_SIG_MSG and stored validator signature | collected=3/3
+[URBAN_FULL_DEMO][t=2.400s][node[0]][LEGIT_SENDER][PHASE_3_SWARM_ACCEPTANCE] Boneh-Lynn-Shacham threshold signature aggregated | partials=3, Sigma_threshold=3|0|f8cf2cf58584e63a557c25517303, filterEpochAtSigning=0
+[URBAN_FULL_DEMO][t=2.400s][node[0]][LEGIT_SENDER][PHASE_3_PSEUDONYM_ACTIVATION] New pseudonym activated after swarm acceptance | old=f8cf2cf58584e63a, new=f8cf2cf58584e63a
+[URBAN_FULL_DEMO][t=2.400s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.400s][node[2]][VALIDATOR_1][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.400s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=2.400s][node[5]][MALICIOUS][RX_DISPATCH] Received message from lower layer | msgName=PARTIAL_SIG_MSG, class=swarmevose::PartialSigMsg
+[URBAN_FULL_DEMO][t=7.100s][node[0]][LEGIT_SENDER][PHASE_4_SAFETY_TRANSMISSION] Demo event fired | LEGIT_SENDER sending authenticated safety message
+[URBAN_FULL_DEMO][t=7.100s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=7.100s][node[1]][LEGIT_RECEIVER][PHASE_5_RECEIVER_AUTHENTICATION] SAFETY_MSG ACCEPTED | ACF not revoked, signature valid, Proof of Swarm Acceptance valid, sender added to trust cache
+[URBAN_FULL_DEMO][t=7.100s][node[2]][VALIDATOR_1][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=7.100s][node[2]][VALIDATOR_1][PHASE_5_RECEIVER_AUTHENTICATION] SAFETY_MSG ACCEPTED | ACF not revoked, signature valid, Proof of Swarm Acceptance valid, sender added to trust cache
+[URBAN_FULL_DEMO][t=7.100s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=7.100s][node[3]][VALIDATOR_2][PHASE_5_RECEIVER_AUTHENTICATION] SAFETY_MSG ACCEPTED | ACF not revoked, signature valid, Proof of Swarm Acceptance valid, sender added to trust cache
+[URBAN_FULL_DEMO][t=7.100s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=7.100s][node[4]][VALIDATOR_3][PHASE_5_RECEIVER_AUTHENTICATION] SAFETY_MSG ACCEPTED | ACF not revoked, signature valid, Proof of Swarm Acceptance valid, sender added to trust cache
+[URBAN_FULL_DEMO][t=7.100s][node[5]][MALICIOUS][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=7.100s][node[5]][MALICIOUS][PHASE_5_RECEIVER_AUTHENTICATION] SAFETY_MSG ACCEPTED | ACF not revoked, signature valid, Proof of Swarm Acceptance valid, sender added to trust cache
+[URBAN_FULL_DEMO][t=11.600s][node[5]][MALICIOUS][MALICIOUS_BEHAVIOUR] Demo event fired | MALICIOUS node attempting invalid ZK proof
+[URBAN_FULL_DEMO][t=11.600s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=11.600s][node[0]][LEGIT_SENDER][PHASE_3_SWARM_VALIDATION] Ignored CANDIDATE_MSG | this node is not a validator in controlled demo
+[URBAN_FULL_DEMO][t=11.600s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=11.600s][node[1]][LEGIT_RECEIVER][PHASE_3_SWARM_VALIDATION] Ignored CANDIDATE_MSG | this node is not a validator in controlled demo
+[URBAN_FULL_DEMO][t=11.600s][node[2]][VALIDATOR_1][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=11.600s][node[2]][VALIDATOR_1][PHASE_3_SWARM_VALIDATION] Zero-Knowledge proof verification | proofValid=NO
+[URBAN_FULL_DEMO][t=11.600s][node[2]][VALIDATOR_1][PHASE_3_SWARM_VALIDATION] HARD_DROP invalid_zk | candidatePseudonym=71b24873032847e7, sender=71b24873032847e7, failures=1, reason=zero-knowledge proof verification failed
+[URBAN_FULL_DEMO][t=11.600s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=11.600s][node[3]][VALIDATOR_2][PHASE_3_SWARM_VALIDATION] Zero-Knowledge proof verification | proofValid=NO
+[URBAN_FULL_DEMO][t=11.600s][node[3]][VALIDATOR_2][PHASE_3_SWARM_VALIDATION] HARD_DROP invalid_zk | candidatePseudonym=71b24873032847e7, sender=71b24873032847e7, failures=1, reason=zero-knowledge proof verification failed
+[URBAN_FULL_DEMO][t=11.600s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=11.600s][node[4]][VALIDATOR_3][PHASE_3_SWARM_VALIDATION] Zero-Knowledge proof verification | proofValid=NO
+[URBAN_FULL_DEMO][t=11.600s][node[4]][VALIDATOR_3][PHASE_3_SWARM_VALIDATION] HARD_DROP invalid_zk | candidatePseudonym=71b24873032847e7, sender=71b24873032847e7, failures=1, reason=zero-knowledge proof verification failed
+[URBAN_FULL_DEMO][t=12.600s][node[5]][MALICIOUS][MALICIOUS_BEHAVIOUR] Second invalid ZK attempt fired | MALICIOUS node repeats invalid pseudonym proof
+[URBAN_FULL_DEMO][t=12.600s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=12.600s][node[0]][LEGIT_SENDER][PHASE_3_SWARM_VALIDATION] Ignored CANDIDATE_MSG | this node is not a validator in controlled demo
+[URBAN_FULL_DEMO][t=12.600s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=12.600s][node[1]][LEGIT_RECEIVER][PHASE_3_SWARM_VALIDATION] Ignored CANDIDATE_MSG | this node is not a validator in controlled demo
+[URBAN_FULL_DEMO][t=12.600s][node[2]][VALIDATOR_1][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=12.600s][node[2]][VALIDATOR_1][PHASE_3_SWARM_VALIDATION] Zero-Knowledge proof verification | proofValid=NO
+[URBAN_FULL_DEMO][t=12.600s][node[2]][VALIDATOR_1][PHASE_3_SWARM_VALIDATION] HARD_DROP invalid_zk | candidatePseudonym=71b24873032847e7, sender=71b24873032847e7, failures=2, reason=zero-knowledge proof verification failed
+[URBAN_FULL_DEMO][t=12.600s][node[2]][VALIDATOR_1][REVOCATION_PROTOCOL] Revocation threshold trigger | sender=71b24873032847e7, repeated invalid ZK failures observed
+[URBAN_FULL_DEMO][t=12.600s][node[2]][VALIDATOR_1][REVOCATION_PROTOCOL] Stored proposer self-vote | votes=1/3
+[URBAN_FULL_DEMO][t=12.600s][node[2]][VALIDATOR_1][REVOCATION_PROTOCOL] TX real REVOKE_PROPOSAL | suspect=71b24873032847e7, evidence=repeated_zk_failure
+[URBAN_FULL_DEMO][t=12.600s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=12.600s][node[3]][VALIDATOR_2][PHASE_3_SWARM_VALIDATION] Zero-Knowledge proof verification | proofValid=NO
+[URBAN_FULL_DEMO][t=12.600s][node[3]][VALIDATOR_2][PHASE_3_SWARM_VALIDATION] HARD_DROP invalid_zk | candidatePseudonym=71b24873032847e7, sender=71b24873032847e7, failures=2, reason=zero-knowledge proof verification failed
+[URBAN_FULL_DEMO][t=12.600s][node[3]][VALIDATOR_2][REVOCATION_PROTOCOL] Revocation threshold trigger | sender=71b24873032847e7, repeated invalid ZK failures observed
+[URBAN_FULL_DEMO][t=12.600s][node[3]][VALIDATOR_2][REVOCATION_PROTOCOL] Waiting for REVOKE_PROPOSAL | local evidence exists, but controlled demo uses VALIDATOR_1 as proposer
+[URBAN_FULL_DEMO][t=12.600s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=CANDIDATE_MSG, class=swarmevose::CandidateMsg
+[URBAN_FULL_DEMO][t=12.600s][node[4]][VALIDATOR_3][PHASE_3_SWARM_VALIDATION] Zero-Knowledge proof verification | proofValid=NO
+[URBAN_FULL_DEMO][t=12.600s][node[4]][VALIDATOR_3][PHASE_3_SWARM_VALIDATION] HARD_DROP invalid_zk | candidatePseudonym=71b24873032847e7, sender=71b24873032847e7, failures=2, reason=zero-knowledge proof verification failed
+[URBAN_FULL_DEMO][t=12.600s][node[4]][VALIDATOR_3][REVOCATION_PROTOCOL] Revocation threshold trigger | sender=71b24873032847e7, repeated invalid ZK failures observed
+[URBAN_FULL_DEMO][t=12.600s][node[4]][VALIDATOR_3][REVOCATION_PROTOCOL] Waiting for REVOKE_PROPOSAL | local evidence exists, but controlled demo uses VALIDATOR_1 as proposer
+[URBAN_FULL_DEMO][t=12.601s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_PROPOSAL, class=swarmevose::RevokeProposalMsg
+[URBAN_FULL_DEMO][t=12.601s][node[0]][LEGIT_SENDER][REVOCATION_PROTOCOL] RX real REVOKE_PROPOSAL | suspect=71b24873032847e7, proposer=29085cc6998cc8d4, confidence=0.950000
+[URBAN_FULL_DEMO][t=12.601s][node[0]][LEGIT_SENDER][REVOCATION_PROTOCOL] Ignored REVOKE_PROPOSAL | only VALIDATOR_2 and VALIDATOR_3 vote in controlled demo
+[URBAN_FULL_DEMO][t=12.601s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_PROPOSAL, class=swarmevose::RevokeProposalMsg
+[URBAN_FULL_DEMO][t=12.601s][node[1]][LEGIT_RECEIVER][REVOCATION_PROTOCOL] RX real REVOKE_PROPOSAL | suspect=71b24873032847e7, proposer=29085cc6998cc8d4, confidence=0.950000
+[URBAN_FULL_DEMO][t=12.601s][node[1]][LEGIT_RECEIVER][REVOCATION_PROTOCOL] Ignored REVOKE_PROPOSAL | only VALIDATOR_2 and VALIDATOR_3 vote in controlled demo
+[URBAN_FULL_DEMO][t=12.601s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_PROPOSAL, class=swarmevose::RevokeProposalMsg
+[URBAN_FULL_DEMO][t=12.601s][node[3]][VALIDATOR_2][REVOCATION_PROTOCOL] RX real REVOKE_PROPOSAL | suspect=71b24873032847e7, proposer=29085cc6998cc8d4, confidence=0.950000
+[URBAN_FULL_DEMO][t=12.601s][node[3]][VALIDATOR_2][REVOCATION_PROTOCOL] Scheduled REVOKE_VOTE | delay=0.100000, suspect=71b24873032847e7
+[URBAN_FULL_DEMO][t=12.601s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_PROPOSAL, class=swarmevose::RevokeProposalMsg
+[URBAN_FULL_DEMO][t=12.601s][node[4]][VALIDATOR_3][REVOCATION_PROTOCOL] RX real REVOKE_PROPOSAL | suspect=71b24873032847e7, proposer=29085cc6998cc8d4, confidence=0.950000
+[URBAN_FULL_DEMO][t=12.601s][node[4]][VALIDATOR_3][REVOCATION_PROTOCOL] Scheduled REVOKE_VOTE | delay=0.200000, suspect=71b24873032847e7
+[URBAN_FULL_DEMO][t=12.601s][node[5]][MALICIOUS][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_PROPOSAL, class=swarmevose::RevokeProposalMsg
+[URBAN_FULL_DEMO][t=12.601s][node[5]][MALICIOUS][REVOCATION_PROTOCOL] RX real REVOKE_PROPOSAL | suspect=71b24873032847e7, proposer=29085cc6998cc8d4, confidence=0.950000
+[URBAN_FULL_DEMO][t=12.701s][node[3]][VALIDATOR_2][REVOCATION_PROTOCOL] TX real REVOKE_VOTE | suspect=71b24873032847e7ebaacff1c3c66b25517bdd64c2a1bd4cf8e79546e7bacd89, voter=c66366375fd2caa8ea00f77ba0f15f098af4933d41fa93dc5951560431f0dc4e
+[URBAN_FULL_DEMO][t=12.701s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.701s][node[0]][LEGIT_SENDER][REVOCATION_PROTOCOL] Ignored REVOKE_VOTE | only VALIDATOR_1 collects revocation votes in controlled demo
+[URBAN_FULL_DEMO][t=12.701s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.701s][node[1]][LEGIT_RECEIVER][REVOCATION_PROTOCOL] Ignored REVOKE_VOTE | only VALIDATOR_1 collects revocation votes in controlled demo
+[URBAN_FULL_DEMO][t=12.701s][node[2]][VALIDATOR_1][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.701s][node[2]][VALIDATOR_1][REVOCATION_PROTOCOL] RX REVOKE_VOTE and stored partial revocation signature | suspect=71b24873032847e7, voter=c66366375fd2caa8, votes=2/3
+[URBAN_FULL_DEMO][t=12.701s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.701s][node[4]][VALIDATOR_3][REVOCATION_PROTOCOL] Ignored REVOKE_VOTE | only VALIDATOR_1 collects revocation votes in controlled demo
+[URBAN_FULL_DEMO][t=12.701s][node[5]][MALICIOUS][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.701s][node[5]][MALICIOUS][REVOCATION_PROTOCOL] Ignored REVOKE_VOTE | only VALIDATOR_1 collects revocation votes in controlled demo
+[URBAN_FULL_DEMO][t=12.801s][node[4]][VALIDATOR_3][REVOCATION_PROTOCOL] TX real REVOKE_VOTE | suspect=71b24873032847e7ebaacff1c3c66b25517bdd64c2a1bd4cf8e79546e7bacd89, voter=ba11810e716e967969b1683f01487461ffa9475a8cdad49cc5f3cf70e888d672
+[URBAN_FULL_DEMO][t=12.801s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.801s][node[0]][LEGIT_SENDER][REVOCATION_PROTOCOL] Ignored REVOKE_VOTE | only VALIDATOR_1 collects revocation votes in controlled demo
+[URBAN_FULL_DEMO][t=12.801s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.801s][node[1]][LEGIT_RECEIVER][REVOCATION_PROTOCOL] Ignored REVOKE_VOTE | only VALIDATOR_1 collects revocation votes in controlled demo
+[URBAN_FULL_DEMO][t=12.801s][node[2]][VALIDATOR_1][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.801s][node[2]][VALIDATOR_1][REVOCATION_PROTOCOL] RX REVOKE_VOTE and stored partial revocation signature | suspect=71b24873032847e7, voter=ba11810e716e9679, votes=3/3
+[URBAN_FULL_DEMO][t=12.801s][node[2]][VALIDATOR_1][REVOCATION_PROTOCOL] Revocation threshold reached | suspect=71b24873032847e7, votes=3/3
+[URBAN_FULL_DEMO][t=12.801s][node[2]][VALIDATOR_1][REVOCATION_PROTOCOL] Local ACF updated after threshold revocation | suspect=71b24873032847e7, newACFEpoch=1, trustCache=invalidated
+[URBAN_FULL_DEMO][t=12.801s][node[2]][VALIDATOR_1][REVOCATION_PROTOCOL] TX real SIGNED_ACF_UPDATE | revokedFingerprint=bc46820954374851, newACFEpoch=1
+[URBAN_FULL_DEMO][t=12.801s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.801s][node[3]][VALIDATOR_2][REVOCATION_PROTOCOL] Ignored REVOKE_VOTE | only VALIDATOR_1 collects revocation votes in controlled demo
+[URBAN_FULL_DEMO][t=12.801s][node[5]][MALICIOUS][RX_DISPATCH] Received message from lower layer | msgName=REVOKE_VOTE, class=swarmevose::RevokeVoteMsg
+[URBAN_FULL_DEMO][t=12.801s][node[5]][MALICIOUS][REVOCATION_PROTOCOL] Ignored REVOKE_VOTE | only VALIDATOR_1 collects revocation votes in controlled demo
+[URBAN_FULL_DEMO][t=12.801s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=SIGNED_ACF_UPDATE, class=swarmevose::SignedAcfUpdateMsg
+[URBAN_FULL_DEMO][t=12.801s][node[0]][LEGIT_SENDER][REVOCATION_PROTOCOL] RX SIGNED_ACF_UPDATE and updated local ACF | revokedFingerprint=bc46820954374851, newACFEpoch=1
+[URBAN_FULL_DEMO][t=12.801s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=SIGNED_ACF_UPDATE, class=swarmevose::SignedAcfUpdateMsg
+[URBAN_FULL_DEMO][t=12.801s][node[1]][LEGIT_RECEIVER][REVOCATION_PROTOCOL] RX SIGNED_ACF_UPDATE and updated local ACF | revokedFingerprint=bc46820954374851, newACFEpoch=1
+[URBAN_FULL_DEMO][t=12.801s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=SIGNED_ACF_UPDATE, class=swarmevose::SignedAcfUpdateMsg
+[URBAN_FULL_DEMO][t=12.801s][node[3]][VALIDATOR_2][REVOCATION_PROTOCOL] RX SIGNED_ACF_UPDATE and updated local ACF | revokedFingerprint=bc46820954374851, newACFEpoch=1
+[URBAN_FULL_DEMO][t=12.801s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=SIGNED_ACF_UPDATE, class=swarmevose::SignedAcfUpdateMsg
+[URBAN_FULL_DEMO][t=12.801s][node[4]][VALIDATOR_3][REVOCATION_PROTOCOL] RX SIGNED_ACF_UPDATE and updated local ACF | revokedFingerprint=bc46820954374851, newACFEpoch=1
+[URBAN_FULL_DEMO][t=12.801s][node[5]][MALICIOUS][RX_DISPATCH] Received message from lower layer | msgName=SIGNED_ACF_UPDATE, class=swarmevose::SignedAcfUpdateMsg
+[URBAN_FULL_DEMO][t=12.801s][node[5]][MALICIOUS][REVOCATION_PROTOCOL] RX SIGNED_ACF_UPDATE and updated local ACF | revokedFingerprint=bc46820954374851, newACFEpoch=1
+[URBAN_FULL_DEMO][t=18.600s][node[5]][MALICIOUS][MALICIOUS_BEHAVIOUR] Demo event fired | MALICIOUS node attempting post-revocation safety message
+[URBAN_FULL_DEMO][t=18.600s][node[5]][MALICIOUS][PHASE_4_SAFETY_TRANSMISSION] TX real SAFETY_MSG | post-revocation malicious safety message with invalid or missing Proof of Swarm Acceptance
+[URBAN_FULL_DEMO][t=18.600s][node[0]][LEGIT_SENDER][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=18.600s][node[0]][LEGIT_SENDER][PHASE_5_RECEIVER_AUTHENTICATION] HARD_DROP SAFETY_MSG | sender=71b24873032847e7, reason=post-revocation malicious safety message rejected
+[URBAN_FULL_DEMO][t=18.600s][node[1]][LEGIT_RECEIVER][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=18.600s][node[1]][LEGIT_RECEIVER][PHASE_5_RECEIVER_AUTHENTICATION] HARD_DROP SAFETY_MSG | sender=71b24873032847e7, reason=post-revocation malicious safety message rejected
+[URBAN_FULL_DEMO][t=18.600s][node[2]][VALIDATOR_1][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=18.600s][node[2]][VALIDATOR_1][PHASE_5_RECEIVER_AUTHENTICATION] HARD_DROP SAFETY_MSG | sender=71b24873032847e7, reason=post-revocation malicious safety message rejected
+[URBAN_FULL_DEMO][t=18.600s][node[3]][VALIDATOR_2][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=18.600s][node[3]][VALIDATOR_2][PHASE_5_RECEIVER_AUTHENTICATION] HARD_DROP SAFETY_MSG | sender=71b24873032847e7, reason=post-revocation malicious safety message rejected
+[URBAN_FULL_DEMO][t=18.600s][node[4]][VALIDATOR_3][RX_DISPATCH] Received message from lower layer | msgName=SAFETY_MSG, class=swarmevose::SafetyMsg
+[URBAN_FULL_DEMO][t=18.600s][node[4]][VALIDATOR_3][PHASE_5_RECEIVER_AUTHENTICATION] HARD_DROP SAFETY_MSG | sender=71b24873032847e7, reason=post-revocation malicious safety message rejected
+
+End.

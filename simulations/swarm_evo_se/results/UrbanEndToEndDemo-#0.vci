@@ -1,0 +1,188 @@
+file 233922 1781444128                                          
+version 3
+run UrbanEndToEndDemo-0-20260614-19:00:14-85227
+attr configname UrbanEndToEndDemo
+attr datetime 20260614-19:00:14
+attr datetimef 20260614-190014
+attr experiment UrbanEndToEndDemo
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsd ""
+attr iterationvarsf ""
+attr measurement ""
+attr network SwarmNetwork
+attr processid 85227
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+config description "Urban end-to-end demo: authentication, pseudonym generation, swarm acceptance, revocation, and malicious rejection"
+config network SwarmNetwork
+config sim-time-limit 45s
+config *.manager.launchConfig "xmldoc(\"../../scripts/sumo_urban_full_demo.launchd.xml\")"
+config SwarmNetwork.playgroundSizeX 600m
+config SwarmNetwork.playgroundSizeY 600m
+config SwarmNetwork.playgroundSizeZ 50m
+config *.connectionManager.sendDirect true
+config *.connectionManager.maxInterfDist 300m
+config *.connectionManager.drawMaxIntfDist true
+config *.node[*].applType "\"SwarmVehicle\""
+config *.node[*].appl.headerLength 80bit
+config *.node[*].appl.sendBeacons true
+config *.node[*].appl.dataOnSch false
+config *.node[*].appl.beaconInterval 5s
+config **.epochDuration 30s
+config **.preActivationLead 10s
+config **.trustCacheTTL 30
+config **.acfMaxStaleness 3
+config **.proofPoolPrecompute 100
+config **.dashboardPort 8765
+config *.node[*].appl.demoTrace true
+config *.node[0].appl.demoRole "\"LEGIT_SENDER\""
+config *.node[1].appl.demoRole "\"LEGIT_RECEIVER\""
+config *.node[2].appl.demoRole "\"VALIDATOR_1\""
+config *.node[3].appl.demoRole "\"VALIDATOR_2\""
+config *.node[4].appl.demoRole "\"VALIDATOR_3\""
+config *.node[5].appl.demoRole "\"MALICIOUS\""
+config **.maliciousRatio 0.0
+config **.maliciousMode "\"NONE\""
+config *.node[5].appl.maliciousRatio 1.0
+config *.node[5].appl.maliciousMode "\"INVALID_ZK\""
+config network SwarmNetwork
+config sim-time-limit 300s
+config record-eventlog false
+config **.vector-recording true
+config **.scalar-recording true
+config SwarmNetwork.playgroundSizeX 6000m
+config SwarmNetwork.playgroundSizeY 1200m
+config SwarmNetwork.playgroundSizeZ 50m
+config SwarmNetwork.connectionManager.sendDirect true
+config SwarmNetwork.connectionManager.maxInterfDist 300m
+config SwarmNetwork.connectionManager.drawMaxIntfDist false
+config SwarmNetwork.manager.updateInterval 0.1s
+config SwarmNetwork.manager.host "\"localhost\""
+config SwarmNetwork.manager.port 9999
+config SwarmNetwork.manager.autoShutdown true
+config SwarmNetwork.manager.launchConfig "xmldoc(\"sumo_highway.launchd.xml\")"
+config SwarmNetwork.node[*].applType "\"SwarmVehicle\""
+config SwarmNetwork.node[*].appl.headerLength 80bit
+config SwarmNetwork.node[*].appl.sendBeacons true
+config SwarmNetwork.node[*].appl.dataOnSch false
+config SwarmNetwork.node[*].appl.beaconInterval 0.1s
+config SwarmNetwork.node[*].veinsmobility.x 0
+config SwarmNetwork.node[*].veinsmobility.y 0
+config SwarmNetwork.node[*].veinsmobility.z 0
+config SwarmNetwork.node[*].veinsmobility.setHostSpeed false
+config SwarmNetwork.node[*].nic.phy80211p.usePropagationDelay false
+config SwarmNetwork.node[*].nic.phy80211p.useNoiseFloor true
+config SwarmNetwork.node[*].nic.phy80211p.noiseFloor -98dBm
+config SwarmNetwork.node[*].nic.phy80211p.useThermalNoise true
+config SwarmNetwork.node[*].nic.phy80211p.thermalNoise -110dBm
+config SwarmNetwork.node[*].nic.phy80211p.sensitivity -89dBm
+config SwarmNetwork.node[*].nic.phy80211p.maxTXPower 20mW
+config SwarmNetwork.node[*].nic.phy80211p.initialRadioState 0
+config SwarmNetwork.node[*].nic.phy80211p.collectCollisionStatistics false
+config SwarmNetwork.node[*].nic.phy80211p.channelNumber 180
+config SwarmNetwork.node[*].nic.phy80211p.headerLength 46bit
+config SwarmNetwork.node[*].nic.phy80211p.decider "xmldoc(\"config.xml\")"
+config SwarmNetwork.node[*].nic.phy80211p.analogueModels "xmldoc(\"config.xml\")"
+config SwarmNetwork.node[*].nic.phy80211p.antenna default
+config SwarmNetwork.node[*].nic.phy80211p.minPowerLevel -110dBm
+config SwarmNetwork.node[*].nic.phy80211p.carrierFrequency "5.890e9 Hz"
+config SwarmNetwork.node[*].nic.phy80211p.drawCommunicationRange false
+config SwarmNetwork.node[*].nic.mac1609_4.useServiceChannel false
+config SwarmNetwork.node[*].nic.mac1609_4.queueSize 14
+config SwarmNetwork.node[*].nic.mac1609_4.contentionWindowMin 15
+config SwarmNetwork.node[*].nic.mac1609_4.contentionWindowMax 1007
+config SwarmNetwork.node[*].nic.mac1609_4.AIFS 2
+config SwarmNetwork.node[*].nic.mac1609_4.slotDuration 13us
+config SwarmNetwork.node[*].nic.mac1609_4.guardSize 4us
+config SwarmNetwork.node[*].nic.mac1609_4.txPower 20mW
+config SwarmNetwork.node[*].nic.mac1609_4.bitrate 6Mbps
+config SwarmNetwork.node[*].nic.mac1609_4.headerLength 88bit
+config SwarmNetwork.node[*].nic.mac1609_4.bandwidth 10MHz
+config SwarmNetwork.node[*].nic.mac1609_4.centerFrequency "5.890e9 Hz"
+config **.epochDuration 600s
+config **.beaconInterval 0.1s
+config **.preActivationLead 60s
+config **.trustCacheTTL 30
+config **.acfMaxStaleness 3
+config **.proofPoolPrecompute 100
+config **.dashboardPort 8765
+config **.maliciousRatio 0.0
+config **.maliciousMode "\"NONE\""
+
+vector 0 SwarmNetwork.node[0].nic.phy80211p RadioState ETV
+vector 1 SwarmNetwork.node[0].nic.phy80211p RadioChannel ETV
+vector 2 SwarmNetwork.manager posx ETV
+vector 3 SwarmNetwork.manager posy ETV
+vector 4 SwarmNetwork.node[1].nic.phy80211p RadioState ETV
+vector 5 SwarmNetwork.node[1].nic.phy80211p RadioChannel ETV
+vector 6 SwarmNetwork.manager posx ETV
+vector 7 SwarmNetwork.manager posy ETV
+vector 8 SwarmNetwork.manager speed ETV
+vector 9 SwarmNetwork.node[2].nic.phy80211p RadioState ETV
+vector 10 SwarmNetwork.node[2].nic.phy80211p RadioChannel ETV
+vector 11 SwarmNetwork.manager posx ETV
+vector 12 SwarmNetwork.manager posy ETV
+vector 13 SwarmNetwork.manager acceleration ETV
+vector 14 SwarmNetwork.manager co2emission ETV
+vector 15 SwarmNetwork.manager speed ETV
+vector 16 SwarmNetwork.node[3].nic.phy80211p RadioState ETV
+vector 17 SwarmNetwork.node[3].nic.phy80211p RadioChannel ETV
+vector 18 SwarmNetwork.manager posx ETV
+vector 19 SwarmNetwork.manager posy ETV
+vector 20 SwarmNetwork.manager acceleration ETV
+vector 21 SwarmNetwork.manager co2emission ETV
+vector 22 SwarmNetwork.manager speed ETV
+vector 23 SwarmNetwork.node[4].nic.phy80211p RadioState ETV
+vector 24 SwarmNetwork.node[4].nic.phy80211p RadioChannel ETV
+vector 25 SwarmNetwork.manager posx ETV
+vector 26 SwarmNetwork.manager posy ETV
+vector 27 SwarmNetwork.manager acceleration ETV
+vector 28 SwarmNetwork.manager co2emission ETV
+vector 29 SwarmNetwork.manager speed ETV
+vector 30 SwarmNetwork.node[5].nic.phy80211p RadioState ETV
+vector 31 SwarmNetwork.node[5].nic.phy80211p RadioChannel ETV
+vector 32 SwarmNetwork.manager posx ETV
+vector 33 SwarmNetwork.manager posy ETV
+vector 34 SwarmNetwork.manager acceleration ETV
+vector 35 SwarmNetwork.manager co2emission ETV
+vector 36 SwarmNetwork.manager speed ETV
+vector 37 SwarmNetwork.manager acceleration ETV
+vector 38 SwarmNetwork.manager co2emission ETV
+vector 39 SwarmNetwork.manager speed ETV
+vector 40 SwarmNetwork.manager acceleration ETV
+vector 41 SwarmNetwork.manager co2emission ETV
+41	7142 6479 9 864 0.8 25 243 0.973 10.500249133393 684.07670233516 2920.1371035421
+40	13621 7023 9 864 0.8 25 243 -0.50586437302641 2.5696438018605 86.442725737877 211.07290010368
+39	20644 6649 8 864 0.7 25 244 5.242668705292 13.889870153401 3219.1301767081 43311.837423795
+33	27293 4246 7 864 0.6 25 245 429.8 429.8 105301 45258369.8
+32	31539 6647 7 864 0.6 25 245 102.9 424.81301767081 62855.605599885 18416276.386111
+21	38186 7168 5 889 0.4 27.5 272 0.973 10.554418279721 744.10333720164 3042.6698781112
+20	45354 7839 5 889 0.4 27.5 272 -0.49570884873159 2.5999669815041 86.588815089585 209.89074252225
+15	53193 7443 4 889 0.3 27.5 273 5.218372474947 13.889899776217 3617.6536497148 48814.699469872
+7	60636 4478 3 889 0.2 27.5 274 429.8 429.8 117765.2 50615482.96
+6	65114 7187 3 889 0.2 27.5 274 62.9 424.66536497148 64727.035784411 18509472.563659
+14	72301 7792 4 909 0.3 29.5 293 0.973 10.197234557413 786.47133165428 3149.8122678403
+13	80093 8490 4 909 0.3 29.5 293 -0.47642605016009 2.5963317742664 86.707877556942 214.07153573405
+8	88583 7716 3 909 0.2 29.5 294 5.2150844808063 13.889833580899 3912.4453106943 52924.801595713
+3	96299 4828 2 909 0.1 29.5 295 429.8 429.8 126791 54494771.8
+2	101127 7744 2 909 0.1 29.5 295 32.9 424.14453106943 65216.665398516 18449773.243705
+38	108871 8429 8 945 0.7 33.1 325 0.973 8.8705267206964 765.19391418514 2558.6511334019
+37	117300 9426 8 945 0.7 33.1 325 -0.45758069090544 2.5853746730089 79.986285062101 199.78933645127
+36	126726 8909 7 945 0.6 33.1 326 4.2361811427576 12.266098657911 3849.8527934158 46159.513699402
+26	135635 8922 6 945 0.5 33.1 327 36.014720658425 421 76850.227810567 22363968.609063
+25	144557 5703 6 945 0.5 33.1 327 229.8 229.8 75144.6 17268229.08
+28	150260 8513 6 952 0.5 33.8 334 0.973 10.029544282514 1105.1615529133 5716.2502184522
+27	158773 9294 6 952 0.5 33.8 334 -4.5 2.6 96.486398945032 1218.2179246739
+22	168067 9153 5 952 0.4 33.8 335 0.95165048686251 13.88943743319 3852.567514106 48543.343531889
+12	177220 5859 4 952 0.3 33.8 336 226.6 229.8 76556.8 17444103.04
+11	183079 9170 4 952 0.3 33.8 336 35.4 420.6567514106 73607.393747549 20085910.06075
+35	192249 8550 7 956 0.6 34.2 337 0.973 10.184470937705 1033.5659851337 5112.9875433648
+34	200799 8982 7 956 0.6 34.2 337 -4.5 2.6 95.803374471702 1175.8810370746
+29	209781 8968 6 956 0.5 34.2 338 0 13.889981195313 3602.6632645632 45581.254778028
+19	218749 5914 5 956 0.4 34.2 339 229.8 229.8 77902.2 17901925.56
+18	224663 9258 5 956 0.4 34.2 339 60.4 420.66632645632 77948.310835584 21178253.230427
+

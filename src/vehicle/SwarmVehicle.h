@@ -32,6 +32,7 @@ using namespace veins;
 
 class SwarmVehicle : public DemoBaseApplLayer {
 public:
+    ~SwarmVehicle() override;
     // Malicious behaviour types for testing
     enum class MaliciousMode {
         NONE,              // Legitimate vehicle
@@ -149,9 +150,27 @@ private:
     KeyBytes    currentSigningKey_;   // Ephemeral key for current pseudonym
     std::string clusterId_;           // Current cluster membership
 
+    // ============================================================
+    // Phase 1 manufacture/registration artefacts
+    // These represent the Starter Pack loaded into the OBU.
+    // ============================================================
+    bool physicalIdentityVerified_ = false;
+    bool hsmManufacturerChainVerified_ = false;
+    bool proofOfPossessionVerified_ = false;
+    bool starterPackLoaded_ = false;
+
+    std::string hsmManufacturerCertChain_;
+    std::string enrolmentCertificateFingerprint_;
+    std::string enrolmentCertificateSerial_;
+    std::string phase1ExpiryInfo_;
+    std::string starterPackId_;
+    std::vector<std::string> bootstrapPIDs_;
+
     uint32_t    currentEpoch_;
     uint32_t    neighbourCount_;      // For adaptive threshold k
     bool        isMalicious_;
+    bool        demoTrace_ = false;
+    std::string demoRole_;
     MaliciousMode maliciousMode_;
     std::string maliciousModeName_;
     bool        isRevoked_;           // Has this vehicle been revoked?
@@ -164,6 +183,10 @@ private:
 
     // Signature failure counter (per sender pseudonym, for auto-revocation)
     std::map<std::string, int> sigFailureCount_;
+
+    // Recently observed neighbours based on received DSRC packets
+    std::map<std::string, simtime_t> recentNeighbourSeen_;
+    void updateObservedNeighbours();
 
     // Dashboard WebSocket client
     void emitDashboardEvent(const std::string& eventType,

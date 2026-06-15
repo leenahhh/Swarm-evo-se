@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<routes>
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.2" length="5" maxSpeed="13.89"/>
+    <route id="r0" edges="road"/>
+
+    <!-- One vehicle only for TA registration demonstration -->
+    <vehicle id="demoVehicle" type="car" route="r0" depart="0" departPos="0" departSpeed="5"/>
+</routes>

@@ -1,0 +1,43 @@
+
+SWARM EVO-SE URBAN END-TO-END DEMO TIMING REPORT
+==============================================================================================================
+ Time(s) | Node     | Role            | Evidence
+--------------------------------------------------------------------------------------------------------------
+   0.100 | node[0]  | LEGIT_SENDER    | Phase 2 first boot begins
+   2.100 | node[0]  | LEGIT_SENDER    | Legitimate pseudonym candidate sent
+   2.100 | node[2]  | VALIDATOR_1     | Validator 1 ZK proof accepted
+   2.100 | node[3]  | VALIDATOR_2     | Validator 2 ZK proof accepted
+   2.100 | node[4]  | VALIDATOR_3     | Validator 3 ZK proof accepted
+   2.200 | node[0]  | LEGIT_SENDER    | Swarm partial signature 1 collected
+   2.300 | node[0]  | LEGIT_SENDER    | Swarm partial signature 2 collected
+   2.400 | node[0]  | LEGIT_SENDER    | Swarm partial signature 3 collected
+   2.400 | node[0]  | LEGIT_SENDER    | Swarm threshold signature aggregated
+   2.400 | node[0]  | LEGIT_SENDER    | New pseudonym activated
+   7.100 | node[1]  | LEGIT_RECEIVER  | Legitimate safety message accepted
+  11.600 | node[2]  | VALIDATOR_1     | Malicious invalid ZK failure 1 detected
+  12.600 | node[2]  | VALIDATOR_1     | Malicious invalid ZK failure 2 detected
+  12.600 | node[2]  | VALIDATOR_1     | Revocation proposer self-vote stored
+  12.601 | node[3]  | VALIDATOR_2     | Validator 2 revocation vote scheduled
+  12.601 | node[4]  | VALIDATOR_3     | Validator 3 revocation vote scheduled
+  12.701 | node[2]  | VALIDATOR_1     | Revocation vote 2 stored
+  12.801 | node[2]  | VALIDATOR_1     | Revocation vote 3 stored
+  12.801 | node[2]  | VALIDATOR_1     | Revocation threshold reached
+  12.801 | node[2]  | VALIDATOR_1     | Local ACF updated after revocation
+  12.801 | node[2]  | VALIDATOR_1     | Signed ACF update broadcast
+  12.801 | node[0]  | LEGIT_SENDER    | Signed ACF update received
+  18.600 | node[5]  | MALICIOUS       | Post-revocation malicious safety sent
+  18.600 | node[5]  | MALICIOUS       | Post-revocation malicious safety transmitted
+  18.600 | node[0]  | LEGIT_SENDER    | Post-revocation malicious safety dropped
+
+KEY LATENCIES
+==============================================================================================================
+Pseudonym swarm acceptance latency: 0.300s simulation time
+Pseudonym activation to receiver acceptance: 4.700s simulation time
+Second malicious ZK failure to revocation threshold: 0.201s simulation time
+Revocation threshold to signed ACF broadcast: 0.000s simulation time
+Signed ACF broadcast to malicious hard-drop: 5.799s simulation time
+
+FINAL RESULT
+==============================================================================================================
+SUCCESS: All expected legitimate and malicious-path evidence lines were found.
+The demo proves pseudonym generation, swarm acceptance, authentication, revocation, ACF update, and malicious hard-drop.

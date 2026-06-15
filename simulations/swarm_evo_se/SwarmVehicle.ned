@@ -3,6 +3,8 @@ import org.car2x.veins.modules.application.ieee80211p.DemoBaseApplLayer;
 simple SwarmVehicle extends DemoBaseApplLayer
 {
     parameters:
+        bool demoTrace = default(false);
+        string demoRole = default("");
         @class(SwarmVehicle);
         @display("i=block/app");
 

@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<configuration>
+    <input>
+        <net-file value="contact_demo.net.xml"/>
+        <route-files value="contact_demo.rou.xml"/>
+    </input>
+    <time>
+        <step-length value="0.1"/>
+    </time>
+</configuration>

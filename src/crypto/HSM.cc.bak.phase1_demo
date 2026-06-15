@@ -1,0 +1,85 @@
+#include "HSM.h"
+#include <openssl/hmac.h>
+#include <openssl/sha.h>
+#include <openssl/rand.h>
+#include <openssl/evp.h>
+#include <stdexcept>
+#include <sstream>
+#include <cstring>
+
+// --- Constructor: K_master is born here and never leaves ---
+HSM::HSM() : vin_bound_(false) {
+    // Generate 32 bytes of hardware random data
+    // Real HSM: AIS-31 Class P2 TRNG. Here: OpenSSL RAND_bytes (CSPRNG)
+    k_master_ = generateRandomBytes(32);
+}
+
+// --- Bind VIN at manufacture (called once by TrustedAuthority) ---
+void HSM::bindVIN(const std::string& vin) {
+    if (vin_bound_) {
+        throw std::runtime_error("HSM: VIN already bound — cannot rebind.");
+    }
+    vin_ = vin;
+    vin_bound_ = true;
+}
+
+// --- H_0: BLS12-381 public key simulation ---
+// Real: H_0 = scalar_mult(K_master, G) on BLS12-381 curve (48 bytes)
+// Simulation: H_0 = SHA256("H0_PUBKEY" || K_master) — same 32-byte public value,
+//             same one-way property (cannot reverse to get K_master)
+PublicKeyBytes HSM::getH0() const {
+    if (!vin_bound_) throw std::runtime_error("HSM: VIN not bound.");
+    return hmacSHA256(k_master_, "H0_PUBKEY");
+}
+
+// --- C_0: chain anchor for pseudonym derivation ---
+// Real: HMAC-SHA256(K_master, "CHAIN" || VIN) — RFC 5869 HKDF-Extract
+KeyBytes HSM::getC0(const std::string& vin) const {
+    if (!vin_bound_) throw std::runtime_error("HSM: VIN not bound.");
+    return hmacSHA256(k_master_, "CHAIN" + vin);
+}
+
+// --- Session seed derivation (per epoch) ---
+// Real: HKDF-Extract(K_master, "Session_" || epoch_number)
+KeyBytes HSM::deriveSessionSeed(uint32_t epoch) const {
+    if (!vin_bound_) throw std::runtime_error("HSM: VIN not bound.");
+    std::string info = "Session_" + std::to_string(epoch);
+    return hmacSHA256(k_master_, info);
+}
+
+// --- TA proof-of-possession signature ---
+// Real: BLS sign(K_master, nonce) — proves HSM holds K_master without revealing it
+// Simulation: HMAC-SHA256(K_master, nonce_hex)
+KeyBytes HSM::signNonce(const KeyBytes& nonce) const {
+    if (!vin_bound_) throw std::runtime_error("HSM: VIN not bound.");
+    // Convert nonce bytes to hex string for use as HMAC data
+    std::string nonceStr(nonce.begin(), nonce.end());
+    return hmacSHA256(k_master_, "NONCE_SIGN" + nonceStr);
+}
+
+// --- Self-consistency check ---
+bool HSM::verifyOwnPublicKey(const PublicKeyBytes& h) const {
+    return h == getH0();
+}
+
+// --- Internal: HMAC-SHA256 ---
+KeyBytes HSM::hmacSHA256(const KeyBytes& key, const std::string& data) const {
+    unsigned char result[EVP_MAX_MD_SIZE];
+    unsigned int result_len = 0;
+
+    HMAC(EVP_sha256(),
+         key.data(), static_cast<int>(key.size()),
+         reinterpret_cast<const unsigned char*>(data.c_str()), data.size(),
+         result, &result_len);
+
+    return KeyBytes(result, result + result_len);
+}
+
+// --- Internal: Cryptographically random bytes ---
+KeyBytes HSM::generateRandomBytes(size_t len) const {
+    KeyBytes buf(len);
+    if (RAND_bytes(buf.data(), static_cast<int>(len)) != 1) {
+        throw std::runtime_error("HSM: RAND_bytes failed — entropy source unavailable.");
+    }
+    return buf;
+}

@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<routes>
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.2" length="5" maxSpeed="13.89"/>
+
+    <route id="mainRoad" edges="e_n00_n01 e_n01_n02"/>
+    <route id="sideRoad" edges="e_n10_n11 e_n11_n12"/>
+    <route id="verticalRoad" edges="e_n01_n11 e_n11_n21"/>
+
+    <!-- Legitimate sender and receiver -->
+    <vehicle id="legitSender" type="car" route="mainRoad" depart="0.0" departPos="0"  departSpeed="5"/>
+    <vehicle id="legitReceiver" type="car" route="mainRoad" depart="0.1" departPos="30" departSpeed="5"/>
+
+    <!-- Swarm validators -->
+    <vehicle id="validator1" type="car" route="sideRoad" depart="0.2" departPos="0"  departSpeed="4"/>
+    <vehicle id="validator2" type="car" route="sideRoad" depart="0.3" departPos="25" departSpeed="4"/>
+    <vehicle id="validator3" type="car" route="verticalRoad" depart="0.4" departPos="0" departSpeed="4"/>
+
+    <!-- Malicious vehicle -->
+    <vehicle id="maliciousVehicle" type="car" route="mainRoad" depart="0.5" departPos="70" departSpeed="5"/>
+</routes>

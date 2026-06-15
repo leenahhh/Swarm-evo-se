@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<routes>
+    <vType id="car" accel="2.6" decel="4.5" sigma="0.2" length="5" maxSpeed="13.89"/>
+    <route id="r0" edges="road"/>
+
+    <!-- Focus vehicle appears first -->
+    <vehicle id="focusVehicle" type="car" route="r0" depart="0" departPos="0" departSpeed="8"/>
+
+    <!-- Validator vehicles appear later inside DSRC range -->
+    <vehicle id="validator1" type="car" route="r0" depart="6" departPos="120" departSpeed="8"/>
+    <vehicle id="validator2" type="car" route="r0" depart="12" departPos="240" departSpeed="8"/>
+</routes>

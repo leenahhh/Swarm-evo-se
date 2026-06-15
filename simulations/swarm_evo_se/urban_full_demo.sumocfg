@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<configuration>
+    <input>
+        <net-file value="urban_full_demo.net.xml"/>
+        <route-files value="urban_full_demo.rou.xml"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="40"/>
+        <step-length value="0.1"/>
+    </time>
+</configuration>

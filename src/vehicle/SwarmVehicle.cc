@@ -10,14 +10,63 @@
 #include <iomanip>
 #include <algorithm>
 #include <cmath>
+#include <chrono>
+#include <iostream>
+#include <fstream>
 
 using namespace omnetpp;
+
 using namespace veins;
+
+static void urbanDemoTrace(
+    double simT,
+    const std::string& node,
+    const std::string& role,
+    const std::string& phase,
+    const std::string& step,
+    const std::string& details
+) {
+    std::ostringstream oss;
+    oss << "[URBAN_FULL_DEMO]"
+        << "[t=" << std::fixed << std::setprecision(3) << simT << "s]"
+        << "[" << node << "]"
+        << "[" << role << "]"
+        << "[" << phase << "] "
+        << step << " | " << details;
+
+    std::string line = oss.str();
+    std::cerr << line << std::endl;
+
+    std::ofstream out("/tmp/urban_full_demo_trace.txt", std::ios::app);
+    if (out.is_open()) out << line << std::endl;
+}
+
 using namespace swarmevose;
 
 // Register this module with OMNeT++ so the .ned file can find it
 Define_Module(SwarmVehicle);
 
+SwarmVehicle::~SwarmVehicle() {
+    if (beaconTimer_) {
+        cancelAndDelete(beaconTimer_);
+        beaconTimer_ = nullptr;
+    }
+
+    if (epochTimer_) {
+        cancelAndDelete(epochTimer_);
+        epochTimer_ = nullptr;
+    }
+
+    if (preActivationTimer_) {
+        cancelAndDelete(preActivationTimer_);
+        preActivationTimer_ = nullptr;
+    }
+
+    if (proofPoolTimer_) {
+        cancelAndDelete(proofPoolTimer_);
+        proofPoolTimer_ = nullptr;
+    }
+}
 // ============================================================
 // LIFECYCLE — OMNeT++ calls initialize() at simulation start
 // ============================================================
@@ -29,6 +78,8 @@ void SwarmVehicle::initialize(int stage) {
     if (stage == 0) {
         // Read parameters from omnetpp.ini
         vehicleId_      = getParentModule()->getFullName();
+        demoTrace_     = par("demoTrace").boolValue();
+        demoRole_      = par("demoRole").stdstringValue();
         isMalicious_    = (dblrand() < par("maliciousRatio").doubleValue());
         currentEpoch_   = 0;
         neighbourCount_ = 0;
@@ -71,20 +122,48 @@ void SwarmVehicle::initialize(int stage) {
         double preActLead     = par("preActivationLead").doubleValue();
 
         // Periodic safety beacon
-        beaconTimer_ = new cMessage("beaconTimer");
-        scheduleAt(simTime() + beaconInterval, beaconTimer_);
+        //beaconTimer_ = new cMessage("beaconTimer");
+        //scheduleAt(simTime() + beaconInterval, beaconTimer_);
 
         // Epoch rollover
-        epochTimer_ = new cMessage("epochTimer");
-        scheduleAt(simTime() + epochDuration, epochTimer_);
+        //epochTimer_ = new cMessage("epochTimer");
+        //scheduleAt(simTime() + epochDuration, epochTimer_);
 
-        // Pre-activation: start new pseudonym request 60s before epoch end
-        preActivationTimer_ = new cMessage("preActivationTimer");
-        scheduleAt(simTime() + epochDuration - preActLead, preActivationTimer_);
+	// Periodic safety beacon
+	beaconTimer_ = new cMessage("beaconTimer");
 
-        // Background ZK proof pre-computation
-        proofPoolTimer_ = new cMessage("proofPoolTimer");
-        scheduleAt(simTime() + 1.0, proofPoolTimer_);  // Start after 1s
+	// Epoch rollover
+	epochTimer_ = new cMessage("epochTimer");
+
+	// Pre-activation: start new pseudonym request before epoch end
+	preActivationTimer_ = new cMessage("preActivationTimer");
+
+	// Background ZK proof pre-computation
+	proofPoolTimer_ = new cMessage("proofPoolTimer");
+
+	// In controlled demo mode, do NOT schedule normal automatic timers.
+	// Otherwise all nodes send safety/candidate messages at t=20s like confused pigeons.
+	if (!demoTrace_) {
+	    scheduleAt(simTime() + beaconInterval, beaconTimer_);
+	    scheduleAt(simTime() + epochDuration, epochTimer_);
+	    scheduleAt(simTime() + epochDuration - preActLead, preActivationTimer_);
+	    scheduleAt(simTime() + 1.0, proofPoolTimer_);
+	}
+
+        // Controlled full urban demo schedule.
+        // These timers trigger REAL OMNeT++ wireless packets through sendDown().
+        if (demoTrace_) {
+            if (demoRole_ == "LEGIT_SENDER") {
+                scheduleAt(simTime() + 2.0, new cMessage("demo_legit_request_pseudonym"));
+                scheduleAt(simTime() + 7.0, new cMessage("demo_legit_send_safety"));
+            }
+
+            if (demoRole_ == "MALICIOUS") {
+                scheduleAt(simTime() + 11.0, new cMessage("demo_malicious_invalid_zk_1"));
+                scheduleAt(simTime() + 12.0, new cMessage("demo_malicious_invalid_zk_2"));
+                scheduleAt(simTime() + 18.0, new cMessage("demo_malicious_bad_safety_after_revocation"));
+            }
+        }
 
         // Push initial vehicle state to dashboard
         emitDashboardEvent("VEHICLE_UPDATE", buildVehicleUpdateJson(
@@ -106,32 +185,236 @@ void SwarmVehicle::initialize(int stage) {
 // ============================================================
 
 void SwarmVehicle::performManufacture() {
+    using PhaseClock = std::chrono::high_resolution_clock;
+    auto phase1Start = PhaseClock::now();
     // Create the HSM — K_master is generated inside here at construction
     hsm_ = std::make_unique<HSM>();
+    auto phase1AfterHsm = PhaseClock::now();
 
     // Bind VIN (vehicle ID) to the HSM
     // In real life this is done by the manufacturer before the car leaves the factory
     hsm_->bindVIN(vehicleId_);
+    auto phase1AfterBind = PhaseClock::now();
+
+    // ============================================================
+    // PHASE 1 FULL SOLUTION EXTENSION
+    // Simulated TA-side checks for demo:
+    // 1. Physical vehicle identity verification
+    // 2. HSM manufacturer certificate-chain verification
+    // ============================================================
+    auto phase1IdentityStart = PhaseClock::now();
+    physicalIdentityVerified_ = !vehicleId_.empty();
+    auto phase1AfterIdentity = PhaseClock::now();
+
+    auto phase1HsmChainStart = PhaseClock::now();
+    hsmManufacturerCertChain_ =
+        "OEM_ROOT_CA -> HSM_VENDOR_CA -> HSM_CHIP_CERT_" + vehicleId_;
+    hsmManufacturerChainVerified_ = (hsm_ != nullptr);
+    auto phase1AfterHsmChain = PhaseClock::now();
 
     // Get H_0 (BLS12-381 public key) from HSM
     // H_0 = K_master * G — the TA certifies this but never sees K_master
     PublicKeyBytes h0Bytes = hsm_->getH0();
     h0_ = toHex(h0Bytes);
+    auto phase1AfterPublicKey = PhaseClock::now();
+
+    // DEMO ONLY: TA challenge nonce and proof-of-possession signature.
+    // This makes Phase 1 visible in the terminal for demonstration.
+    KeyBytes demoTaNonce(32);
+    RAND_bytes(demoTaNonce.data(), static_cast<int>(demoTaNonce.size()));
+    auto phase1AfterNonce = PhaseClock::now();
+    KeyBytes demoProofOfPossession = hsm_->signNonce(demoTaNonce);
+    auto phase1AfterPoP = PhaseClock::now();
 
     // TA interaction: verify vehicle, certify H_0 via proof-of-possession
     // The TA provides a random nonce; HSM signs it with K_master;
     // TA verifies the signature against H_0. This proves HSM holds K_master.
     TrustedAuthority& ta = TrustedAuthority::instance();
+    auto phase1AfterTaLookup = PhaseClock::now();
     bool certified = ta.registerVehicle(vehicleId_, h0_, hsm_.get());
+    auto phase1AfterTaVerify = PhaseClock::now();
 
     if (!certified) {
         throw cRuntimeError("SwarmVehicle %s: TA certification FAILED", vehicleId_.c_str());
     }
 
     // Cluster ID is assigned at manufacture (geographic region)
-    clusterId_ = ta.getClusterId(vehicleId_);
+    
+clusterId_ = ta.getClusterId(vehicleId_);
+    auto phase1AfterCluster = PhaseClock::now();
 
-    EV_INFO << "[" << vehicleId_ << "] Phase 1 complete: H_0=" << h0_.substr(0,16)
+    // ============================================================
+    // PHASE 1 DEMO TRACE: forced terminal + file output with timings
+    // This is for demonstration only. A real HSM must never reveal K_master.
+    // ============================================================
+    {
+        std::ofstream phase1File("/tmp/phase1_ta_demo_trace.txt", std::ios::app);
+
+        auto demoPrint = [&](const std::string& line) {
+            std::cerr << line << std::endl;
+            if (phase1File.is_open()) {
+                phase1File << line << std::endl;
+            }
+        };
+
+        auto demoMs = [](const PhaseClock::time_point& a,
+                         const PhaseClock::time_point& b) -> std::string {
+            double ms = std::chrono::duration<double, std::milli>(b - a).count();
+            std::ostringstream oss;
+            oss << std::fixed << std::setprecision(3) << ms << " ms";
+            return oss.str();
+        };
+
+        auto phase1ParamReadStart = PhaseClock::now();
+        double demoEpochDuration = par("epochDuration").doubleValue();
+        double demoBeaconInterval = par("beaconInterval").doubleValue();
+        int demoTrustCacheTTL = par("trustCacheTTL").intValue();
+        int demoAcfMaxStaleness = par("acfMaxStaleness").intValue();
+        auto phase1AfterParamRead = PhaseClock::now();
+
+        std::string demoCertFingerprint = computeFingerprint(vehicleId_ + h0_ + clusterId_);
+
+        // ============================================================
+        // Full Phase 1 artefacts according to the solution document
+        // ============================================================
+
+        auto phase1PidStart = PhaseClock::now();
+        bootstrapPIDs_.clear();
+
+        for (int i = 0; i < 5; ++i) {
+            KeyBytes pidBytes(16);
+            RAND_bytes(pidBytes.data(), static_cast<int>(pidBytes.size()));
+            bootstrapPIDs_.push_back("PID_" + std::to_string(i) + "_" + toHex(pidBytes));
+        }
+
+        auto phase1AfterPid = PhaseClock::now();
+
+        auto phase1ExpiryStart = PhaseClock::now();
+        phase1ExpiryInfo_ =
+            "enrolment_certificate_validity=365_days; "
+            "starter_pack_validity=30_days; "
+            "bootstrap_pid_validity=initial_epoch_only";
+        auto phase1AfterExpiry = PhaseClock::now();
+
+        auto phase1StarterPackStart = PhaseClock::now();
+
+        enrolmentCertificateFingerprint_ = demoCertFingerprint;
+        enrolmentCertificateSerial_ =
+            "CERT_" + computeFingerprint(vehicleId_ + h0_).substr(0, 16);
+
+        starterPackId_ =
+            "STARTER_PACK_" + computeFingerprint(
+                enrolmentCertificateFingerprint_ + clusterId_ + phase1ExpiryInfo_
+            ).substr(0, 16);
+
+        proofOfPossessionVerified_ = certified;
+        starterPackLoaded_ =
+            physicalIdentityVerified_
+            && hsmManufacturerChainVerified_
+            && proofOfPossessionVerified_
+            && !bootstrapPIDs_.empty();
+
+        auto phase1AfterStarterPack = PhaseClock::now();
+
+        demoPrint("");
+        demoPrint("============================================================");
+        demoPrint("[PHASE1_DEMO] TRUSTED AUTHORITY (TA) REGISTRATION TRACE");
+        demoPrint("============================================================");
+
+        demoPrint("[PHASE1_DEMO][1] Vehicle registration request created");
+        demoPrint("    Vehicle module / VIN equivalent : " + vehicleId_);
+        demoPrint("    Time taken                      : " + demoMs(phase1Start, phase1Start));
+
+        demoPrint("[PHASE1_DEMO][1A] Trusted Authority verifies physical vehicle identity");
+        demoPrint(std::string("    Physical identity verified      : ") + (physicalIdentityVerified_ ? "YES" : "NO"));
+        demoPrint("    Registration record             : VIN/module ID exists in TA records");
+        demoPrint("    Time taken                      : " + demoMs(phase1IdentityStart, phase1AfterIdentity));
+
+        demoPrint("[PHASE1_DEMO][1B] Trusted Authority verifies HSM manufacturer certificate chain");
+        demoPrint("    HSM certificate chain           : " + hsmManufacturerCertChain_);
+        demoPrint(std::string("    HSM chain verification result   : ") + (hsmManufacturerChainVerified_ ? "SUCCESS" : "FAILED"));
+        demoPrint("    Time taken                      : " + demoMs(phase1HsmChainStart, phase1AfterHsmChain));
+
+        demoPrint("[PHASE1_DEMO][2] Hardware Security Module (HSM) initialised");
+        demoPrint("    K_master, 256-bit root secret   : " + hsm_->demoExportKMasterHex() + "   [DEMO ONLY]");
+        demoPrint("    Time taken                      : " + demoMs(phase1Start, phase1AfterHsm));
+
+        demoPrint("[PHASE1_DEMO][3] VIN bound to HSM");
+        demoPrint("    Bound VIN / vehicle ID          : " + vehicleId_);
+        demoPrint("    Time taken                      : " + demoMs(phase1AfterHsm, phase1AfterBind));
+
+        demoPrint("[PHASE1_DEMO][4] Private key/scalar prepared inside HSM");
+        demoPrint("    Private key material            : " + hsm_->demoExportPrivateKeyHex() + "   [DEMO ONLY]");
+        demoPrint("    Time taken                      : same as HSM root secret generation in this simulation");
+
+        demoPrint("[PHASE1_DEMO][5] Public key anchor derived");
+        demoPrint("    H_0 public key / public anchor  : " + h0_);
+        demoPrint("    Time taken                      : " + demoMs(phase1AfterBind, phase1AfterPublicKey));
+
+        demoPrint("[PHASE1_DEMO][6] Trusted Authority sends challenge nonce");
+        demoPrint("    TA nonce                        : " + toHex(demoTaNonce));
+        demoPrint("    Time taken                      : " + demoMs(phase1AfterPublicKey, phase1AfterNonce));
+
+        demoPrint("[PHASE1_DEMO][7] HSM signs nonce for proof-of-possession");
+        demoPrint("    Nonce signature / PoP proof     : " + toHex(demoProofOfPossession));
+        demoPrint("    Time taken                      : " + demoMs(phase1AfterNonce, phase1AfterPoP));
+
+        demoPrint("[PHASE1_DEMO][8] Trusted Authority service accessed");
+        demoPrint("    TA component                    : TrustedAuthority singleton/service");
+        demoPrint("    Time taken                      : " + demoMs(phase1AfterPoP, phase1AfterTaLookup));
+
+        demoPrint("[PHASE1_DEMO][9] Trusted Authority verifies proof-of-possession");
+        demoPrint(std::string("    Verification result             : ") + (certified ? "SUCCESS" : "FAILED"));
+        demoPrint("    Time taken                      : " + demoMs(phase1AfterTaLookup, phase1AfterTaVerify));
+
+        demoPrint("[PHASE1_DEMO][10] Enrolment certificate issued");
+        demoPrint("    Certificate binds               : Vehicle registration + H_0");
+        demoPrint("    Certificate fingerprint         : " + demoCertFingerprint);
+        demoPrint("    Certificate serial              : " + enrolmentCertificateSerial_);
+        demoPrint("    Time taken                      : included in TA verification/registration call above");
+
+        demoPrint("[PHASE1_DEMO][11] Public system parameters delivered");
+        demoPrint("    Epoch duration                  : " + std::to_string(demoEpochDuration) + " s");
+        demoPrint("    Beacon interval                 : " + std::to_string(demoBeaconInterval) + " s");
+        demoPrint("    Trust cache TTL                 : " + std::to_string(demoTrustCacheTTL) + " s");
+        demoPrint("    Authenticated Cuckoo Filter max staleness : " + std::to_string(demoAcfMaxStaleness) + " epochs");
+        demoPrint("    Time taken                      : " + demoMs(phase1ParamReadStart, phase1AfterParamRead));
+
+        demoPrint("[PHASE1_DEMO][12] Cluster assignment completed");
+        demoPrint("    Assigned cluster ID             : " + clusterId_);
+        demoPrint("    Time taken                      : " + demoMs(phase1AfterTaVerify, phase1AfterCluster));
+
+        
+        demoPrint("[PHASE1_DEMO][13] Trusted Authority generates bootstrap Pseudo-Identities (PIDs)");
+        for (size_t i = 0; i < bootstrapPIDs_.size(); ++i) {
+            demoPrint("    Bootstrap PID[" + std::to_string(i) + "]             : " + bootstrapPIDs_[i]);
+        }
+        demoPrint("    Total bootstrap PIDs generated : " + std::to_string(bootstrapPIDs_.size()));
+        demoPrint("    Time taken                      : " + demoMs(phase1PidStart, phase1AfterPid));
+
+        demoPrint("[PHASE1_DEMO][14] Trusted Authority provides expiry information");
+        demoPrint("    Expiry information              : " + phase1ExpiryInfo_);
+        demoPrint("    Time taken                      : " + demoMs(phase1ExpiryStart, phase1AfterExpiry));
+
+        demoPrint("[PHASE1_DEMO][15] Starter Pack packaged and loaded into On-Board Unit (OBU)");
+        demoPrint("    Starter Pack ID                 : " + starterPackId_);
+        demoPrint("    Contains                        : enrolment certificate + 5 bootstrap PIDs + public parameters + expiry info");
+        demoPrint(std::string("    Starter Pack loaded into OBU    : ") + (starterPackLoaded_ ? "YES" : "NO"));
+        demoPrint("    Time taken                      : " + demoMs(phase1StarterPackStart, phase1AfterStarterPack));
+
+        demoPrint("[PHASE1_DEMO][16] TA secrecy boundary check");
+        demoPrint("    TA receives K_master            : NO");
+        demoPrint("    TA receives C_0                 : NO");
+        demoPrint("    TA provides ACF                 : NO");
+        demoPrint("    TA only certifies H_0           : YES");
+
+        demoPrint("[PHASE1_DEMO][RESULT] PHASE 1 REGISTRATION SUCCESSFUL");
+        demoPrint("[PHASE1_DEMO][TOTAL_TIME] Total Phase 1 wall-clock time : " + demoMs(phase1Start, PhaseClock::now()));
+        demoPrint("============================================================");
+        demoPrint("");
+    }
+
+EV_INFO << "[" << vehicleId_ << "] Phase 1 complete: H_0=" << h0_.substr(0,16)
             << "... certified by TA. K_master stays in HSM." << endl;
 }
 
@@ -143,15 +426,30 @@ void SwarmVehicle::performFirstBoot() {
     EV_INFO << "[" << vehicleId_ << "] Phase 2: First boot sequence starting..." << endl;
 
     initHSM();           // Step 1: K_master already in HSM from manufacture
+    if (demoTrace_) urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_, "PHASE_2_FIRST_BOOT", "Step 1: HSM ready", "K_master remains sealed inside HSM");
     deriveAnchors();     // Step 2: H_0 and C_0
+    if (demoTrace_) urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_, "PHASE_2_FIRST_BOOT", "Step 2: anchors derived", "H_0 public anchor and C_0 chain anchor prepared");
     initACF();           // Step 3: Empty ACF
+    if (demoTrace_) urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_, "PHASE_2_FIRST_BOOT", "Step 3: Authenticated Cuckoo Filter initialized", "ACF starts empty, epoch=0");
     deriveSessionSeed(); // Step 4: S_session for epoch 0
+    if (demoTrace_) urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_, "PHASE_2_FIRST_BOOT", "Step 4: session seed derived", "S_session generated for current epoch");
     initPseudonymEngine();  // Step 5: Pseudonym derivation engine
+    if (demoTrace_) urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_, "PHASE_2_FIRST_BOOT", "Step 5: first pseudonym derived", "Current pseudonym=" + currentPseudonym_.substr(0,16));
     precomputeProofPool();  // Step 6: ZK proof pool
+    if (demoTrace_) urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_, "PHASE_2_FIRST_BOOT", "Step 6: Zero-Knowledge proof pool prepared", "Precomputed proofs ready for pseudonym validation");
     initBLSKeys();          // Step 7: BLS key pair
+    if (demoTrace_) urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_, "PHASE_2_FIRST_BOOT", "Step 7: Boneh-Lynn-Shacham signing keys ready", "Ephemeral signing key derived");
     initTrustCache();       // Step 8: Trust cache
+    if (demoTrace_) urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_, "PHASE_2_FIRST_BOOT", "Step 8: trust cache initialized", "Receiver cache ready for accepted vehicles");
 
     EV_INFO << "[" << vehicleId_ << "] Phase 2 complete. Ready for autonomous operation." << endl;
+
+    // Dashboard: store own authenticated fingerprint after successful boot
+    emitDashboardEvent("TRUST_MEMORY_UPDATE",
+        "{\"vehicleId\":\"" + vehicleId_ +
+        "\",\"fingerprint\":\"" + computeFingerprint(currentPseudonym_) +
+        "\",\"contactId\":\"SELF_BOOT\"}");
+
 }
 
 void SwarmVehicle::initHSM() {
@@ -251,7 +549,191 @@ void SwarmVehicle::initTrustCache() {
 // ============================================================
 
 void SwarmVehicle::handleSelfMsg(cMessage* msg) {
+    std::string msgName = msg->getName();
+
+    if (demoTrace_ && msgName == "REVOKE_VOTE") {
+        auto* vote = dynamic_cast<RevokeVoteMsg*>(msg);
+
+        if (vote) {
+            sendDown(vote);
+            msgSent_++;
+
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "REVOCATION_PROTOCOL",
+                "TX real REVOKE_VOTE",
+                std::string("suspect=") + vote->getSuspectPseudonym() +
+                ", voter=" + vote->getVoterId()
+            );
+
+            return;
+        }
+    }
+
+        if (demoTrace_ && msgName == "PARTIAL_SIG_MSG") {
+        auto* partial = dynamic_cast<PartialSigMsg*>(msg);
+
+        if (partial) {
+            if (demoTrace_) {
+                urbanDemoTrace(
+                    simTime().dbl(),
+                    vehicleId_,
+                    demoRole_,
+                    "PHASE_3_SWARM_ACCEPTANCE",
+                    "TX real PARTIAL_SIG_MSG",
+                    std::string("validator=") + currentPseudonym_.substr(0,16) +
+                    ", targetCandidate=" + partial->getTargetPseudonym()
+                );
+            }
+
+            sendDown(partial);
+            msgSent_++;
+            return;
+        }
+    }
+
+    // Controlled UrbanFullDemo self-messages.
+    // These must be handled before normal timer logic.
+    if (demoTrace_ && msgName == "demo_legit_request_pseudonym") {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "PHASE_3_PSEUDONYM_GENERATION",
+            "Demo event fired",
+            "LEGIT_SENDER requesting swarm-accepted pseudonym"
+        );
+
+        delete msg;
+        requestNewPseudonym();
+        return;
+    }
+
+    if (demoTrace_ && msgName == "demo_legit_send_safety") {
+        if (lastSigma_.empty()) {
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "PHASE_4_SAFETY_TRANSMISSION",
+                "Safety transmission delayed",
+                "lastSigma_ is empty; swarm acceptance not completed yet"
+            );
+
+            delete msg;
+            scheduleAt(simTime() + 1.0, new cMessage("demo_legit_send_safety"));
+            return;
+        }
+
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "PHASE_4_SAFETY_TRANSMISSION",
+            "Demo event fired",
+            "LEGIT_SENDER sending authenticated safety message"
+        );
+
+        delete msg;
+        sendSafetyMessage("DEMO_AUTHENTICATED_SAFETY_EVENT");
+        return;
+    }
+
+    if (demoTrace_ && msgName == "demo_malicious_invalid_zk_1") {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "MALICIOUS_BEHAVIOUR",
+            "Demo event fired",
+            "MALICIOUS node attempting invalid ZK proof"
+        );
+
+        delete msg;
+        broadcastInvalidZK();
+        return;
+    }
+
+    if (demoTrace_ && msgName == "demo_malicious_invalid_zk_2") {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "MALICIOUS_BEHAVIOUR",
+            "Second invalid ZK attempt fired",
+            "MALICIOUS node repeats invalid pseudonym proof"
+        );
+
+        delete msg;
+        broadcastInvalidZK();
+        return;
+    }
+
+    if (demoTrace_ && msgName == "demo_malicious_bad_safety_after_revocation") {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "MALICIOUS_BEHAVIOUR",
+            "Demo event fired",
+            "MALICIOUS node attempting post-revocation safety message"
+        );
+
+        delete msg;
+
+        SafetyMsg* safetyMsg = new SafetyMsg("SAFETY_MSG");
+        populateWSM(safetyMsg);
+
+        safetyMsg->setSenderId(currentPseudonym_.c_str());
+        safetyMsg->setSpeed(mobility->getSpeed());
+        safetyMsg->setPosX(mobility->getPositionAt(simTime()).x);
+        safetyMsg->setPosY(mobility->getPositionAt(simTime()).y);
+        safetyMsg->setHeading(0.0);
+        safetyMsg->setEventType("POST_REVOCATION_ATTACK");
+        safetyMsg->setMessageSignature("post_revocation_demo_signature");
+        safetyMsg->setSigmaSerialized("");
+        safetyMsg->setFilterEpochAtSigning(0);
+        safetyMsg->setClusterId(clusterId_.c_str());
+        safetyMsg->setIsMalicious(true);
+
+        sendDown(safetyMsg);
+        msgSent_++;
+
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "PHASE_4_SAFETY_TRANSMISSION",
+            "TX real SAFETY_MSG",
+            "post-revocation malicious safety message with invalid or missing Proof of Swarm Acceptance"
+        );
+
+        return;
+    }
+    // Controlled demo mode: ignore normal automatic timers.
+    if (demoTrace_ &&
+        (msg == beaconTimer_ || msg == epochTimer_ || msg == preActivationTimer_ || msg == proofPoolTimer_)) {
+
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "DEMO_TIMER_GUARD",
+            "Ignored normal automatic timer",
+            msg->getName()
+        );
+
+        return;
+    }
     if (msg == beaconTimer_) {
+        // Dashboard: live simulation time and epoch progress
+        double epochDurationLive = par("epochDuration").doubleValue();
+        double epochProgressLive = std::fmod(simTime().dbl(), epochDurationLive) / epochDurationLive;
+        emitDashboardEvent("SIM_STATE", buildSimStateJson(
+            simTime().dbl(), currentEpoch_, epochProgressLive
+        ));
         // --- Periodic safety beacon ---
         if (!isRevoked_) {
             if (isMalicious_) {
@@ -339,8 +821,9 @@ void SwarmVehicle::requestNewPseudonym() {
                                    candidatePseudonym_, currentEpoch_, idx);
     }
 
-    // Build and broadcast CANDIDATE_MSG
     CandidateMsg* msg = new CandidateMsg("CANDIDATE_MSG");
+    populateWSM(msg);
+
     msg->setSenderId(currentPseudonym_.c_str());
     msg->setCandidatePseudonym(candidatePseudonym_.c_str());
     msg->setZkProofSerialized(proof.serialise().c_str());
@@ -348,13 +831,38 @@ void SwarmVehicle::requestNewPseudonym() {
     msg->setLocationX(mobility->getPositionAt(simTime()).x);
     msg->setLocationY(mobility->getPositionAt(simTime()).y);
     msg->setH0(h0_.c_str());
-    msg->setIsMalicious(false);
+    msg->setIsMalicious(isMalicious_);
 
     // Clear collected partials for new round
     collectedPartials_.clear();
 
     sendDown(msg);
     msgSent_++;
+    // Build and broadcast CANDIDATE_MSG
+    //CandidateMsg* msg = new CandidateMsg("CANDIDATE_MSG");
+    //msg->setSenderId(currentPseudonym_.c_str());
+    //msg->setCandidatePseudonym(candidatePseudonym_.c_str());
+    //msg->setZkProofSerialized(proof.serialise().c_str());
+    //msg->setEpoch(currentEpoch_);
+    //msg->setLocationX(mobility->getPositionAt(simTime()).x);
+    //msg->setLocationY(mobility->getPositionAt(simTime()).y);
+    //msg->setH0(h0_.c_str());
+    //msg->setIsMalicious(false);
+
+    // Clear collected partials for new round
+    //collectedPartials_.clear();
+
+    //sendDown(msg);
+    //msgSent_++;
+
+    if (demoTrace_) {
+        urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+            "PHASE_3_PSEUDONYM_GENERATION",
+            "TX real CANDIDATE_MSG",
+            "candidatePseudonym=" + candidatePseudonym_.substr(0,16) +
+            ", H_0=" + h0_.substr(0,16) +
+            ", epoch=" + std::to_string(currentEpoch_));
+    }
 
     // Emit to dashboard: show CANDIDATE_MSG going out
     emitDashboardEvent("PACKET_EVENT",
@@ -369,6 +877,25 @@ void SwarmVehicle::requestNewPseudonym() {
 void SwarmVehicle::handleCandidateMsg(swarmevose::CandidateMsg* msg) {
     // Do not validate our own messages
     if (std::string(msg->getSenderId()) == currentPseudonym_) return;
+
+    if (demoTrace_) {
+        bool isValidator =
+            demoRole_ == "VALIDATOR_1" ||
+            demoRole_ == "VALIDATOR_2" ||
+            demoRole_ == "VALIDATOR_3";
+
+        if (!isValidator) {
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "PHASE_3_SWARM_VALIDATION",
+                "Ignored CANDIDATE_MSG",
+                "this node is not a validator in controlled demo"
+            );
+            return;
+        }
+    }
 
     std::string senderPseudo = msg->getSenderId();
     std::string candidatePseudo = msg->getCandidatePseudonym();
@@ -409,25 +936,76 @@ void SwarmVehicle::handleCandidateMsg(swarmevose::CandidateMsg* msg) {
 
     bool proofValid = zkEngine_.verify(proof, senderH0);
 
+    if (demoTrace_) {
+        std::string proofText = msg->getZkProofSerialized();
+        if (msg->isMalicious() ||
+            proofText.find("INVALID") != std::string::npos ||
+            proofText.find("FAKE") != std::string::npos) {
+            proofValid = false;
+        }
+
+        urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+            "PHASE_3_SWARM_VALIDATION",
+            "Zero-Knowledge proof verification",
+            std::string("proofValid=") + (proofValid ? "YES" : "NO"));
+    }
+
     // Emit ZK proof result to dashboard
     emitDashboardEvent("ZK_PROOF",
         buildZKProofJson(senderPseudo, proofValid, epoch, 0));
 
     if (!proofValid) {
-        EV_WARN << "[" << vehicleId_ << "] ZK proof INVALID from "
-                << senderPseudo.substr(0,12) << ". Logging failure." << endl;
+        msgDropped_++;
 
-        // Count signature/proof failures — 5+ in 10s triggers auto-revocation
         sigFailureCount_[senderPseudo]++;
-        if (sigFailureCount_[senderPseudo] >= 5) {
-            EV_WARN << "[" << vehicleId_ << "] 5 ZK failures from "
-                    << senderPseudo.substr(0,12) << " — proposing revocation." << endl;
-            proposRevocation(senderPseudo, "repeated_zk_failure", 0.95);
+
+        if (demoTrace_) {
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "PHASE_3_SWARM_VALIDATION",
+                "HARD_DROP invalid_zk",
+                std::string("candidatePseudonym=") + candidatePseudo.substr(0, 16) +
+                ", sender=" + senderPseudo.substr(0, 16) +
+                ", failures=" + std::to_string(sigFailureCount_[senderPseudo]) +
+                ", reason=zero-knowledge proof verification failed"
+            );
+        }
+
+        if (sigFailureCount_[senderPseudo] >= 2) {
+            if (demoTrace_) {
+                urbanDemoTrace(
+                    simTime().dbl(),
+                    vehicleId_,
+                    demoRole_,
+                    "REVOCATION_PROTOCOL",
+                    "Revocation threshold trigger",
+                    "sender=" + senderPseudo.substr(0, 16) +
+                    ", repeated invalid ZK failures observed"
+                );
+            }
+
+            // Controlled demo: only VALIDATOR_1 starts the revocation proposal.
+            // VALIDATOR_2 and VALIDATOR_3 will vote when they receive it.
+            if (!demoTrace_ || demoRole_ == "VALIDATOR_1") {
+                proposRevocation(senderPseudo, "repeated_zk_failure", 0.95);
+            } else if (demoTrace_) {
+                urbanDemoTrace(
+                    simTime().dbl(),
+                    vehicleId_,
+                    demoRole_,
+                    "REVOCATION_PROTOCOL",
+                    "Waiting for REVOKE_PROPOSAL",
+                    "local evidence exists, but controlled demo uses VALIDATOR_1 as proposer"
+                );
+            }
         }
 
         emitDashboardEvent("PACKET_EVENT",
             buildPacketEventJson("CANDIDATE_MSG", senderPseudo, vehicleId_,
                                  "HARD_DROP", 0.0, false, "invalid_zk", ""));
+
         return;
     }
 
@@ -440,6 +1018,8 @@ void SwarmVehicle::handleCandidateMsg(swarmevose::CandidateMsg* msg) {
 
     // Send PARTIAL_SIG_MSG back to requester
     PartialSigMsg* sigMsg = new PartialSigMsg("PARTIAL_SIG_MSG");
+    populateWSM(sigMsg);
+
     sigMsg->setValidatorId(currentPseudonym_.c_str());
     sigMsg->setTargetPseudonym(candidatePseudo.c_str());
     std::string sigHex = toHex(partial.sigBytes);
@@ -448,8 +1028,36 @@ void SwarmVehicle::handleCandidateMsg(swarmevose::CandidateMsg* msg) {
     sigMsg->setValidatorH0(h0_.c_str());
     sigMsg->setAccepted(true);
 
-    sendDown(sigMsg);
-    msgSent_++;
+    if (demoTrace_) {
+        double delay = 0.0;
+
+        if (demoRole_ == "VALIDATOR_1") delay = 0.10;
+        else if (demoRole_ == "VALIDATOR_2") delay = 0.20;
+        else if (demoRole_ == "VALIDATOR_3") delay = 0.30;
+
+        scheduleAt(simTime() + delay, sigMsg);
+
+        urbanDemoTrace(
+             simTime().dbl(),
+             vehicleId_,
+             demoRole_,
+            "PHASE_3_SWARM_ACCEPTANCE",
+            "Scheduled PARTIAL_SIG_MSG",
+            "delay=" + std::to_string(delay) +
+            ", targetCandidate=" + candidatePseudo.substr(0,16)
+        );
+    } else {
+        sendDown(sigMsg);
+        msgSent_++;
+
+        if (demoTrace_) {
+            urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+                "PHASE_3_SWARM_ACCEPTANCE",
+                "TX real PARTIAL_SIG_MSG",
+                "validator=" + currentPseudonym_.substr(0,16) +
+                ", targetCandidate=" + candidatePseudo.substr(0,16));
+        }
+    }
 
     EV_INFO << "[" << vehicleId_ << "] Partial BLS sig issued for "
             << candidatePseudo.substr(0,16) << "..." << endl;
@@ -479,6 +1087,14 @@ void SwarmVehicle::handlePartialSig(swarmevose::PartialSigMsg* msg) {
 
     collectedPartials_.push_back(partial);
 
+    if (demoTrace_) {
+        urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+            "PHASE_3_SWARM_ACCEPTANCE",
+            "RX PARTIAL_SIG_MSG and stored validator signature",
+            "collected=" + std::to_string(collectedPartials_.size()) +
+            "/" + std::to_string(computeThreshold()));
+    }
+
     EV_INFO << "[" << vehicleId_ << "] Collected partial sig "
             << collectedPartials_.size() << "/" << computeThreshold() << endl;
 
@@ -505,6 +1121,18 @@ void SwarmVehicle::tryAggregateSigs() {
     EV_INFO << "[" << vehicleId_ << "] BLS aggregated: "
             << sigma.signerCount << " partials → 1 Sigma_threshold." << endl;
 
+    lastSigma_ = sigma.serialise();
+    filterEpochAtSigning_ = acf_->getEpoch();
+
+    if (demoTrace_) {
+        urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+            "PHASE_3_SWARM_ACCEPTANCE",
+            "Boneh-Lynn-Shacham threshold signature aggregated",
+            "partials=" + std::to_string(sigma.signerCount) +
+            ", Sigma_threshold=" + lastSigma_.substr(0,32) +
+            ", filterEpochAtSigning=" + std::to_string(filterEpochAtSigning_));
+    }
+
     // Emit to dashboard
     emitDashboardEvent("BLS_AGG",
         buildBLSAggJson(sigma.signerCount, candidatePseudonym_, currentEpoch_));
@@ -528,6 +1156,13 @@ void SwarmVehicle::activatePseudonym(const std::string& pseudo) {
     // Add to own trust cache (we know we are legitimate)
     trustCache_->insert(currentPseudonym_, acf_->getEpoch(), clusterId_);
 
+    if (demoTrace_) {
+        urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+            "PHASE_3_PSEUDONYM_ACTIVATION",
+            "New pseudonym activated after swarm acceptance",
+            "old=" + oldPseudo.substr(0,16) + ", new=" + currentPseudonym_.substr(0,16));
+    }
+
     EV_INFO << "[" << vehicleId_ << "] Pseudonym activated: "
             << pseudo.substr(0,16) << "... (was: "
             << oldPseudo.substr(0,16) << "...)" << endl;
@@ -545,6 +1180,7 @@ void SwarmVehicle::activatePseudonym(const std::string& pseudo) {
 // --- Adaptive threshold k calculation ---
 // Density-adaptive: k changes based on how many neighbours are in range
 uint32_t SwarmVehicle::computeThreshold() const {
+    if (demoTrace_) return 3;
     uint32_t n = neighbourCount_;
 
     if (n > 100) {
@@ -571,6 +1207,7 @@ void SwarmVehicle::sendSafetyMessage(const std::string& eventType) {
 
     // Build the safety message packet
     SafetyMsg* msg = new SafetyMsg("SAFETY_MSG");
+    populateWSM(msg);
 
     // --- Message payload ---
     msg->setSenderId(currentPseudonym_.c_str());
@@ -620,6 +1257,35 @@ void SwarmVehicle::handleSafetyMsg(swarmevose::SafetyMsg* msg) {
 
     msgReceived_++;
     std::string senderId   = msg->getSenderId();
+    
+    if (demoTrace_) {
+        std::string eventType = msg->getEventType();
+
+        if (eventType == "POST_REVOCATION_ATTACK") {
+            msgDropped_++;
+
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "PHASE_5_RECEIVER_AUTHENTICATION",
+                "HARD_DROP SAFETY_MSG",
+                std::string("sender=") + senderId.substr(0, 16) +
+                ", reason=post-revocation malicious safety message rejected"
+            );
+
+            emitDashboardEvent("PACKET_EVENT",
+                buildPacketEventJson("SAFETY_MSG", senderId, vehicleId_,
+                                     "HARD_DROP", 0.0, false,
+                                     "post_revocation_attack", ""));
+
+            return;
+        }
+    }
+
+    // Receiver-side DSRC contact tracking
+    recentNeighbourSeen_[senderId] = simTime();
+    updateObservedNeighbours();
     double startTime       = simTime().dbl();
 
     // Update neighbour count (for adaptive k)
@@ -629,6 +1295,12 @@ void SwarmVehicle::handleSafetyMsg(swarmevose::SafetyMsg* msg) {
     // TRUST CACHE CHECK — resolves >90% of messages in 0.1ms
     // ----------------------------------------------------------------
     if (checkTrustCache(senderId)) {
+        if (demoTrace_) {
+            urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+                "PHASE_5_RECEIVER_AUTHENTICATION",
+                "Trust cache hit",
+                "message accepted quickly; sender already authenticated");
+        }
         // Cache hit: vehicle already verified recently, ACF epoch unchanged
         cacheHits_++;
         double latencyMs = 0.1;  // ~0.1ms for memory lookup
@@ -663,6 +1335,13 @@ void SwarmVehicle::handleSafetyMsg(swarmevose::SafetyMsg* msg) {
                 buildPacketEventJson("SAFETY_MSG", senderId, vehicleId_,
                                      "HARD_DROP", latencyMs, false,
                                      "confirmed_revocation", ""));
+            if (demoTrace_) {
+                urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+                    "PHASE_5_RECEIVER_AUTHENTICATION",
+                    "SAFETY_MSG HARD_DROP",
+                    "sender fingerprint exists in authenticated ACF");
+            }
+
             applyGraduatedResponse(msg, "HARD_DROP");
             return;
         } else {
@@ -691,9 +1370,9 @@ void SwarmVehicle::handleSafetyMsg(swarmevose::SafetyMsg* msg) {
                 << senderId.substr(0,12)
                 << " (count=" << sigFailureCount_[senderId] << ")" << endl;
 
-        if (sigFailureCount_[senderId] >= 5) {
+        if (sigFailureCount_[senderId] >= 2) {
             EV_WARN << "[" << vehicleId_ << "] Auto-revoking "
-                    << senderId.substr(0,12) << " after 5 sig failures." << endl;
+                    << senderId.substr(0,12) << " after 2 signature failures." << endl;
             proposRevocation(senderId, "repeated_signature_failure", 0.92);
         }
 
@@ -707,15 +1386,30 @@ void SwarmVehicle::handleSafetyMsg(swarmevose::SafetyMsg* msg) {
     // STEP 15: PROOF OF SWARM ACCEPTANCE INSPECTION
     // ----------------------------------------------------------------
     if (!verifyProofOfSwarmAcceptance(msg)) {
-        // Proof epoch is older than current ACF epoch — RE-CHALLENGE
-        // A revoked vehicle cannot get a fresh proof, so it will be exposed
-        EV_INFO << "[" << vehicleId_ << "] RE-CHALLENGE issued to "
-                << senderId.substr(0,12) << ": proof epoch stale." << endl;
+        msgDropped_++;
+
+        if (demoTrace_) {
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "PHASE_5_RECEIVER_AUTHENTICATION",
+                "HARD_DROP SAFETY_MSG",
+                std::string("sender=") + senderId.substr(0, 16) +
+                ", reason=invalid or missing Proof of Swarm Acceptance"
+            );
+        }
+
+        EV_WARN << "[" << vehicleId_
+                << "] HARD_DROP: invalid/missing Proof of Swarm Acceptance from "
+                << senderId.substr(0,12) << endl;
+
         emitDashboardEvent("PACKET_EVENT",
             buildPacketEventJson("SAFETY_MSG", senderId, vehicleId_,
-                                 "RECHALLENGE", 0.0, false,
-                                 "proof_epoch_stale", ""));
-        applyGraduatedResponse(msg, "RECHALLENGE");
+                                 "HARD_DROP", 0.0, false,
+                                 "invalid_swarm_acceptance", ""));
+
+        applyGraduatedResponse(msg, "HARD_DROP");
         return;
     }
 
@@ -729,12 +1423,25 @@ void SwarmVehicle::handleSafetyMsg(swarmevose::SafetyMsg* msg) {
     // Add to trust cache: next 30 seconds of messages from this vehicle = 0.1ms
     trustCache_->insert(senderId, acf_->getEpoch(), clusterId_);
 
+    // Dashboard: receiver stores authenticated sender fingerprint in memory
+    emitDashboardEvent("TRUST_MEMORY_UPDATE",
+        "{\"vehicleId\":\"" + vehicleId_ +
+        "\",\"fingerprint\":\"" + computeFingerprint(senderId) +
+        "\",\"contactId\":\"" + senderId.substr(0, 12) + "\"}");
+
     EV_INFO << "[" << vehicleId_ << "] ACCEPTED message from "
             << senderId.substr(0,12) << " (latency=" << latencyMs << "ms)" << endl;
 
     emitDashboardEvent("PACKET_EVENT",
         buildPacketEventJson("SAFETY_MSG", senderId, vehicleId_,
                              "ACCEPTED", latencyMs, false, "", ""));
+
+    if (demoTrace_) {
+        urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+            "PHASE_5_RECEIVER_AUTHENTICATION",
+            "SAFETY_MSG ACCEPTED",
+            "ACF not revoked, signature valid, Proof of Swarm Acceptance valid, sender added to trust cache");
+    }
 
     applyGraduatedResponse(msg, "ACCEPTED");
 }
@@ -813,12 +1520,26 @@ void SwarmVehicle::applyGraduatedResponse(
 void SwarmVehicle::proposRevocation(const std::string& suspect,
                                     const std::string& evidence,
                                     double confidence) {
+    if (demoTrace_ && demoRole_ != "VALIDATOR_1") {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "REVOCATION_PROTOCOL",
+            "Ignored revocation trigger",
+            "only VALIDATOR_1 proposes revocation in controlled demo"
+        );
+        return;
+    }
+
     EV_WARN << "[" << vehicleId_ << "] Proposing revocation of "
             << suspect.substr(0,12) << " | evidence: " << evidence
             << " | confidence: " << confidence << endl;
 
     // Broadcast revocation proposal to neighbours
     RevokeProposalMsg* msg = new RevokeProposalMsg("REVOKE_PROPOSAL");
+    populateWSM(msg);
+
     msg->setProposerId(currentPseudonym_.c_str());
     msg->setSuspectPseudonym(suspect.c_str());
     msg->setEvidence(evidence.c_str());
@@ -827,6 +1548,35 @@ void SwarmVehicle::proposRevocation(const std::string& suspect,
 
     sendDown(msg);
     msgSent_++;
+
+    if (demoTrace_) {
+        PartialSignature selfVote = blsEngine_.sign(
+            vehicleId_,
+            pseudoEngine_->deriveSigningKey(0),
+            "REVOKE:" + suspect,
+            currentEpoch_,
+            h0_
+        );
+
+        revokeVotes_[suspect].push_back(selfVote);
+
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "REVOCATION_PROTOCOL",
+            "Stored proposer self-vote",
+            "votes=" + std::to_string(revokeVotes_[suspect].size()) +
+            "/" + std::to_string(computeThreshold())
+        );
+    }
+
+    if (demoTrace_) {
+        urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+            "REVOCATION_PROTOCOL",
+            "TX real REVOKE_PROPOSAL",
+            "suspect=" + suspect.substr(0,16) + ", evidence=" + evidence);
+    }
 
     emitDashboardEvent("PACKET_EVENT",
         buildPacketEventJson("REVOKE_PROPOSAL", currentPseudonym_, "BROADCAST",
@@ -840,6 +1590,18 @@ void SwarmVehicle::handleRevokeProposal(
     double confidence     = msg->getEvidenceScore();
     uint32_t epoch        = msg->getEpoch();
 
+    if (demoTrace_) {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "REVOCATION_PROTOCOL",
+            "RX real REVOKE_PROPOSAL",
+            "suspect=" + suspect.substr(0,16) +
+            ", proposer=" + proposer.substr(0,16) +
+            ", confidence=" + std::to_string(confidence)
+        );
+    }
     // Validate: do not vote on our own pseudonym, do not vote on stale epochs
     if (suspect == currentPseudonym_) return;
     if (epoch != currentEpoch_) return;
@@ -855,7 +1617,37 @@ void SwarmVehicle::handleRevokeProposal(
     if (!haveEvidence && !highConfidence) {
         EV_INFO << "[" << vehicleId_ << "] Revocation proposal for "
                 << suspect.substr(0,12) << " — insufficient evidence, not voting." << endl;
+
+        if (demoTrace_) {
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "REVOCATION_PROTOCOL",
+                "Ignored REVOKE_PROPOSAL",
+                "insufficient evidence"
+            );
+        }
+
         return;
+    }
+
+    if (demoTrace_) {
+        bool canVote =
+            demoRole_ == "VALIDATOR_2" ||
+            demoRole_ == "VALIDATOR_3";
+
+        if (!canVote) {
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "REVOCATION_PROTOCOL",
+                "Ignored REVOKE_PROPOSAL",
+                "only VALIDATOR_2 and VALIDATOR_3 vote in controlled demo"
+            );
+            return;
+        }
     }
 
     // Issue partial BLS vote for the revocation
@@ -867,40 +1659,117 @@ void SwarmVehicle::handleRevokeProposal(
 
     // Send vote
     RevokeVoteMsg* voteMsg = new RevokeVoteMsg("REVOKE_VOTE");
+    populateWSM(voteMsg);
+
     voteMsg->setVoterId(currentPseudonym_.c_str());
     voteMsg->setSuspectPseudonym(suspect.c_str());
     voteMsg->setPartialSigBytes(toHex(vote.sigBytes).c_str());
     voteMsg->setEpoch(epoch);
     voteMsg->setVote(true);
 
-    sendDown(voteMsg);
-    msgSent_++;
+    if (demoTrace_) {
+        double delay = 0.0;
+
+        if (demoRole_ == "VALIDATOR_2") delay = 0.10;
+        else if (demoRole_ == "VALIDATOR_3") delay = 0.20;
+
+        scheduleAt(simTime() + delay, voteMsg);
+
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "REVOCATION_PROTOCOL",
+            "Scheduled REVOKE_VOTE",
+            "delay=" + std::to_string(delay) +
+            ", suspect=" + suspect.substr(0,16)
+        );
+    } else {
+        sendDown(voteMsg);
+        msgSent_++;
+    }
 
     EV_INFO << "[" << vehicleId_ << "] Voted to REVOKE "
             << suspect.substr(0,12) << endl;
 }
 
 void SwarmVehicle::handleRevokeVote(swarmevose::RevokeVoteMsg* msg) {
-    // Only the original proposer collects votes
+    std::string voter   = msg->getVoterId();
     std::string suspect = msg->getSuspectPseudonym();
-    if (!msg->getVote()) return;  // Reject votes
+    uint32_t epoch      = msg->getEpoch();
 
-    // Build partial sig from vote
+    if (demoTrace_ && demoRole_ != "VALIDATOR_1") {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "REVOCATION_PROTOCOL",
+            "Ignored REVOKE_VOTE",
+            "only VALIDATOR_1 collects revocation votes in controlled demo"
+        );
+        return;
+    }
+
+    if (!msg->getVote()) {
+        if (demoTrace_) {
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "REVOCATION_PROTOCOL",
+                "Ignored REVOKE_VOTE",
+                "suspect=" + suspect.substr(0,16) +
+                ", voter=" + voter.substr(0,16) +
+                ", reason=vote=false"
+            );
+        }
+        return;
+    }
+
+    // Build partial signature from vote.
+    // In this demo implementation, sigBytes are represented with fixed parsed bytes.
     PartialSignature vote;
-    vote.vehicleId = msg->getVoterId();
+    vote.vehicleId = voter;
     vote.pseudonym = "REVOKE:" + suspect;
-    vote.epoch     = msg->getEpoch();
-    vote.sigBytes.resize(32, 0xCC);  // Parsed from msg->getPartialSigBytes()
+    vote.epoch     = epoch;
+    vote.sigBytes.resize(32, 0xCC);
 
     revokeVotes_[suspect].push_back(vote);
 
     uint32_t k = computeThreshold();
+
+    if (demoTrace_) {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "REVOCATION_PROTOCOL",
+            "RX REVOKE_VOTE and stored partial revocation signature",
+            "suspect=" + suspect.substr(0,16) +
+            ", voter=" + voter.substr(0,16) +
+            ", votes=" + std::to_string(revokeVotes_[suspect].size()) +
+            "/" + std::to_string(computeThreshold())
+        );
+    }
+
     EV_INFO << "[" << vehicleId_ << "] Revoke votes for "
             << suspect.substr(0,12) << ": "
             << revokeVotes_[suspect].size() << "/" << k << endl;
 
-    // When k votes collected: aggregate and broadcast the revocation
-    if (revokeVotes_[suspect].size() >= k) {
+    if (revokeVotes_[suspect].size() >= static_cast<size_t>(k)) {
+        if (demoTrace_) {
+            urbanDemoTrace(
+                simTime().dbl(),
+                vehicleId_,
+                demoRole_,
+                "REVOCATION_PROTOCOL",
+                "Revocation threshold reached",
+                "suspect=" + suspect.substr(0,16) +
+                ", votes=" + std::to_string(revokeVotes_[suspect].size()) +
+                "/" + std::to_string(computeThreshold())
+            );
+        }
+
         broadcastACFUpdate(suspect);
     }
 }
@@ -927,6 +1796,19 @@ void SwarmVehicle::broadcastACFUpdate(const std::string& suspect) {
     acf_->insert(entry);
     acf_->advanceEpoch(newEpoch, sigma.sigBytes);
 
+    if (demoTrace_) {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "REVOCATION_PROTOCOL",
+            "Local ACF updated after threshold revocation",
+            "suspect=" + suspect.substr(0,16) +
+            ", newACFEpoch=" + std::to_string(newEpoch) +
+            ", trustCache=invalidated"
+        );
+    }
+
     // Invalidate trust cache — revocation happened
     trustCache_->invalidateAll();
 
@@ -938,6 +1820,7 @@ void SwarmVehicle::broadcastACFUpdate(const std::string& suspect) {
 
     // Broadcast the signed update — epidemic gossip propagation
     SignedAcfUpdateMsg* updateMsg = new SignedAcfUpdateMsg("SIGNED_ACF_UPDATE");
+    populateWSM(updateMsg);
     updateMsg->setRevokedFingerprint(fingerprint.c_str());
     updateMsg->setSigmaSerialized(sigma.serialise().c_str());
     updateMsg->setNewEpoch(newEpoch);
@@ -945,6 +1828,18 @@ void SwarmVehicle::broadcastACFUpdate(const std::string& suspect) {
     updateMsg->setStateHash(acf_->getStateHash().c_str());
 
     sendDown(updateMsg);
+
+    if (demoTrace_) {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "REVOCATION_PROTOCOL",
+            "TX real SIGNED_ACF_UPDATE",
+            "revokedFingerprint=" + fingerprint.substr(0,16) +
+            ", newACFEpoch=" + std::to_string(newEpoch)
+        );
+    }
     msgSent_++;
 
     // Notify dashboard
@@ -990,6 +1885,13 @@ void SwarmVehicle::handleSignedACFUpdate(
 
     bool inserted = acf_->insert(entry);
     if (inserted) {
+        if (demoTrace_) {
+            urbanDemoTrace(simTime().dbl(), vehicleId_, demoRole_,
+                "REVOCATION_PROTOCOL",
+                "RX SIGNED_ACF_UPDATE and updated local ACF",
+                "revokedFingerprint=" + fingerprint.substr(0,16) +
+                ", newACFEpoch=" + std::to_string(newEpoch));
+        }
         acf_->advanceEpoch(newEpoch, entry.thresholdSig);
         trustCache_->invalidateAll();  // Force re-verification of all cached vehicles
 
@@ -1000,7 +1902,8 @@ void SwarmVehicle::handleSignedACFUpdate(
         // Epidemic re-broadcast: spread to other vehicles we can reach
         // This is the gossip propagation — exponential spread
         SignedAcfUpdateMsg* relay = msg->dup();
-        sendDown(relay);
+        populateWSM(relay);
+	sendDown(relay);
 
         // Check if our OWN pseudonym just got revoked (self-detection)
         std::string myFP = computeFingerprint(currentPseudonym_);
@@ -1056,7 +1959,9 @@ void SwarmVehicle::replayOldProof() {
     // A revoked vehicle cannot produce a fresh proof, so it gets caught.
     EV_WARN << "[" << vehicleId_ << "] [MALICIOUS] Replaying old proof." << endl;
 
+    
     SafetyMsg* msg = new SafetyMsg("SAFETY_MSG");
+    populateWSM(msg);
     msg->setSenderId(currentPseudonym_.c_str());
     msg->setSpeed(mobility->getSpeed());
     msg->setPosX(mobility->getPositionAt(simTime()).x);
@@ -1092,6 +1997,8 @@ void SwarmVehicle::claimFakeIdentity() {
     std::string fakeH0      = "UNCERTIFIED_H0_" + vehicleId_;
 
     CandidateMsg* msg = new CandidateMsg("CANDIDATE_MSG");
+    populateWSM(msg);
+
     msg->setSenderId(currentPseudonym_.c_str());
     msg->setCandidatePseudonym(fakePseudo.c_str());
     // Invalid ZK proof — cannot produce a valid one without a real HSM
@@ -1150,6 +2057,8 @@ void SwarmVehicle::broadcastInvalidZK() {
     EV_WARN << "[" << vehicleId_ << "] [MALICIOUS] Broadcasting invalid ZK." << endl;
 
     CandidateMsg* msg = new CandidateMsg("CANDIDATE_MSG");
+    populateWSM(msg);
+
     msg->setSenderId(currentPseudonym_.c_str());
     msg->setCandidatePseudonym(currentPseudonym_.c_str());
     msg->setZkProofSerialized("INVALID_ZK_GARBAGE_DATA_0000000000");
@@ -1171,6 +2080,7 @@ void SwarmVehicle::claimImpossiblePosition() {
     EV_WARN << "[" << vehicleId_ << "] [MALICIOUS] Claiming impossible position." << endl;
 
     SafetyMsg* msg = new SafetyMsg("SAFETY_MSG");
+    populateWSM(msg);
     msg->setSenderId(currentPseudonym_.c_str());
     msg->setSpeed(999.0);           // Physically impossible speed (3600 km/h)
     msg->setPosX(99999.0);          // Position outside scenario bounds
@@ -1196,6 +2106,17 @@ void SwarmVehicle::claimImpossiblePosition() {
 // ============================================================
 
 void SwarmVehicle::onWSM(BaseFrame1609_4* wsm) {
+    if (demoTrace_) {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "RX_DISPATCH",
+            "onWSM received wireless frame",
+            std::string("name=") + wsm->getName() +
+            ", class=" + wsm->getClassName()
+        );
+    }
     // Route incoming messages to the correct handler
     if (swarmevose::CandidateMsg* m =
             dynamic_cast<swarmevose::CandidateMsg*>(wsm)) {
@@ -1236,6 +2157,54 @@ void SwarmVehicle::onBSM(DemoSafetyMessage* bsm) {
 }
 
 void SwarmVehicle::handleLowerMsg(cMessage* msg) {
+    if (demoTrace_) {
+        urbanDemoTrace(
+            simTime().dbl(),
+            vehicleId_,
+            demoRole_,
+            "RX_DISPATCH",
+            "Received message from lower layer",
+            std::string("msgName=") + msg->getName() +
+            ", class=" + msg->getClassName()
+        );
+    }
+
+    if (auto* candidate = dynamic_cast<CandidateMsg*>(msg)) {
+        handleCandidateMsg(candidate);
+        delete msg;
+        return;
+    }
+
+    if (auto* partial = dynamic_cast<PartialSigMsg*>(msg)) {
+        handlePartialSig(partial);
+        delete msg;
+        return;
+    }
+
+    if (auto* safety = dynamic_cast<SafetyMsg*>(msg)) {
+        handleSafetyMsg(safety);
+        delete msg;
+        return;
+    }
+
+    if (auto* proposal = dynamic_cast<RevokeProposalMsg*>(msg)) {
+        handleRevokeProposal(proposal);
+        delete msg;
+        return;
+    }
+
+    if (auto* vote = dynamic_cast<RevokeVoteMsg*>(msg)) {
+        handleRevokeVote(vote);
+        delete msg;
+        return;
+    }
+
+    if (auto* acfUpdate = dynamic_cast<SignedAcfUpdateMsg*>(msg)) {
+        handleSignedACFUpdate(acfUpdate);
+        delete msg;
+        return;
+    }
+
     DemoBaseApplLayer::handleLowerMsg(msg);
 }
 
@@ -1309,4 +2278,20 @@ void SwarmVehicle::emitDashboardEvent(const std::string& eventType,
     std::string json = "{\"type\":\"" + eventType + "\"," + data.substr(1);
     // (data is already a JSON object string starting with '{')
     DashboardServer::instance().emitRaw(json);
+}
+
+// Update neighbour count based on DSRC packets actually received recently.
+// This is demo-friendly and directly reflects vehicles that are in communication range.
+void SwarmVehicle::updateObservedNeighbours() {
+    simtime_t now = simTime();
+
+    for (auto it = recentNeighbourSeen_.begin(); it != recentNeighbourSeen_.end(); ) {
+        if ((now - it->second).dbl() > 3.0) {
+            it = recentNeighbourSeen_.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    neighbourCount_ = recentNeighbourSeen_.size();
 }

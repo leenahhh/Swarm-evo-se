@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Swarm Evo-SE — Live Dashboard</title>
+<style>
+  /* ---- Base ---- */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Courier New', monospace;
+    background: #0a0e1a;
+    color: #c8d3f0;
+    height: 100vh;
+    overflow: hidden;
+  }
+  h1 { font-size: 14px; color: #82aaff; letter-spacing: 2px; }
+  h2 { font-size: 11px; color: #7fdbca; letter-spacing: 1px; margin-bottom: 6px; }
+
+  /* ---- Layout grid ---- */
+  #root {
+    display: grid;
+    grid-template-columns: 260px 1fr 260px;
+    grid-template-rows: 40px 1fr 1fr 32px;
+    height: 100vh;
+    gap: 4px;
+    padding: 4px;
+  }
+  header {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #111827;
+    border-radius: 6px;
+    padding: 0 12px;
+    border-left: 3px solid #82aaff;
+  }
+  footer {
+    grid-column: 1 / -1;
+    background: #111827;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 24px;
+    font-size: 11px;
+  }
+
+  /* ---- Panels ---- */
+  .panel {
+    background: #111827;
+    border-radius: 6px;
+    padding: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #1e293b;
+  }
+  .panel-content {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 11px;
+    line-height: 1.6;
+  }
+  .panel-content::-webkit-scrollbar { width: 4px; }
+  .panel-content::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+  /* ---- Map canvas ---- */
+  #mapCanvas {
+    width: 100%;
+    height: 100%;
+    background: #0d1425;
+    border-radius: 4px;
+  }
+
+  /* ---- Log entries ---- */
+  .log-entry { padding: 2px 4px; border-radius: 3px; margin-bottom: 1px; }
+  .log-entry.accept  { color: #73daca; }
+  .log-entry.drop    { color: #f7768e; background: rgba(247,118,142,0.08); }
+  .log-entry.quarantine { color: #e0af68; }
+  .log-entry.rechallenge { color: #bb9af7; }
+  .log-entry.revoke  { color: #ff9e64; background: rgba(255,158,100,0.1); }
+  .log-entry.info    { color: #7dcfff; }
+  .log-entry.zkproof { color: #9ece6a; }
+  .log-entry.bls     { color: #2ac3de; }
+  .log-entry.malicious { color: #f7768e; background: rgba(247,118,142,0.15);
+                          border-left: 2px solid #f7768e; }
+
+  /* ---- Packet inspector ---- */
+  .packet-field { display: flex; margin-bottom: 2px; }
+  .field-name   { color: #7fdbca; min-width: 130px; font-size: 10px; }
+  .field-value  { color: #c8d3f0; font-size: 10px; word-break: break-all; }
+  .field-value.hash { color: #bb9af7; }
+  .field-value.sig  { color: #2ac3de; }
+  .field-value.bad  { color: #f7768e; }
+  .field-value.good { color: #73daca; }
+
+  /* ---- Vehicle cards ---- */
+  .vehicle-card {
+    background: #1a2035;
+    border-radius: 4px;
+    padding: 5px 8px;
+    margin-bottom: 4px;
+    border-left: 3px solid #334155;
+    font-size: 10px;
+  }
+  .vehicle-card.legitimate { border-left-color: #73daca; }
+  .vehicle-card.malicious  { border-left-color: #f7768e; }
+  .vehicle-card.revoked    { border-left-color: #f7768e; opacity: 0.5; }
+  .vehicle-card.quarantine { border-left-color: #e0af68; }
+  .vc-header { display: flex; justify-content: space-between; margin-bottom: 2px; }
+  .vc-id     { color: #82aaff; font-weight: bold; }
+  .vc-status { font-size: 9px; padding: 1px 5px; border-radius: 10px; }
+  .status-ok  { background: rgba(115,218,202,0.2); color: #73daca; }
+  .status-bad { background: rgba(247,118,142,0.2); color: #f7768e; }
+  .status-warn{ background: rgba(224,175,104,0.2); color: #e0af68; }
+
+  /* ---- ACF display ---- */
+  .acf-entry {
+    background: rgba(247,118,142,0.08);
+    border-left: 2px solid #f7768e;
+    padding: 3px 6px;
+    margin-bottom: 3px;
+    font-size: 10px;
+    border-radius: 0 3px 3px 0;
+  }
+
+  /* ---- Stats bar ---- */
+  .stat { display: flex; align-items: center; gap: 6px; }
+  .stat-label { color: #4a5568; font-size: 10px; }
+  .stat-value { color: #82aaff; font-weight: bold; font-size: 11px; }
+  .stat-value.good { color: #73daca; }
+  .stat-value.bad  { color: #f7768e; }
+
+  /* ---- Connection status ---- */
+  #connStatus { font-size: 11px; }
+  .conn-ok   { color: #73daca; }
+  .conn-err  { color: #f7768e; }
+  .conn-wait { color: #e0af68; }
+
+  /* ---- Tabs ---- */
+  .tabs { display: flex; gap: 2px; margin-bottom: 6px; }
+  .tab {
+    padding: 2px 8px;
+    font-size: 10px;
+    background: #1e293b;
+    border-radius: 3px;
+    cursor: pointer;
+    color: #4a5568;
+  }
+  .tab.active { background: #1e3a5f; color: #82aaff; }
+
+  /* ---- Epoch progress bar ---- */
+  #epochBar {
+    height: 3px;
+    background: #1e293b;
+    border-radius: 2px;
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+  #epochBarFill {
+    height: 100%;
+    background: linear-gradient(90deg, #82aaff, #7fdbca);
+    width: 0%;
+    transition: width 0.5s;
+  }
+</style>
+</head>
+<body>
+<div id="root">
+
+  <!-- Header -->
+  <header>
+    <h1>⬡ SWARM EVO-SE — LIVE SIMULATION DASHBOARD</h1>
+    <div style="display:flex; gap:20px; align-items:center;">
+      <span id="simTime" style="color:#e0af68; font-size:12px;">t = 0.0s</span>
+      <span id="epochLabel" style="color:#7fdbca; font-size:12px;">Epoch 0</span>
+      <span id="connStatus" class="conn-wait">⬤ Connecting...</span>
+    </div>
+  </header>
+
+  <!-- Left: Vehicle list -->
+  <div class="panel" style="grid-row: 2 / 4;">
+    <h2>VEHICLES</h2>
+    <div id="epochBar"><div id="epochBarFill"></div></div>
+    <div class="tabs">
+      <div class="tab active" onclick="setVehicleTab('all')">All</div>
+      <div class="tab" onclick="setVehicleTab('malicious')">Malicious</div>
+      <div class="tab" onclick="setVehicleTab('revoked')">Revoked</div>
+    </div>
+    <div class="panel-content" id="vehicleList"></div>
+  </div>
+
+  <!-- Centre top: Map -->
+  <div class="panel" style="grid-row: 2;">
+    <h2>NETWORK MAP — DSRC RANGE VISUALISATION</h2>
+    <canvas id="mapCanvas"></canvas>
+  </div>
+
+  <!-- Centre bottom: Packet inspector -->
+  <div class="panel" style="grid-row: 3;">
+    <h2>PACKET INSPECTOR</h2>
+    <div class="tabs">
+      <div class="tab active" onclick="setPacketTab('latest')">Latest</div>
+      <div class="tab" onclick="setPacketTab('candidate')">CANDIDATE_MSG</div>
+      <div class="tab" onclick="setPacketTab('safety')">SAFETY_MSG</div>
+      <div class="tab" onclick="setPacketTab('revoke')">REVOKE</div>
+      <div class="tab" onclick="setPacketTab('acf')">ACF UPDATE</div>
+    </div>
+    <div class="panel-content" id="packetInspector"></div>
+  </div>
+
+  <!-- Right top: Event log -->
+  <div class="panel" style="grid-row: 2;">
+    <h2>EVENT LOG</h2>
+    <div class="panel-content" id="eventLog"></div>
+  </div>
+
+  <!-- Right bottom: ACF state -->
+  <div class="panel" style="grid-row: 3;">
+    <h2>AUTHENTICATED CUCKOO FILTER</h2>
+    <div style="font-size:10px; color:#4a5568; margin-bottom:6px;">
+      Epoch: <span id="acfEpoch" style="color:#82aaff">0</span> &nbsp;|&nbsp;
+      Entries: <span id="acfSize" style="color:#f7768e">0</span> &nbsp;|&nbsp;
+      Fresh: <span id="acfFresh" style="color:#73daca">YES</span>
+    </div>
+    <div class="panel-content" id="acfEntries"></div>
+  </div>
+
+  <!-- Footer: stats -->
+  <footer>
+    <div class="stat">
+      <span class="stat-label">MSG SENT</span>
+      <span class="stat-value" id="sMsgSent">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">ACCEPTED</span>
+      <span class="stat-value good" id="sMsgAccepted">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">HARD DROP</span>
+      <span class="stat-value bad" id="sMsgDropped">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">QUARANTINE</span>
+      <span class="stat-value" style="color:#e0af68" id="sMsgQuarantine">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">RE-CHALLENGE</span>
+      <span class="stat-value" style="color:#bb9af7" id="sMsgRechallenge">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">REVOCATIONS</span>
+      <span class="stat-value bad" id="sRevocations">0</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">CACHE HIT RATE</span>
+      <span class="stat-value good" id="sCacheHit">0%</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">AVG AUTH LATENCY</span>
+      <span class="stat-value" id="sLatency">0ms</span>
+    </div>
+    <div class="stat">
+      <span class="stat-label">ZK PROOFS/s</span>
+      <span class="stat-value" style="color:#9ece6a" id="sZkRate">0</span>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ============================================================
+// Dashboard JavaScript — connects to simulation WebSocket
+// and renders all live state
+// ============================================================
+
+const WS_URL = "ws://localhost:8765";
+let ws = null;
+let vehicles = {};       // vehicleId -> vehicle state
+let acfEntries = [];     // current ACF entries
+let eventLogEntries = [];
+let stats = { sent:0, accepted:0, dropped:0, quarantine:0, rechallenge:0,
+              revocations:0, cacheHits:0, totalAuth:0, latencySum:0, zkRate:0 };
+let currentPacket = null;
+let vehicleTab = 'all';
+let packetTab = 'latest';
+let packetHistory = { candidate:[], safety:[], revoke:[], acf:[] };
+
+// --- Map state ---
+const mapCanvas = document.getElementById('mapCanvas');
+const ctx = mapCanvas.getContext('2d');
+let mapWidth = 1000, mapHeight = 1000;  // scenario dimensions
+
+// ---- WebSocket connection ----
+function connect() {
+  ws = new WebSocket(WS_URL);
+  ws.onopen = () => {
+    document.getElementById('connStatus').textContent = '⬤ Connected';
+    document.getElementById('connStatus').className = 'conn-ok';
+  };
+  ws.onclose = () => {
+    document.getElementById('connStatus').textContent = '⬤ Disconnected';
+    document.getElementById('connStatus').className = 'conn-err';
+    setTimeout(connect, 2000);  // Reconnect every 2s
+  };
+  ws.onmessage = (ev) => {
+    try {
+      const event = JSON.parse(ev.data);
+      handleEvent(event);
+    } catch(e) { console.error("Parse error:", e); }
+  };
+}
+
+// ---- Event dispatcher ----
+function handleEvent(e) {
+  switch(e.type) {
+    case 'SIM_STATE':       handleSimState(e); break;
+    case 'VEHICLE_UPDATE':  handleVehicleUpdate(e); break;
+    case 'PACKET_EVENT':    handlePacketEvent(e); break;
+    case 'ACF_UPDATE':      handleACFUpdate(e); break;
+    case 'REVOCATION':      handleRevocation(e); break;
+    case 'ZK_PROOF':        handleZKProof(e); break;
+    case 'BLS_AGG':         handleBLSAgg(e); break;
+    case 'STATS_UPDATE':    handleStatsUpdate(e); break;
+    default: addLog('info', `Unknown event: ${e.type}`);
+  }
+}
+
+// ---- Simulation state (time, epoch) ----
+function handleSimState(e) {
+  document.getElementById('simTime').textContent = `t = ${e.simTime.toFixed(1)}s`;
+  document.getElementById('epochLabel').textContent = `Epoch ${e.epoch}`;
+  const pct = (e.epochProgress * 100).toFixed(0);
+  document.getElementById('epochBarFill').style.width = pct + '%';
+}
+
+// ---- Vehicle update ----
+function handleVehicleUpdate(e) {
+  vehicles[e.vehicleId] = e;
+  renderVehicleList();
+  renderMap();
+}
+
+// ---- Packet event ----
+function handlePacketEvent(e) {
+  currentPacket = e;
+
+  // Categorise for tab history
+  if (e.msgType === 'CANDIDATE_MSG')   { packetHistory.candidate.unshift(e); packetHistory.candidate = packetHistory.candidate.slice(0,20); }
+  if (e.msgType === 'SAFETY_MSG')      { packetHistory.safety.unshift(e); packetHistory.safety = packetHistory.safety.slice(0,20); }
+  if (e.msgType === 'REVOKE_PROPOSAL') { packetHistory.revoke.unshift(e); packetHistory.revoke = packetHistory.revoke.slice(0,20); }
+  if (e.msgType === 'ACF_UPDATE')      { packetHistory.acf.unshift(e); packetHistory.acf = packetHistory.acf.slice(0,20); }
+
+  renderPacketInspector(e);
+
+  // Add to event log
+  let cls = 'info', label = e.msgType;
+  if (e.outcome === 'ACCEPTED')     { cls = 'accept';     label = '✓ ACCEPTED'; }
+  if (e.outcome === 'HARD_DROP')    { cls = 'drop';       label = '✗ HARD DROP'; }
+  if (e.outcome === 'QUARANTINE')   { cls = 'quarantine'; label = '⚠ QUARANTINE'; }
+  if (e.outcome === 'RECHALLENGE')  { cls = 'rechallenge';label = '↺ RE-CHALLENGE'; }
+  if (e.isMalicious)                { cls = 'malicious';  label = '☠ MAL: ' + e.msgType; }
+
+  addLog(cls, `[${e.senderId?.slice(0,8)}] ${label}: ${e.msgType}`);
+
+  // Update stats
+  stats.sent++;
+  if (e.outcome === 'ACCEPTED')    stats.accepted++;
+  if (e.outcome === 'HARD_DROP')   stats.dropped++;
+  if (e.outcome === 'QUARANTINE')  stats.quarantine++;
+  if (e.outcome === 'RECHALLENGE') stats.rechallenge++;
+  if (e.latencyMs) { stats.latencySum += e.latencyMs; stats.totalAuth++; }
+  updateStatsBar();
+}
+
+// ---- ACF update ----
+function handleACFUpdate(e) {
+  acfEntries = e.entries || [];
+  document.getElementById('acfEpoch').textContent = e.epoch;
+  document.getElementById('acfSize').textContent  = acfEntries.length;
+  document.getElementById('acfFresh').textContent = e.isFresh ? 'YES' : 'STALE';
+  document.getElementById('acfFresh').style.color = e.isFresh ? '#73daca' : '#f7768e';
+  renderACF();
+  addLog('revoke', `ACF UPDATE: epoch ${e.epoch}, ${acfEntries.length} revoked entries`);
+}
+
+// ---- Revocation event ----
+function handleRevocation(e) {
+  stats.revocations++;
+  addLog('revoke', `🔴 REVOKED: ${e.suspectId?.slice(0,12)} | reason: ${e.reason}`);
+  if (vehicles[e.suspectId]) {
+    vehicles[e.suspectId].status = 'REVOKED';
+    renderVehicleList();
+  }
+  updateStatsBar();
+}
+
+// ---- ZK Proof event ----
+function handleZKProof(e) {
+  const result = e.verified ? '✓ VALID' : '✗ INVALID';
+  const cls    = e.verified ? 'zkproof' : 'malicious';
+  addLog(cls, `ZK: [${e.vehicleId?.slice(0,8)}] proof ${result} | epoch=${e.epoch} idx=${e.index}`);
+}
+
+// ---- BLS aggregation event ----
+function handleBLSAgg(e) {
+  addLog('bls', `BLS AGG: ${e.signerCount} partials → 1 Sigma_threshold | pseudo=${e.pseudonym?.slice(0,12)}`);
+}
+
+// ---- Stats update ----
+function handleStatsUpdate(e) {
+  if (e.cacheHitRate !== undefined)
+    document.getElementById('sCacheHit').textContent = (e.cacheHitRate * 100).toFixed(1) + '%';
+  if (e.zkProofsPerSec !== undefined)
+    document.getElementById('sZkRate').textContent = e.zkProofsPerSec.toFixed(0);
+}
+
+// ---- Render: Vehicle list ----
+function renderVehicleList() {
+  const el = document.getElementById('vehicleList');
+  const vList = Object.values(vehicles).filter(v => {
+    if (vehicleTab === 'malicious') return v.isMalicious;
+    if (vehicleTab === 'revoked')   return v.status === 'REVOKED';
+    return true;
+  });
+  el.innerHTML = vList.map(v => {
+    const cls = v.status === 'REVOKED' ? 'revoked' : v.isMalicious ? 'malicious' : 'legitimate';
+    const statusCls = v.status === 'REVOKED' ? 'status-bad' :
+                      v.status === 'QUARANTINE' ? 'status-warn' : 'status-ok';
+    const statusLabel = v.status || 'OK';
+    return `<div class="vehicle-card ${cls}">
+      <div class="vc-header">
+        <span class="vc-id">${v.vehicleId?.slice(0,10) || 'unknown'}</span>
+        <span class="vc-status ${statusCls}">${statusLabel}</span>
+      </div>
+      <div>Pseudo: <span style="color:#bb9af7">${(v.pseudonym||'').slice(0,16)}…</span></div>
+      <div>H_0: <span style="color:#7fdbca">${(v.h0||'').slice(0,14)}…</span></div>
+      <div>Epoch: ${v.epoch||0} | k: ${v.threshold||0} | Neighbours: ${v.neighbours||0}</div>
+      ${v.isMalicious ? `<div style="color:#f7768e; font-size:9px;">MODE: ${v.maliciousMode||''}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ---- Render: Packet inspector ----
+function renderPacketInspector(pkt) {
+  if (!pkt) return;
+  const el = document.getElementById('packetInspector');
+  const fields = buildPacketFields(pkt);
+  el.innerHTML = `
+    <div style="color:#82aaff; font-size:11px; margin-bottom:6px; font-weight:bold;">
+      ${pkt.msgType} 
+      <span style="color:#4a5568; font-weight:normal; margin-left:8px;">
+        ${pkt.senderId?.slice(0,10)} → ${pkt.receiverId?.slice(0,10) || 'BROADCAST'}
+      </span>
+      ${pkt.outcome ? `<span style="float:right; color:${outcomeColor(pkt.outcome)}">${pkt.outcome}</span>` : ''}
+    </div>
+    ${fields}
+    ${pkt.isMalicious ? '<div style="color:#f7768e; margin-top:4px; font-size:10px;">⚠ MALICIOUS PACKET DETECTED</div>' : ''}
+  `;
+}
+
+function buildPacketFields(pkt) {
+  const show = (name, val, cls='') =>
+    `<div class="packet-field">
+       <span class="field-name">${name}</span>
+       <span class="field-value ${cls}">${val}</span>
+     </div>`;
+
+  let html = '';
+  if (pkt.senderId)       html += show('sender_pseudonym', pkt.senderId?.slice(0,32), 'hash');
+  if (pkt.h0)             html += show('H_0 (pubkey)', pkt.h0?.slice(0,32), 'hash');
+  if (pkt.epoch !== undefined) html += show('epoch', pkt.epoch);
+  if (pkt.candidatePseudonym) html += show('candidate_pseudo', pkt.candidatePseudonym?.slice(0,32), 'hash');
+  if (pkt.zkProof)        html += show('ZK_proof', pkt.zkProof?.valid ? '✓ VALID' : '✗ INVALID',
+                                        pkt.zkProof?.valid ? 'good' : 'bad');
+  if (pkt.zkProof?.commitment) html += show('  commitment', pkt.zkProof.commitment?.slice(0,32), 'sig');
+  if (pkt.zkProof?.response)   html += show('  response', pkt.zkProof.response?.slice(0,32), 'sig');
+  if (pkt.sigmaSerialized) html += show('Sigma_threshold', pkt.sigmaSerialized?.slice(0,32), 'sig');
+  if (pkt.filterEpochAtSigning !== undefined)
+    html += show('filter_epoch@signing', pkt.filterEpochAtSigning,
+                 pkt.filterEpochAtSigning === pkt.currentAcfEpoch ? 'good' : 'bad');
+  if (pkt.clusterId)      html += show('cluster_id', pkt.clusterId);
+  if (pkt.messageSignature) html += show('msg_signature',
+                              pkt.sigValid ? '✓ VALID' : '✗ INVALID',
+                              pkt.sigValid ? 'good' : 'bad');
+  if (pkt.speed !== undefined) html += show('speed', pkt.speed?.toFixed(1) + ' m/s');
+  if (pkt.posX !== undefined)  html += show('position', `(${pkt.posX?.toFixed(0)}, ${pkt.posY?.toFixed(0)})`);
+  if (pkt.eventType)           html += show('event_type', pkt.eventType);
+  if (pkt.latencyMs !== undefined) html += show('auth_latency', pkt.latencyMs?.toFixed(2) + ' ms',
+                                                  pkt.latencyMs < 20 ? 'good' : 'bad');
+  if (pkt.overhead !== undefined)  html += show('packet_overhead', pkt.overhead + ' bytes');
+  if (pkt.outcome)        html += show('OUTCOME', pkt.outcome,
+                            pkt.outcome === 'ACCEPTED' ? 'good' : 'bad');
+  if (pkt.dropReason)     html += show('drop_reason', pkt.dropReason, 'bad');
+  return html;
+}
+
+function outcomeColor(outcome) {
+  if (outcome === 'ACCEPTED')    return '#73daca';
+  if (outcome === 'HARD_DROP')   return '#f7768e';
+  if (outcome === 'QUARANTINE')  return '#e0af68';
+  if (outcome === 'RECHALLENGE') return '#bb9af7';
+  return '#c8d3f0';
+}
+
+// ---- Render: ACF entries ----
+function renderACF() {
+  const el = document.getElementById('acfEntries');
+  if (acfEntries.length === 0) {
+    el.innerHTML = '<div style="color:#4a5568; font-size:10px;">No revocations yet</div>';
+    return;
+  }
+  el.innerHTML = acfEntries.map(e =>
+    `<div class="acf-entry">
+      <div><span style="color:#f7768e">REVOKED</span> | epoch ${e.epoch} | cluster: ${e.clusterId}</div>
+      <div style="color:#bb9af7; font-size:9px;">${e.pseudonymFingerprint?.slice(0,40)}…</div>
+      <div style="color:#4a5568; font-size:9px;">sig: ${e.thresholdSig ? '✓ authenticated' : '✗ missing'}</div>
+    </div>`
+  ).join('');
+}
+
+// ---- Render: Map canvas ----
+function renderMap() {
+  const W = mapCanvas.width  = mapCanvas.offsetWidth;
+  const H = mapCanvas.height = mapCanvas.offsetHeight;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background grid (road network approximation)
+  ctx.strokeStyle = '#1a2035';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < W; x += W/6) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += H/6) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  const vList = Object.values(vehicles);
+  if (!vList.length) return;
+
+  // Find bounds for coordinate scaling
+  const xs = vList.map(v => v.posX || 0);
+  const ys = vList.map(v => v.posY || 0);
+  const minX = Math.min(...xs), maxX = Math.max(...xs) || 1;
+  const minY = Math.min(...ys), maxY = Math.max(...ys) || 1;
+  const pad = 30;
+  const scaleX = (x) => pad + (x - minX) / (maxX - minX + 1) * (W - 2*pad);
+  const scaleY = (y) => pad + (y - minY) / (maxY - minY + 1) * (H - 2*pad);
+
+  // Draw DSRC range circles (faint)
+  vList.forEach(v => {
+    const cx = scaleX(v.posX || 0);
+    const cy = scaleY(v.posY || 0);
+    const r  = 300 / ((maxX - minX + 1) / (W - 2*pad));  // 300m radius scaled
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.min(r, 60), 0, 2*Math.PI);
+    ctx.strokeStyle = v.isMalicious ? 'rgba(247,118,142,0.08)' : 'rgba(130,170,255,0.06)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+
+  // Draw V2V communication lines (recent)
+  // (in a full implementation these come as events from simulation)
+
+  // Draw vehicles
+  vList.forEach(v => {
+    const cx = scaleX(v.posX || 0);
+    const cy = scaleY(v.posY || 0);
+
+    // Vehicle dot
+    const color = v.status === 'REVOKED'    ? '#f7768e' :
+                  v.isMalicious             ? '#ff9e64' :
+                  v.status === 'QUARANTINE' ? '#e0af68' : '#73daca';
+    ctx.beginPath();
+    ctx.arc(cx, cy, 5, 0, 2*Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+
+    // Vehicle ID label
+    ctx.fillStyle = '#4a5568';
+    ctx.font = '8px monospace';
+    ctx.fillText(v.vehicleId?.slice(0,6) || '', cx + 7, cy + 3);
+
+    // Pseudonym hash (truncated)
+    ctx.fillStyle = '#1e3a5f';
+    ctx.fillText((v.pseudonym||'').slice(0,8), cx + 7, cy + 12);
+  });
+}
+
+// ---- Event log ----
+function addLog(cls, msg) {
+  const now = new Date().toLocaleTimeString('en-GB', {hour12:false});
+  eventLogEntries.unshift({ cls, msg, time: now });
+  if (eventLogEntries.length > 200) eventLogEntries.pop();
+  const el = document.getElementById('eventLog');
+  el.innerHTML = eventLogEntries.slice(0, 80).map(e =>
+    `<div class="log-entry ${e.cls}"><span style="color:#334155">${e.time}</span> ${e.msg}</div>`
+  ).join('');
+}
+
+// ---- Stats bar ----
+function updateStatsBar() {
+  document.getElementById('sMsgSent').textContent      = stats.sent;
+  document.getElementById('sMsgAccepted').textContent  = stats.accepted;
+  document.getElementById('sMsgDropped').textContent   = stats.dropped;
+  document.getElementById('sMsgQuarantine').textContent= stats.quarantine;
+  document.getElementById('sMsgRechallenge').textContent = stats.rechallenge;
+  document.getElementById('sRevocations').textContent  = stats.revocations;
+  const avgLat = stats.totalAuth > 0 ? (stats.latencySum / stats.totalAuth).toFixed(1) : '0';
+  document.getElementById('sLatency').textContent = avgLat + 'ms';
+}
+
+// ---- Tab handlers ----
+function setVehicleTab(tab) {
+  vehicleTab = tab;
+  document.querySelectorAll('.tabs .tab').forEach((t,i) => {
+    if (['all','malicious','revoked'][i] === tab) t.classList.add('active');
+    else t.classList.remove('active');
+  });
+  renderVehicleList();
+}
+function setPacketTab(tab) { packetTab = tab; }
+
+// ---- Start ----
+connect();
+setInterval(renderMap, 500);  // Refresh map every 500ms
+</script>
+</body>
+</html>

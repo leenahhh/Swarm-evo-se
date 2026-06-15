@@ -1,0 +1,337 @@
+[General]
+network = SwarmNetwork
+sim-time-limit = 300s
+record-eventlog = false
+**.vector-recording = true
+**.scalar-recording = true
+
+# Playground
+SwarmNetwork.playgroundSizeX = 6000m
+SwarmNetwork.playgroundSizeY = 1200m
+SwarmNetwork.playgroundSizeZ = 50m
+
+# Connection manager
+SwarmNetwork.connectionManager.sendDirect = true
+SwarmNetwork.connectionManager.maxInterfDist = 300m
+SwarmNetwork.connectionManager.drawMaxIntfDist = false
+
+# TraCI manager
+SwarmNetwork.manager.updateInterval = 0.1s
+SwarmNetwork.manager.host = "localhost"
+SwarmNetwork.manager.port = 9999
+SwarmNetwork.manager.autoShutdown = true
+SwarmNetwork.manager.launchConfig = xmldoc("sumo_highway.launchd.xml")
+
+# Vehicle app binding
+SwarmNetwork.node[*].applType = "SwarmVehicle"
+SwarmNetwork.node[*].appl.headerLength = 80bit
+SwarmNetwork.node[*].appl.sendBeacons = true
+SwarmNetwork.node[*].appl.dataOnSch = false
+SwarmNetwork.node[*].appl.beaconInterval = 0.1s
+
+# Mobility
+SwarmNetwork.node[*].veinsmobility.x = 0
+SwarmNetwork.node[*].veinsmobility.y = 0
+SwarmNetwork.node[*].veinsmobility.z = 0
+SwarmNetwork.node[*].veinsmobility.setHostSpeed = false
+
+# PHY layer — complete list for Veins 5.x
+SwarmNetwork.node[*].nic.phy80211p.usePropagationDelay = false
+SwarmNetwork.node[*].nic.phy80211p.useNoiseFloor = true
+SwarmNetwork.node[*].nic.phy80211p.noiseFloor = -98dBm
+SwarmNetwork.node[*].nic.phy80211p.useThermalNoise = true
+SwarmNetwork.node[*].nic.phy80211p.thermalNoise = -110dBm
+SwarmNetwork.node[*].nic.phy80211p.sensitivity = -89dBm
+SwarmNetwork.node[*].nic.phy80211p.maxTXPower = 20mW
+SwarmNetwork.node[*].nic.phy80211p.initialRadioState = 0
+SwarmNetwork.node[*].nic.phy80211p.collectCollisionStatistics = false
+SwarmNetwork.node[*].nic.phy80211p.channelNumber = 180
+SwarmNetwork.node[*].nic.phy80211p.headerLength = 46bit
+SwarmNetwork.node[*].nic.phy80211p.decider = xmldoc("config.xml")
+SwarmNetwork.node[*].nic.phy80211p.analogueModels = xmldoc("config.xml")
+SwarmNetwork.node[*].nic.phy80211p.antenna = default
+SwarmNetwork.node[*].nic.phy80211p.minPowerLevel = -110dBm
+SwarmNetwork.node[*].nic.phy80211p.carrierFrequency = 5.890e9 Hz
+SwarmNetwork.node[*].nic.phy80211p.drawCommunicationRange = false
+
+# MAC layer — complete list for Veins 5.x
+SwarmNetwork.node[*].nic.mac1609_4.useServiceChannel = false
+SwarmNetwork.node[*].nic.mac1609_4.queueSize = 14
+SwarmNetwork.node[*].nic.mac1609_4.contentionWindowMin = 15
+SwarmNetwork.node[*].nic.mac1609_4.contentionWindowMax = 1007
+SwarmNetwork.node[*].nic.mac1609_4.AIFS = 2
+SwarmNetwork.node[*].nic.mac1609_4.slotDuration = 13us
+SwarmNetwork.node[*].nic.mac1609_4.guardSize = 4us
+SwarmNetwork.node[*].nic.mac1609_4.txPower = 20mW
+SwarmNetwork.node[*].nic.mac1609_4.bitrate = 6Mbps
+SwarmNetwork.node[*].nic.mac1609_4.headerLength = 88bit
+SwarmNetwork.node[*].nic.mac1609_4.bandwidth = 10MHz
+SwarmNetwork.node[*].nic.mac1609_4.centerFrequency = 5.890e9 Hz
+
+# Protocol parameters
+**.epochDuration = 600s
+**.beaconInterval = 0.1s
+**.preActivationLead = 60s
+**.trustCacheTTL = 30
+**.acfMaxStaleness = 3
+**.proofPoolPrecompute = 100
+**.dashboardPort = 8765
+**.maliciousRatio = 0.0
+**.maliciousMode = "NONE"
+
+# ===========================================================
+[Config Highway]
+description = "Highway: 8 vehicles, 5km, sparse"
+SwarmNetwork.manager.launchConfig = xmldoc("sumo_highway.launchd.xml")
+**.maliciousRatio = 0.0
+**.maliciousMode = "NONE"
+
+# ===========================================================
+[Config Urban]
+description = "Urban: 120 veh/km, Manhattan grid"
+SwarmNetwork.manager.launchConfig = xmldoc("sumo_urban.launchd.xml")
+**.maliciousRatio = 0.0
+**.maliciousMode = "NONE"
+
+# ===========================================================
+[Config Sybil]
+description = "Sybil attack: 50 vehicles, 10% malicious"
+SwarmNetwork.manager.launchConfig = xmldoc("sumo_urban.launchd.xml")
+**.maliciousRatio = 0.10
+**.maliciousMode = "SYBIL_ATTACK"
+
+# ===========================================================
+[Config ReplayAttack]
+description = "Replay attack"
+SwarmNetwork.manager.launchConfig = xmldoc("sumo_urban.launchd.xml")
+**.maliciousRatio = 0.10
+**.maliciousMode = "REPLAY_ATTACK"
+
+# ===========================================================
+[Config FalseRevocation]
+description = "False revocation: colluding attackers"
+SwarmNetwork.manager.launchConfig = xmldoc("sumo_urban.launchd.xml")
+**.maliciousRatio = 0.12
+**.maliciousMode = "FALSE_REVOCATION"
+
+# ===========================================================
+[Config GhostVehicle]
+description = "Ghost vehicle: impossible positions"
+SwarmNetwork.manager.launchConfig = xmldoc("sumo_urban.launchd.xml")
+**.maliciousRatio = 0.07
+**.maliciousMode = "GHOST_VEHICLE"
+
+# ===========================================================
+# DEMO CONFIG: Legitimate urban authentication
+# Shows: boot, pseudonym generation, swarm acceptance,
+# successful SAFETY_MSG transmission, receiver ACCEPTED result.
+# ===========================================================
+[Config UrbanAuthDemo]
+extends = Urban
+description = "DEMO: Urban legitimate driver authentication"
+sim-time-limit = 90s
+
+# Short demo timing
+**.epochDuration = 30s
+**.preActivationLead = 10s
+**.beaconInterval = 0.2s
+
+# No attackers in this demo
+**.maliciousRatio = 0.0
+**.maliciousMode = "NONE"
+
+
+# ===========================================================
+# DEMO CONFIG: Urban malicious vehicle attack
+# Shows: malicious proof/message, failed authentication,
+# revocation proposal, ACF update, hard drop.
+# ===========================================================
+[Config UrbanAttackDemo]
+extends = Urban
+description = "DEMO: Urban malicious vehicle detection and revocation"
+sim-time-limit = 120s
+
+# Short demo timing
+**.epochDuration = 30s
+**.preActivationLead = 10s
+**.beaconInterval = 0.2s
+
+# Malicious vehicles enabled
+**.maliciousRatio = 0.25
+**.maliciousMode = "INVALID_ZK"
+
+
+# ===========================================================
+# DEMO CONFIG: Highway legitimate authentication
+# Shows sparse highway operation.
+# ===========================================================
+[Config HighwayAuthDemo]
+extends = Highway
+description = "DEMO: Highway legitimate driver authentication"
+sim-time-limit = 90s
+
+**.epochDuration = 30s
+**.preActivationLead = 10s
+**.beaconInterval = 0.2s
+**.maliciousRatio = 0.0
+**.maliciousMode = "NONE"
+
+
+# ===========================================================
+# DEMO CONFIG: Highway malicious replay attack
+# Shows stale proof / replay attack handling.
+# ===========================================================
+[Config HighwayAttackDemo]
+extends = Highway
+description = "DEMO: Highway malicious replay attack"
+sim-time-limit = 120s
+
+**.epochDuration = 30s
+**.preActivationLead = 10s
+**.beaconInterval = 0.2s
+**.maliciousRatio = 0.25
+**.maliciousMode = "REPLAY_ATTACK"
+
+# ===========================================================
+# CONTROLLED DEMO: Legitimate driver authentication
+# One focus node appears first. Validator nodes enter DSRC range.
+# ===========================================================
+[Config ContactLegitDemo]
+description = "Controlled demo: legitimate driver authentication"
+network = SwarmNetwork
+sim-time-limit = 90s
+
+*.manager.launchConfig = xmldoc("../../scripts/sumo_contact_demo.launchd.xml")
+
+SwarmNetwork.playgroundSizeX = 2500m
+SwarmNetwork.playgroundSizeY = 500m
+SwarmNetwork.playgroundSizeZ = 50m
+
+SwarmNetwork.connectionManager.sendDirect = true
+SwarmNetwork.connectionManager.maxInterfDist = 300m
+SwarmNetwork.connectionManager.drawMaxIntfDist = true
+
+SwarmNetwork.node[*].applType = "SwarmVehicle"
+SwarmNetwork.node[*].appl.headerLength = 80bit
+SwarmNetwork.node[*].appl.sendBeacons = true
+SwarmNetwork.node[*].appl.dataOnSch = false
+SwarmNetwork.node[*].appl.beaconInterval = 0.2s
+
+**.epochDuration = 30s
+**.preActivationLead = 10s
+**.trustCacheTTL = 30
+**.acfMaxStaleness = 3
+**.proofPoolPrecompute = 100
+**.dashboardPort = 8765
+
+**.maliciousRatio = 0.0
+**.maliciousMode = "NONE"
+
+
+# ===========================================================
+# CONTROLLED DEMO: Malicious vehicle detection and revocation
+# One attacker sends invalid proof material.
+# ===========================================================
+[Config ContactAttackDemo]
+extends = ContactLegitDemo
+description = "Controlled demo: malicious vehicle rejection and revocation"
+
+**.maliciousRatio = 0.34
+**.maliciousMode = "INVALID_ZK"
+
+# ===========================================================
+# URBAN VISUAL DEMO: Legitimate authentication, no dashboard
+# ===========================================================
+[Config UrbanVisualDemo]
+extends = Urban
+description = "Urban visual demo: legitimate vehicles"
+
+network = SwarmNetwork
+sim-time-limit = 120s
+
+*.manager.launchConfig = xmldoc("../../scripts/sumo_urban.launchd.xml")
+
+# Use inherited Veins Scenario manager
+*.manager.moduleType = "org.car2x.veins.nodes.Car"
+*.manager.moduleName = "node"
+
+# Strong visible shape for dynamic vehicles
+# DISABLED_BAD_DISPLAY_STRING: *.manager.moduleDisplayString = "b=22,22,oval,#00aa00;i=block/circle;is=vs"
+
+# Urban playground
+SwarmNetwork.playgroundSizeX = 1400m
+SwarmNetwork.playgroundSizeY = 1400m
+SwarmNetwork.playgroundSizeZ = 50m
+
+# DSRC visual range
+*.connectionManager.sendDirect = true
+*.connectionManager.maxInterfDist = 300m
+*.connectionManager.drawMaxIntfDist = true
+
+# Custom Swarm Evo-SE vehicle app
+*.node[*].applType = "SwarmVehicle"
+*.node[*].appl.headerLength = 80bit
+*.node[*].appl.sendBeacons = true
+*.node[*].appl.dataOnSch = false
+*.node[*].appl.beaconInterval = 0.2s
+
+# Fast demo timing
+**.epochDuration = 30s
+**.preActivationLead = 10s
+**.trustCacheTTL = 30
+**.acfMaxStaleness = 3
+**.proofPoolPrecompute = 100
+**.dashboardPort = 8765
+
+# Legitimate vehicles only
+**.maliciousRatio = 0.0
+**.maliciousMode = "NONE"
+
+
+# ===========================================================
+# URBAN ATTACK VISUAL DEMO: malicious rejection/revocation
+# ===========================================================
+[Config UrbanAttackVisualDemo]
+extends = UrbanVisualDemo
+description = "Urban visual demo: malicious vehicle rejection and revocation"
+
+**.maliciousRatio = 0.20
+**.maliciousMode = "INVALID_ZK"
+
+# ===========================================================
+# PHASE 1 TA DEMO: One vehicle registration and initial boot
+# Shows Trusted Authority registration clearly in terminal.
+# ===========================================================
+[Config Phase1TADemo]
+description = "One-node Trusted Authority registration demo"
+
+network = SwarmNetwork
+sim-time-limit = 5s
+
+*.manager.launchConfig = xmldoc("../../scripts/sumo_phase1_ta_demo.launchd.xml")
+
+SwarmNetwork.playgroundSizeX = 600m
+SwarmNetwork.playgroundSizeY = 200m
+SwarmNetwork.playgroundSizeZ = 50m
+
+*.connectionManager.sendDirect = true
+*.connectionManager.maxInterfDist = 300m
+*.connectionManager.drawMaxIntfDist = true
+
+*.node[*].applType = "SwarmVehicle"
+*.node[*].appl.headerLength = 80bit
+*.node[*].appl.sendBeacons = true
+*.node[*].appl.dataOnSch = false
+*.node[*].appl.beaconInterval = 1s
+
+# Phase 1/boot parameters
+**.epochDuration = 30s
+**.preActivationLead = 10s
+**.trustCacheTTL = 30
+**.acfMaxStaleness = 3
+**.proofPoolPrecompute = 10
+**.dashboardPort = 8765
+
+# No malicious vehicle for TA registration demo
+**.maliciousRatio = 0.0
+**.maliciousMode = "NONE"
